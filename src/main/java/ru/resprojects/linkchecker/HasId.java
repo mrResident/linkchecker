@@ -1,4 +1,4 @@
-package ru.resprojects.linkchecker.model;
+package ru.resprojects.linkchecker;
 
 /**
  * The interface indicates that the object has an identifier.

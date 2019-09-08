@@ -29,8 +29,6 @@ public interface EdgeRepository extends JpaRepository<Edge, Integer> {
     @Transactional
     void deleteAllInBatch();
 
-    List<Edge> findAll();
-
     Optional<Edge> findEdgeByNodeOneAndNodeTwo(Node nodeOne, Node nodeTwo);
 
     List<Edge> findEdgesByNodeOneOrNodeTwo(Node nodeOne, Node nodeTwo);

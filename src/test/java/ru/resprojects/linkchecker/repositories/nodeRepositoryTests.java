@@ -12,6 +12,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
+import ru.resprojects.linkchecker.model.Edge;
 import ru.resprojects.linkchecker.model.Node;
 
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ public class nodeRepositoryTests {
 
 	@Autowired
 	NodeRepository nodeRepository;
+
+	@Autowired
+	EdgeRepository edgeRepository;
 
 	@Test
 	public void persistNewNodeTest() {
@@ -112,11 +116,14 @@ public class nodeRepositoryTests {
 	}
 
 	@Test
-	public void deleteAllNodesTest() {
+	public void cascadeDeleteAllNodesAndEdgesTest() {
 		nodeRepository.deleteAllInBatch();
 		List<Node> nodes = nodeRepository.findAll();
 		Assert.assertNotNull(nodes);
 		Assert.assertEquals(0, nodes.size());
+		List<Edge> edges = edgeRepository.findAll();
+		Assert.assertNotNull(edges);
+		Assert.assertEquals(0, edges.size());
 	}
 
 }

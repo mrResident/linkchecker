@@ -1,6 +1,7 @@
 package ru.resprojects.linkchecker.model;
 
 import org.hibernate.Hibernate;
+import ru.resprojects.linkchecker.HasId;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

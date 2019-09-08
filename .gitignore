@@ -5,6 +5,7 @@ target/
 !**/src/test/**
 TestRESTful/
 *.log
+*.gz
 
 ### STS ###
 .apt_generated

@@ -3,9 +3,28 @@ spring:
     active: dev
 ---
 spring:
-  profiles: dev
+  profiles: prod
   jpa:
     show-sql: false
+    database: postgresql
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    open-in-view: false
+  datasource:
+    url: jdbc:postgresql://192.168.20.234:5432/linkchecker
+    username: user
+    password: password
+    platform: postgresql
+    initialization-mode: never
+---
+spring:
+  profiles: dev
+  jpa:
+    show-sql: true
     database: postgresql
     properties:
       hibernate:
@@ -31,4 +50,19 @@ spring:
     url: jdbc:h2:mem:linkchecker
     initialization-mode: always
     platform: h2
+---
 
+spring:
+  output:
+    ansi:
+      enabled: always
+
+logging:
+  level:
+    org.springframework: error
+    ru.resprojects: debug
+  pattern:
+#    console: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+    file: "%d %p %c{1.} [%t] %m%n"
+    console: "%clr(%d{HH:mm:ss.SSS}){yellow} %clr(%-5p) %clr(---){faint} %clr([%t]){cyan} %clr(%-40.40logger{36}){blue} %clr(:){red} %clr(%msg){faint}%n"
+  file: app.log

@@ -9,27 +9,21 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface NodeRepository extends JpaRepository<Node, Integer> {
 
-    @Override
     @Transactional
     Node save(Node node);
 
-    @Override
     @Transactional
     <S extends Node> List<S> saveAll(Iterable<S> entities);
 
     @Transactional
-    int deleteById(int id);
+    void deleteById(int id);
 
     @Transactional
-    int deleteByName(String name);
+    void deleteByName(String name);
 
     @Transactional
-    void deleteAll();
+    void deleteAllInBatch();
 
     Node getByName(String name);
-
-    @Override
-    List<Node> findAll();
-
 
 }

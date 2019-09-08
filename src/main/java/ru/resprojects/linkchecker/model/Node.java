@@ -40,6 +40,27 @@ public class Node extends AbstractNamedEntity {
     /**
      * Ctor.
      * @param name - unique name of database entity that implement graph node.
+     */
+    public Node(final String name) {
+        super(null, name);
+        this.probability = 0.5f;
+        this.counter = 0;
+    }
+
+    /**
+     * Ctor.
+     * @param name - unique name of database entity that implement graph node.
+     * @param probability - probability of failure graph node.
+     */
+    public Node(final String name, final float probability) {
+        super(null, name);
+        this.probability = probability;
+        this.counter = 0;
+    }
+
+    /**
+     * Ctor.
+     * @param name - unique name of database entity that implement graph node.
      * @param probability - probability of failure graph node.
      * @param counter - number of passes through the graph node.
      */

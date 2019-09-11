@@ -132,4 +132,8 @@ public class IntegrationNodeRepositoryTests {
 		Assert.assertEquals(0, edges.size());
 	}
 
+	@Test
+	public void existNodeByNameTest() {
+		Assert.assertTrue(nodeRepository.existsByName("v1"));
+	}
 }

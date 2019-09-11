@@ -75,13 +75,37 @@ public class GraphServiceImpl implements GraphService {
     }
 
     @Override
-    public void deleteNode(String name) throws NotFoundException {
+    public void deleteNode(Integer id) throws NotFoundException {
+        if (nodeRepository.existsById(id)) {
+            nodeRepository.deleteById(id);
+        } else {
+            throw new NotFoundException(String.format("Node with ID = %d is not found", id));
+        }
+    }
 
+    @Override
+    public void deleteNode(String name) throws NotFoundException {
+        if (nodeRepository.existsByName(name)) {
+            nodeRepository.deleteByName(name);
+        } else {
+            throw new NotFoundException(String.format("Node with NAME = %s is not found", name));
+        }
     }
 
     @Override
     public void deleteNode(NodeGraph nodeGraph) throws NotFoundException {
-
+        if (nodeGraph == null) {
+            throw new NotFoundException("Node null is not found");
+        }
+        NodeGraph nodeFromRepo = GraphUtil.nodeToNodeGraph(nodeRepository
+            .findById(nodeGraph.getId()).orElse(null));
+        if (nodeGraph.equals(nodeFromRepo)) {
+            nodeRepository.deleteById(nodeGraph.getId());
+        } else {
+            throw new NotFoundException(String.format(
+                "Node %s is not found", nodeGraph.toString())
+            );
+        }
     }
 
     @Override
@@ -120,7 +144,7 @@ public class GraphServiceImpl implements GraphService {
             findEdgeByNodeOneAndNodeTwo(nodeOne, nodeTwo).orElse(null));
         if (edgeGraph == null) {
             throw new NotFoundException(String.format(
-                "Edge for nodes with name [%s, %s] is not found",
+                "Edge for nodes [%s, %s] is not found",
                 nodeNameOne,
                 nodeNameTwo
             ));

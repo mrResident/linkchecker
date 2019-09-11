@@ -16,7 +16,7 @@ public interface NodeRepository extends JpaRepository<Node, Integer> {
     <S extends Node> List<S> saveAll(Iterable<S> entities);
 
     @Transactional
-    void deleteById(int id);
+    void deleteById(Integer id);
 
     @Transactional
     void deleteByName(String name);
@@ -26,4 +26,5 @@ public interface NodeRepository extends JpaRepository<Node, Integer> {
 
     Node getByName(String name);
 
+    boolean existsByName(String name);
 }

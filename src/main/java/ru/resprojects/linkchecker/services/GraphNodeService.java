@@ -26,6 +26,13 @@ public interface GraphNodeService {
     void updateNode(NodeGraph node);
 
     /**
+     * Search graph node by id and delete from graph.
+     * @param id of node of the graph.
+     * @throws NotFoundException if node not found int the graph.
+     */
+    void deleteNode(Integer id) throws NotFoundException;
+
+    /**
      * Search graph node by unique name and delete from graph.
      * @param name unique name of graph node.
      * @throws NotFoundException if node not found int the graph.

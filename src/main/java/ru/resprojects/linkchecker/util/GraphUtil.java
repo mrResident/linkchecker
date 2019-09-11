@@ -187,20 +187,39 @@ public final class GraphUtil {
     }
 
     /**
-     * Convert {@link Node} into {@link NodeGraph}
+     * Convert {@link Node} to {@link NodeGraph}
      * @param node model object.
      * @return graph node DTO or null
      */
     public static NodeGraph nodeToNodeGraph(final Node node) {
-        if (node == null) {
+        if (node != null) {
+            return new NodeGraph(node.getId(), node.getName(),
+                node.getProbability(), node.getCounter());
+        } else {
             return null;
         }
-        return new NodeGraph(node.getId(), node.getName(),
-            node.getProbability(), node.getCounter());
     }
 
     /**
-     * Convert collection of {@link Edge} into set of {@link EdgeGraph}
+     * Convert {@link NodeGraph} to {@link Node}
+     * @param nodeGraph graph node DTO.
+     * @return model object or null
+     */
+    public static Node nodeGraphToNode(final NodeGraph nodeGraph) {
+        if (nodeGraph != null) {
+            return new Node(
+                nodeGraph.getId(),
+                nodeGraph.getName(),
+                nodeGraph.getProbability(),
+                nodeGraph.getCounter()
+            );
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Convert collection of {@link Edge} to set of {@link EdgeGraph}
      * @param edges model objects collection.
      * @return set of graph edge DTO
      */
@@ -217,16 +236,17 @@ public final class GraphUtil {
     }
 
     /**
-     * Convert {@link Edge} into {@link EdgeGraph}
+     * Convert {@link Edge} to {@link EdgeGraph}
      * @param edge model object.
      * @return graph edge DTO or null
      */
     public static EdgeGraph edgeToEdgeGraph(final Edge edge) {
-        if (edge == null) {
+        if (edge != null) {
+            return new EdgeGraph(edge.getId(), edge.getNodeOne().getName(),
+                edge.getNodeTwo().getName());
+        } else {
             return null;
         }
-        return new EdgeGraph(edge.getId(), edge.getNodeOne().getName(),
-            edge.getNodeTwo().getName());
     }
 
 }

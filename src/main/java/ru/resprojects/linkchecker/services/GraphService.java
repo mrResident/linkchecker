@@ -12,7 +12,7 @@ import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
  * how one big linked graph with subgraphs and may be represented how set of
  * unlinked graphs.
  */
-public interface GraphService extends GraphNodeService, GraphEdgeService {
+public interface GraphService {
 
     /**
      * Checking input graph data, removing cycles from input graph and saving
@@ -20,7 +20,7 @@ public interface GraphService extends GraphNodeService, GraphEdgeService {
      * @param graphTo graph {@link GraphDto}
      * @return graph.
      */
-    GraphDto create(GraphDto graphTo);
+    GraphDto create(final GraphDto graphTo);
 
     /**
      * Get graph.
@@ -39,13 +39,13 @@ public interface GraphService extends GraphNodeService, GraphEdgeService {
      * @param graphDto subgraph.
      * @throws NotFoundException if graph not found in database or corrupted.
      */
-    void delete(GraphDto graphDto) throws NotFoundException;
+    void delete(final GraphDto graphDto) throws NotFoundException;
 
     /**
      * Checking route between nodes.
      * @param nodes set of graph nodes. {@link GraphDto.NodeGraph}
      * @return check result in JSON format.
      */
-    String checkRoute(Set<NodeGraph> nodes);
+    String checkRoute(final Set<NodeGraph> nodes);
 }
 

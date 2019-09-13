@@ -14,6 +14,9 @@ public class GraphDto {
      */
     public static class NodeGraph extends BaseDto {
 
+        private static final float NODE_PROBABILITY_DEFAULT = 0.5f;
+        private static final int NODE_COUNTER_DEFAULT = 0;
+
         /**
          * Unique graph node name.
          */
@@ -49,7 +52,7 @@ public class GraphDto {
          * @param name - unique graph node name.
          */
         public NodeGraph(final String name) {
-            this(name, 0.0f);
+            this(name, NODE_PROBABILITY_DEFAULT);
         }
 
         /**
@@ -57,8 +60,8 @@ public class GraphDto {
          * @param name - unique graph node name.
          * @param probability - probability of failure node.
          */
-        NodeGraph(final String name, final float probability) {
-            this(name, probability, 0);
+        public NodeGraph(final String name, final float probability) {
+            this(name, probability, NODE_COUNTER_DEFAULT);
         }
 
         /**
@@ -67,7 +70,7 @@ public class GraphDto {
          * @param probability - probability of failure node.
          * @param counter - the number of passes through the current node.
          */
-        NodeGraph(final String name, final float probability, final int counter) {
+        public NodeGraph(final String name, final float probability, final int counter) {
             this(null, name, probability, counter);
         }
 

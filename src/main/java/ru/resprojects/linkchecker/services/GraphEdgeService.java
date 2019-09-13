@@ -15,17 +15,17 @@ public interface GraphEdgeService {
     /**
      * Create graph edge. Nodes that linked by the edge, must be
      * exist in graph, else throw exception.
-     * @param edge Graph edge that link two nodes.
+     * @param edgeGraph Graph edge that link two nodes.
      * @return added graph edge.
      */
-    EdgeGraph createEdge(EdgeGraph edge);
+    EdgeGraph create(final EdgeGraph edgeGraph);
 
     /**
      * Delete exist edge from graph.
-     * @param edge Graph edge that link two nodes.
+     * @param edgeGraph Graph edge that link two nodes.
      * @throws NotFoundException if present edge is not found in the graph.
      */
-    void deleteEdge(EdgeGraph edge) throws NotFoundException;
+    void delete(final EdgeGraph edgeGraph) throws NotFoundException;
 
     /**
      * Get edge of the graph, that link two nodes {@link GraphDto.NodeGraph}
@@ -35,7 +35,7 @@ public interface GraphEdgeService {
      * @return graph edge {@link EdgeGraph}.
      * @throws NotFoundException if edge is not found in the graph.
      */
-    EdgeGraph getEdge(String nodeNameOne, String nodeNameTwo) throws NotFoundException;
+    EdgeGraph get(final String nodeNameOne, final String nodeNameTwo) throws NotFoundException;
 
     /**
      * Get edge of the graph by edge id.
@@ -43,12 +43,12 @@ public interface GraphEdgeService {
      * @return graph edge {@link EdgeGraph}.
      * @throws NotFoundException if edge is not found in the graph.
      */
-    EdgeGraph getEdgeById(Integer id) throws NotFoundException;
+    EdgeGraph getById(final Integer id) throws NotFoundException;
 
     /**
      * Get all edges from graph.
      * @return set of graph edges.
      */
-    Set<EdgeGraph> getAllEdges();
+    Set<EdgeGraph> getAll();
 }
 

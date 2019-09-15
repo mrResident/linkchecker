@@ -2,6 +2,7 @@ package ru.resprojects.linkchecker.model;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import ru.resprojects.linkchecker.util.ValidationUtil;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,7 +27,7 @@ public class Edge extends AbstractBaseEntity {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "nodeone", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @NotNull
+    @NotNull(message = ValidationUtil.VALIDATOR_NOT_NULL_MESSAGE)
     private Node nodeOne;
 
     /**
@@ -35,7 +36,7 @@ public class Edge extends AbstractBaseEntity {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "nodetwo", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @NotNull
+    @NotNull(message = ValidationUtil.VALIDATOR_NOT_NULL_MESSAGE)
     private Node nodeTwo;
 
     /**

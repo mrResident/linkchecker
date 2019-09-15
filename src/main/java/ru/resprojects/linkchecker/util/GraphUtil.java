@@ -31,7 +31,6 @@ import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
  */
 public final class GraphUtil {
 
-
     private static final Logger LOG = LoggerFactory.getLogger(GraphUtil.class);
 
     /**

@@ -43,13 +43,13 @@ public class EdgeGraphServiceTests {
     }
 
     @Test
-    public void getAllEdgesTest() {
+    public void getAllEdges() {
         List<Node> nodes = Stream.of(
-            new Node(5000, "v1", 0.43f, 0),
-            new Node(5001, "v2", 0.6f, 0),
-            new Node(5002, "v3", 0.35f, 0),
-            new Node(5003, "v4", 0.56f, 0),
-            new Node(5004, "v5", 0.2f, 0)
+            new Node(5000, "v1", 43, 0),
+            new Node(5001, "v2", 60, 0),
+            new Node(5002, "v3", 35, 0),
+            new Node(5003, "v4", 56, 0),
+            new Node(5004, "v5", 20, 0)
         ).collect(Collectors.toList());
         List<Edge> edges = Stream.of(
             new Edge(5005, nodes.get(0), nodes.get(1)),

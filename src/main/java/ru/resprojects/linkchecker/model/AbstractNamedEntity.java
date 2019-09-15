@@ -5,6 +5,11 @@ import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import static ru.resprojects.linkchecker.util.ValidationUtil.MAX_NAME_SIZE;
+import static ru.resprojects.linkchecker.util.ValidationUtil.MIN_NAME_SIZE;
+import static ru.resprojects.linkchecker.util.ValidationUtil.VALIDATOR_NODE_NAME_RANGE_MESSAGE;
+import static ru.resprojects.linkchecker.util.ValidationUtil.VALIDATOR_NODE_NOT_BLANK_NAME_MESSAGE;
+
 /**
  * Abstract base class for named database entity.
  */
@@ -12,21 +17,12 @@ import javax.validation.constraints.Size;
 public abstract class AbstractNamedEntity extends AbstractBaseEntity {
 
     /**
-     * Maximum string database field size.
-     */
-    private static final int MAX_SIZE = 50;
-
-    /**
-     * Minimum string database field size.
-     */
-    private static final int MIN_SIZE = 1;
-
-    /**
      * Unique name of database entity.
      */
     @Column(name = "name", nullable = false, unique = true)
-    @NotBlank
-    @Size(min = MIN_SIZE, max = MAX_SIZE)
+    @NotBlank(message = VALIDATOR_NODE_NOT_BLANK_NAME_MESSAGE)
+    @Size(min = MIN_NAME_SIZE, max = MAX_NAME_SIZE,
+        message = VALIDATOR_NODE_NAME_RANGE_MESSAGE)
     private String name;
 
     /**

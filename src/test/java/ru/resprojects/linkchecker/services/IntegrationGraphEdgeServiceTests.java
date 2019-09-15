@@ -41,7 +41,7 @@ public class IntegrationGraphEdgeServiceTests {
     private GraphEdgeService edgeService;
 
     @Test
-    public void getAllEdgesTest() {
+    public void getAllEdges() {
         Set<EdgeGraph> actual = edgeService.getAll();
 
         Assert.assertEquals(4, actual.size());

@@ -1,8 +1,14 @@
 package ru.resprojects.linkchecker.dto;
 
+import org.hibernate.validator.constraints.Range;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import static ru.resprojects.linkchecker.util.ValidationUtil.*;
 
 /**
  * Class for transfer object that implements graph.
@@ -14,18 +20,21 @@ public class GraphDto {
      */
     public static class NodeGraph extends BaseDto {
 
-        private static final float NODE_PROBABILITY_DEFAULT = 0.5f;
-        private static final int NODE_COUNTER_DEFAULT = 0;
-
         /**
          * Unique graph node name.
          */
+        @NotBlank(message = VALIDATOR_NODE_NOT_BLANK_NAME_MESSAGE)
+        @Size(min = MIN_NAME_SIZE, max = MAX_NAME_SIZE,
+            message = VALIDATOR_NODE_NAME_RANGE_MESSAGE)
         private String name;
 
         /**
-         * Probability of failure node.
+         * Percentage value of probability failure node.
          */
-        private float probability;
+        @Range(min = MIN_PROBABILITY_VALUE,
+            max = MAX_PROBABILITY_VALUE,
+            message = VALIDATOR_NODE_PROBABILITY_RANGE_MESSAGE)
+        private int probability;
 
         /**
          * The number of passes through the graph node.
@@ -60,7 +69,7 @@ public class GraphDto {
          * @param name - unique graph node name.
          * @param probability - probability of failure node.
          */
-        public NodeGraph(final String name, final float probability) {
+        public NodeGraph(final String name, final int probability) {
             this(name, probability, NODE_COUNTER_DEFAULT);
         }
 
@@ -70,7 +79,7 @@ public class GraphDto {
          * @param probability - probability of failure node.
          * @param counter - the number of passes through the current node.
          */
-        public NodeGraph(final String name, final float probability, final int counter) {
+        public NodeGraph(final String name, final int probability, final int counter) {
             this(null, name, probability, counter);
         }
 
@@ -82,7 +91,7 @@ public class GraphDto {
          * @param counter - the number of passes through the current node.
          */
         public NodeGraph(final Integer id, final String name,
-            final float probability, final int counter) {
+            final int probability, final int counter) {
             super(id);
             this.name = name;
             this.probability = probability;
@@ -97,12 +106,12 @@ public class GraphDto {
             this.name = name;
         }
 
-        public float getProbability() {
+        public int getProbability() {
             return probability;
         }
 
 
-        public void setProbability(final float probability) {
+        public void setProbability(final int probability) {
             this.probability = probability;
         }
 
@@ -152,11 +161,15 @@ public class GraphDto {
         /**
          * Unique name of first graph node.
          */
+        @NotBlank
+        @Size(min = MIN_NAME_SIZE, max = MAX_NAME_SIZE)
         private String nodeOne;
 
         /**
          * Unique name of second graph node.
          */
+        @NotBlank
+        @Size(min = MIN_NAME_SIZE, max = MAX_NAME_SIZE)
         private String nodeTwo;
 
         /**

@@ -25,9 +25,9 @@ import java.util.stream.IntStream;
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
 	scripts = {"classpath:schema-h2.sql", "classpath:data-h2.sql"},
 	config = @SqlConfig(encoding = "UTF-8"))
-public class IntegrationNodeRepositoryTests {
+public class NodeRepositoryTests {
 
-	private static final Logger LOG = LoggerFactory.getLogger(IntegrationNodeRepositoryTests.class);
+	private static final Logger LOG = LoggerFactory.getLogger(NodeRepositoryTests.class);
 
 	@Autowired
 	NodeRepository nodeRepository;
@@ -36,7 +36,7 @@ public class IntegrationNodeRepositoryTests {
 	EdgeRepository edgeRepository;
 
 	@Test
-	public void persistNewNodeTest() {
+	public void persistNewNode() {
 		Node node = new Node("v11");
 		Node savedNode = nodeRepository.save(node);
 		Assert.assertNotNull(savedNode.getId());
@@ -47,7 +47,7 @@ public class IntegrationNodeRepositoryTests {
 	}
 
 	@Test
-	public void persistNodeListTest() {
+	public void persistNodeList() {
 		List<Node> nodes = new ArrayList<>();
 		IntStream.range(1, 6).forEach(i -> nodes.add(new Node("w" + i)));
 		nodeRepository.saveAll(nodes);
@@ -59,7 +59,7 @@ public class IntegrationNodeRepositoryTests {
 	}
 
 	@Test
-	public void getAllNodesTest() {
+	public void getAllNodes() {
 		List<Node> nodes = nodeRepository.findAll();
 		Assert.assertNotNull(nodes);
 		Assert.assertEquals(5, nodes.size());
@@ -68,7 +68,7 @@ public class IntegrationNodeRepositoryTests {
 	}
 
 	@Test
-	public void getNodeByIdTest() {
+	public void getNodeById() {
 		Node node = nodeRepository.findById(5000).orElse(null);
 		Assert.assertNotNull(node);
 		Assert.assertEquals("v1", node.getName());
@@ -76,13 +76,13 @@ public class IntegrationNodeRepositoryTests {
 	}
 
 	@Test
-	public void nodeNotFoundByIdTest() {
+	public void nodeNotFoundById() {
 		Node node = nodeRepository.findById(5010).orElse(null);
 		Assert.assertNull(node);
 	}
 
 	@Test
-	public void getNodeByNameTest() {
+	public void getNodeByName() {
 		Node node = nodeRepository.getByName("v1");
 		Assert.assertNotNull(node);
 		Assert.assertEquals("v1", node.getName());
@@ -90,19 +90,19 @@ public class IntegrationNodeRepositoryTests {
 	}
 
 	@Test
-	public void nodeNotFoundIfNameIsNullTest() {
+	public void nodeNotFoundIfNameIsNull() {
 		Node node = nodeRepository.getByName(null);
 		Assert.assertNull(node);
 	}
 
 	@Test
-	public void nodeNotFoundByNameTest() {
+	public void nodeNotFoundByName() {
 		Node node = nodeRepository.getByName("v11");
 		Assert.assertNull(node);
 	}
 
 	@Test
-	public void deleteByIdTest() {
+	public void deleteById() {
 		nodeRepository.deleteById(5000);
 		List<Node> nodes = nodeRepository.findAll();
 		Assert.assertNotNull(nodes);
@@ -112,7 +112,7 @@ public class IntegrationNodeRepositoryTests {
 	}
 
 	@Test
-	public void deleteByNameTest() {
+	public void deleteByName() {
 		nodeRepository.deleteByName("v1");
 		List<Node> nodes = nodeRepository.findAll();
 		Assert.assertNotNull(nodes);
@@ -122,7 +122,7 @@ public class IntegrationNodeRepositoryTests {
 	}
 
 	@Test
-	public void cascadeDeleteAllNodesAndEdgesTest() {
+	public void cascadeDeleteAllNodesAndEdges() {
 		nodeRepository.deleteAllInBatch();
 		List<Node> nodes = nodeRepository.findAll();
 		Assert.assertNotNull(nodes);
@@ -133,7 +133,7 @@ public class IntegrationNodeRepositoryTests {
 	}
 
 	@Test
-	public void existNodeByNameTest() {
+	public void existNodeByName() {
 		Assert.assertTrue(nodeRepository.existsByName("v1"));
 	}
 }

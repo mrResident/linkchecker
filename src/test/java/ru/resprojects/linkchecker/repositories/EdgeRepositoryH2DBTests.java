@@ -24,9 +24,9 @@ import java.util.List;
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
 	scripts = {"classpath:schema-h2.sql", "classpath:data-h2.sql"},
 	config = @SqlConfig(encoding = "UTF-8"))
-public class EdgeRepositoryTests {
+public class EdgeRepositoryH2DBTests {
 
-	private static final Logger LOG = LoggerFactory.getLogger(EdgeRepositoryTests.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EdgeRepositoryH2DBTests.class);
 
 	@Autowired
 	EdgeRepository edgeRepository;

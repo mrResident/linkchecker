@@ -8,8 +8,6 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.resprojects.linkchecker.model.Node;
-import ru.resprojects.linkchecker.repositories.NodeRepositoryTests;
 import ru.resprojects.linkchecker.util.ValidationUtil;
 
 import javax.validation.ConstraintViolation;
@@ -21,7 +19,7 @@ import java.util.Set;
 @RunWith(SpringRunner.class)
 public class ValidationModelTests {
 
-    private static final Logger LOG = LoggerFactory.getLogger(NodeRepositoryTests.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ValidationModelTests.class);
     private static ValidatorFactory validatorFactory;
     private static Validator validator;
 

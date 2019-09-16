@@ -13,7 +13,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.TransactionSystemException;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
@@ -28,9 +27,9 @@ import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
     scripts = {"classpath:schema-h2.sql", "classpath:data-h2.sql"},
     config = @SqlConfig(encoding = "UTF-8"))
-public class IntegrationGraphNodeServiceTests {
+public class GraphNodeServiceH2DBTests {
 
-    private static final Logger LOG = LoggerFactory.getLogger(IntegrationGraphNodeServiceTests.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GraphNodeServiceH2DBTests.class);
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

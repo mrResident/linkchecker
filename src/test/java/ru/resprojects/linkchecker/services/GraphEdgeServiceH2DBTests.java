@@ -14,14 +14,10 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
-import ru.resprojects.linkchecker.repositories.EdgeRepository;
-import ru.resprojects.linkchecker.repositories.NodeRepository;
-import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
 import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 
 @RunWith(SpringRunner.class)
@@ -30,9 +26,9 @@ import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
     scripts = {"classpath:schema-h2.sql", "classpath:data-h2.sql"},
     config = @SqlConfig(encoding = "UTF-8"))
-public class IntegrationGraphEdgeServiceTests {
+public class GraphEdgeServiceH2DBTests {
 
-    private static final Logger LOG = LoggerFactory.getLogger(IntegrationGraphEdgeServiceTests.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GraphEdgeServiceH2DBTests.class);
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

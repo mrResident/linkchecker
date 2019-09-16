@@ -25,9 +25,9 @@ import java.util.stream.IntStream;
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
 	scripts = {"classpath:schema-h2.sql", "classpath:data-h2.sql"},
 	config = @SqlConfig(encoding = "UTF-8"))
-public class NodeRepositoryTests {
+public class NodeRepositoryH2DBTests {
 
-	private static final Logger LOG = LoggerFactory.getLogger(NodeRepositoryTests.class);
+	private static final Logger LOG = LoggerFactory.getLogger(NodeRepositoryH2DBTests.class);
 
 	@Autowired
 	NodeRepository nodeRepository;

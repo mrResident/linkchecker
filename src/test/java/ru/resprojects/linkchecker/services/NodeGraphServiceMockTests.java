@@ -26,7 +26,7 @@ import static org.mockito.BDDMockito.when;
 import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
 
 @RunWith(SpringRunner.class)
-public class NodeGraphServiceTests {
+public class NodeGraphServiceMockTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

@@ -29,7 +29,7 @@ import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
 import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 
 @RunWith(SpringRunner.class)
-public class GraphServiceTests {
+public class GraphServiceMockTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

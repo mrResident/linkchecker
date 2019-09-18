@@ -5,10 +5,8 @@ import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import static ru.resprojects.linkchecker.util.ValidationUtil.MAX_NAME_SIZE;
-import static ru.resprojects.linkchecker.util.ValidationUtil.MIN_NAME_SIZE;
-import static ru.resprojects.linkchecker.util.ValidationUtil.VALIDATOR_NODE_NAME_RANGE_MESSAGE;
-import static ru.resprojects.linkchecker.util.ValidationUtil.VALIDATOR_NODE_NOT_BLANK_NAME_MESSAGE;
+import static ru.resprojects.linkchecker.util.ValidationUtil.*;
+import static ru.resprojects.linkchecker.util.Messages.*;
 
 /**
  * Abstract base class for named database entity.

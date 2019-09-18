@@ -21,9 +21,16 @@ public interface GraphEdgeService {
     EdgeGraph create(final EdgeGraph edgeGraph);
 
     /**
-     * Delete exist edge from graph.
-     * @param edgeGraph Graph edge that link two nodes.
-     * @throws NotFoundException if present edge is not found in the graph.
+     * Search graph edge by id and delete from graph.
+     * @param id of edge of the graph.
+     * @throws NotFoundException edge is not found in the graph.
+     */
+    void delete(final Integer id) throws NotFoundException;
+
+    /**
+     * Search graph edge by object {@link EdgeGraph} and delete from graph.
+     * @param edgeGraph object {@link EdgeGraph}
+     * @throws NotFoundException edge is not found in the graph.
      */
     void delete(final EdgeGraph edgeGraph) throws NotFoundException;
 

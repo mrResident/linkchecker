@@ -16,7 +16,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
@@ -56,7 +58,7 @@ public class GraphNodeServiceH2DBTests {
     @Test
     public void getNodeByNameNotFound() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node with name v11 is not found");
+        thrown.expectMessage("Node with NAME = v11 is not found");
         nodeService.get("v11");
     }
 
@@ -132,6 +134,14 @@ public class GraphNodeServiceH2DBTests {
     }
 
     @Test
+    public void deleteAllNodes() {
+        nodeService.deleteAll();
+        Set<NodeGraph> nodeGraphs = nodeService.getAll();
+        Assert.assertNotNull(nodeGraphs);
+        Assert.assertEquals(0, nodeGraphs.size());
+    }
+
+    @Test
     public void createNode() {
         NodeGraph nodeGraph = new NodeGraph("v6");
         nodeService.create(nodeGraph);
@@ -142,10 +152,28 @@ public class GraphNodeServiceH2DBTests {
     }
 
     @Test
+    public void createNodes() {
+        Set<NodeGraph> nodeGraphs = new HashSet<>();
+        IntStream.range(1, 6).forEach(i -> {
+            nodeGraphs.add(new NodeGraph("w" + i));
+        });
+        nodeService.create(nodeGraphs);
+        Set<NodeGraph> actual = nodeService.getAll();
+        Assert.assertNotNull(actual);
+        Assert.assertEquals(10, actual.size());
+        Assert.assertEquals("w1", actual.stream()
+            .filter(ng -> "w1".equals(ng.getName()))
+            .findFirst().get().getName());
+        actual.forEach(ng -> LOG.debug("---- NODE: " + ng));
+    }
+
+    @Test
     public void exceptionWhileCreateNode() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Node must not be null");
-        nodeService.create(null);
+        thrown.expectMessage("Must not be null");
+
+        NodeGraph nodeGraph = null;
+        nodeService.create(nodeGraph);
     }
 
     @Test
@@ -163,7 +191,7 @@ public class GraphNodeServiceH2DBTests {
     @Test
     public void exceptionOneWhileNodeUpdate() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Node must not be null");
+        thrown.expectMessage("Must not be null");
         nodeService.update(null);
     }
 

@@ -1,6 +1,7 @@
 package ru.resprojects.linkchecker.services;
 
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -31,4 +32,8 @@ public class GraphServiceH2DBTests {
 	@Autowired
 	GraphService graphService;
 
+	@Test
+	public void stub() {
+		LOG.debug("NOTHING");
+	}
 }

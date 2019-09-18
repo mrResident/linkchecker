@@ -15,18 +15,12 @@ public final class ValidationUtil {
     public static final int MAX_NAME_SIZE = 50;
     public static final int MIN_PROBABILITY_VALUE = 0;
     public static final int MAX_PROBABILITY_VALUE = 100;
-    public static final String VALIDATOR_NODE_NOT_BLANK_NAME_MESSAGE = "value does not be empty";
-    public static final String VALIDATOR_NODE_NAME_RANGE_MESSAGE = "value must be at range from "
-        + MIN_NAME_SIZE + " to " + MAX_NAME_SIZE;
-    public static final String VALIDATOR_NODE_PROBABILITY_RANGE_MESSAGE = "value must be at range from "
-        + MIN_PROBABILITY_VALUE + " to " + MAX_PROBABILITY_VALUE;
-    public static final String VALIDATOR_NOT_NULL_MESSAGE = "object does not be null";
 
     private ValidationUtil() {
     }
 
     public static <T> T checkNotFoundWithId(T object, int id) {
-        return checkNotFound(object, "Node with id=" + id + " is not found");
+        return checkNotFound(object, "id=" + id);
     }
 
     public static void checkNotFoundWithId(boolean found, int id) {

@@ -19,8 +19,11 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
 import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
@@ -169,24 +172,31 @@ public final class GraphUtil {
     }
 
     /**
-     * Convert collection of {@link Node} into set of {@link NodeGraph}
-     * @param nodes model objects collection.
+     * Converting collection of {@link Node} into set of {@link NodeGraph}
+     * @param nodes node model objects collection.
      * @return set of graph node DTO
      */
     public static Set<NodeGraph> nodesToNodeGraphs(final Collection<Node> nodes) {
-        Set<NodeGraph> result = new HashSet<>();
-        nodes.forEach(node -> {
-                NodeGraph nodeGraph = nodeToNodeGraph(node);
-                if (nodeGraph != null) {
-                    result.add(nodeGraph);
-                }
-            }
-        );
-        return result;
+        return nodes.stream()
+            .filter(Objects::nonNull)
+            .map(GraphUtil::nodeToNodeGraph)
+            .collect(Collectors.toSet());
     }
 
     /**
-     * Convert {@link Node} to {@link NodeGraph}
+     * Converting collection of {@link NodeGraph} to the list of {@link Node}
+     * @param nodeGraphs collection of graph node DTO
+     * @return list of node model objects
+     */
+    public static List<Node> nodeGraphsToNodes(final Collection<NodeGraph> nodeGraphs) {
+        return nodeGraphs.stream()
+            .filter(Objects::nonNull)
+            .map(GraphUtil::nodeGraphToNode)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Converting {@link Node} to {@link NodeGraph}
      * @param node model object.
      * @return graph node DTO or null
      */
@@ -200,7 +210,7 @@ public final class GraphUtil {
     }
 
     /**
-     * Convert {@link NodeGraph} to {@link Node}
+     * Converting {@link NodeGraph} to {@link Node}
      * @param nodeGraph graph node DTO.
      * @return model object or null
      */
@@ -218,24 +228,19 @@ public final class GraphUtil {
     }
 
     /**
-     * Convert collection of {@link Edge} to set of {@link EdgeGraph}
+     * Converting collection of {@link Edge} to set of {@link EdgeGraph}
      * @param edges model objects collection.
      * @return set of graph edge DTO
      */
     public static Set<EdgeGraph> edgesToEdgeGraphs(final Collection<Edge> edges) {
-        Set<EdgeGraph> result = new HashSet<>();
-        edges.forEach(edge -> {
-                EdgeGraph edgeGraph = edgeToEdgeGraph(edge);
-                if (edgeGraph != null) {
-                    result.add(edgeGraph);
-                }
-            }
-        );
-        return result;
+        return edges.stream()
+            .filter(Objects::nonNull)
+            .map(GraphUtil::edgeToEdgeGraph)
+            .collect(Collectors.toSet());
     }
 
     /**
-     * Convert {@link Edge} to {@link EdgeGraph}
+     * Converting {@link Edge} to {@link EdgeGraph}
      * @param edge model object.
      * @return graph edge DTO or null
      */

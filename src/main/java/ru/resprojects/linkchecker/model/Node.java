@@ -8,6 +8,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import static ru.resprojects.linkchecker.util.ValidationUtil.*;
+import static ru.resprojects.linkchecker.util.Messages.*;
 
 @Entity
 @Table(name = "nodes", uniqueConstraints = {

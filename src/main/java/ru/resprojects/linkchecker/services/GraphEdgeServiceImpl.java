@@ -11,6 +11,8 @@ import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 import java.util.Set;
 
 import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
+import static ru.resprojects.linkchecker.util.ValidationUtil.checkNotFound;
+import static ru.resprojects.linkchecker.util.Messages.*;
 
 @Service
 public class GraphEdgeServiceImpl implements GraphEdgeService {
@@ -30,6 +32,11 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
     }
 
     @Override
+    public void delete(Integer id) throws NotFoundException {
+
+    }
+
+    @Override
     public void delete(EdgeGraph edgeGraph) throws NotFoundException {
 
     }
@@ -40,24 +47,17 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
         Node nodeTwo = nodeRepository.getByName(nodeNameTwo);
         EdgeGraph edgeGraph = GraphUtil.edgeToEdgeGraph(edgeRepository.
             findEdgeByNodeOneAndNodeTwo(nodeOne, nodeTwo).orElse(null));
-        if (edgeGraph == null) {
-            throw new NotFoundException(String.format(
-                "Edge for nodes [%s, %s] is not found",
-                nodeNameOne,
-                nodeNameTwo
-            ));
-        }
-        return edgeGraph;
+        return checkNotFound(edgeGraph, String.format(
+            EDGE_MSG_GET_ERROR,
+            nodeNameOne,
+            nodeNameTwo));
     }
 
     @Override
     public EdgeGraph getById(Integer id) throws NotFoundException {
         EdgeGraph edgeGraph = GraphUtil.edgeToEdgeGraph(edgeRepository.findById(id)
             .orElse(null));
-        if (edgeGraph == null) {
-            throw new NotFoundException(String.format("Edge with ID = %d is not found", id));
-        }
-        return edgeGraph;
+        return checkNotFound(edgeGraph, String.format(MSG_BY_ID_ERROR, "Edge", id));
     }
 
     @Override

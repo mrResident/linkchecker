@@ -49,11 +49,11 @@ public class NodeRepositoryH2DBTests {
 	@Test
 	public void persistNodeList() {
 		List<Node> nodes = new ArrayList<>();
-		IntStream.range(1, 6).forEach(i -> nodes.add(new Node("w" + i)));
+		IntStream.range(1, 60).forEach(i -> nodes.add(new Node("w" + i)));
 		nodeRepository.saveAll(nodes);
 		List<Node> savedNodes = nodeRepository.findAll();
 		Assert.assertNotNull(savedNodes);
-		Assert.assertEquals(10, savedNodes.size());
+		Assert.assertEquals(64, savedNodes.size());
 		LOG.info("LIST count = " + savedNodes.size());
 		savedNodes.forEach(node -> LOG.info(node.toString()));
 	}

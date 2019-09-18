@@ -24,7 +24,7 @@ import static org.mockito.BDDMockito.given;
 import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 
 @RunWith(SpringRunner.class)
-public class EdgeGraphServiceMockTests {
+public class GraphEdgeServiceMockTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

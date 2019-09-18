@@ -13,20 +13,25 @@ import ru.resprojects.linkchecker.repositories.NodeRepository;
 import ru.resprojects.linkchecker.util.GraphUtil;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyIterable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.when;
 import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
 
 @RunWith(SpringRunner.class)
-public class NodeGraphServiceMockTests {
+public class GraphNodeServiceMockTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -55,7 +60,7 @@ public class NodeGraphServiceMockTests {
     @Test
     public void getNodeByNameNotFound() throws NotFoundException {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node with name v1 is not found");
+        thrown.expectMessage("Node with NAME = v1 is not found");
         graphNodeService.get("v1");
     }
 
@@ -129,8 +134,8 @@ public class NodeGraphServiceMockTests {
 
     @Test
     public void exceptionThreeWhileDeleteNodeByNodeGraph() {
-        thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node null is not found");
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Must not be null");
         NodeGraph nodeGraph = null;
         graphNodeService.delete(nodeGraph);
     }
@@ -201,10 +206,28 @@ public class NodeGraphServiceMockTests {
     }
 
     @Test
+    public void createNodes() {
+        Set<NodeGraph> nodeGraphs = new HashSet<>();
+        List<Node> nodes = new ArrayList<>();
+        IntStream.range(1, 6).forEach(i -> {
+            nodeGraphs.add(new NodeGraph("w" + i));
+            nodes.add(new Node(5000 + i, "w" + i, 50, 0));
+        });
+        when(nodeRepository.saveAll(anyIterable())).thenReturn(nodes);
+
+        Set<NodeGraph> actual = graphNodeService.create(nodeGraphs);
+
+        Assert.assertNotNull(actual);
+        Assert.assertEquals(5, actual.size());
+    }
+
+    @Test
     public void exceptionWhileCreateNode() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Node must not be null");
-        graphNodeService.create(null);
+        thrown.expectMessage("Must not be null");
+
+        NodeGraph nodeGraph = null;
+        graphNodeService.create(nodeGraph);
     }
 
     @Test
@@ -222,14 +245,14 @@ public class NodeGraphServiceMockTests {
     @Test
     public void exceptionOneWhileUpdateNode() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Node must not be null");
+        thrown.expectMessage("Must not be null");
         graphNodeService.update(null);
     }
 
     @Test
     public void exceptionTwoWhileUpdateNode() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node with id=5000 is not found");
+        thrown.expectMessage("Error while update node with id = 5000");
         NodeGraph nodeGraph = new NodeGraph(5000, "v1", 50, 0);
         when(nodeRepository.save(any(Node.class))).thenReturn(null);
         graphNodeService.update(nodeGraph);

@@ -6,6 +6,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.resprojects.linkchecker.model.Edge;
@@ -31,6 +33,8 @@ import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 @RunWith(SpringRunner.class)
 public class GraphServiceMockTests {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GraphServiceMockTests.class);
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -45,6 +49,11 @@ public class GraphServiceMockTests {
     @Before
     public void init() {
         graphService = new GraphServiceImpl(edgeService, nodeService);
+    }
+
+    @Test
+    public void stub() {
+        LOG.debug("NOTHING");
     }
 
 }

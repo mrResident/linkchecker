@@ -1,0 +1,35 @@
+stages:
+  - clean
+  - compile
+  - test
+  - package
+
+clean:
+  stage: clean
+
+  tags:
+    - maven
+
+  script:
+    - echo "Clean old target data with maven"
+    - mvn clean
+
+compile:
+  stage: compile
+  tags:
+    - compile
+    - maven
+
+  script:
+    - echo "Run compile stage with maven"
+    - mvn compile
+
+test:
+  stage: test
+  tags:
+    - test
+    - maven
+
+  script:
+    - echo "Run junit testing with maven"
+    - mvn test

@@ -33,6 +33,8 @@ public class GraphNodeServiceImpl implements GraphNodeService {
     @Override
     public Set<NodeGraph> create(Set<NodeGraph> nodeGraphs) {
         Assert.notNull(nodeGraphs, MSG_NOT_NULL);
+        Assert.notEmpty(nodeGraphs, MSG_COLLECTION_EMPTY);
+        nodeGraphs.forEach(nodeGraph -> Assert.notNull(nodeGraph, MSG_COLLECTION_CONTAIN_NULL));
         return GraphUtil.nodesToNodeGraphs(nodeRepository.saveAll(
             GraphUtil.nodeGraphsToNodes(nodeGraphs)));
     }

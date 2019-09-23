@@ -72,7 +72,6 @@ public class GraphNodeServiceH2DBTests {
     @Test
     public void getAllNodes() {
         Set<NodeGraph> actual = nodeService.getAll();
-
         Assert.assertEquals(5, actual.size());
         assertThat(actual.stream()
             .filter(eg -> eg.getId().equals(5000))
@@ -171,9 +170,7 @@ public class GraphNodeServiceH2DBTests {
     public void exceptionWhileCreateNode() {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("Must not be null");
-
-        NodeGraph nodeGraph = null;
-        nodeService.create(nodeGraph);
+        nodeService.create((NodeGraph) null);
     }
 
     @Test

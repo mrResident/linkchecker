@@ -35,7 +35,7 @@ public class EdgeRepositoryH2DBTests {
 	NodeRepository nodeRepository;
 
 	@Test
-	public void persistNewEdgeTest() {
+	public void persistNewEdge() {
 		Node nodeOne = nodeRepository.save(new Node("v6"));
 		Node nodeTwo = nodeRepository.getByName("v5");
 		Edge edge = edgeRepository.save(new Edge(nodeOne, nodeTwo));
@@ -48,7 +48,7 @@ public class EdgeRepositoryH2DBTests {
 	}
 
 	@Test
-	public void persistEdgeListTest() {
+	public void persistEdgeList() {
 		List<Node> nodes = nodeRepository.findAll();
 		Node nodeOne = nodeRepository.save(new Node("v6"));
 		List<Edge> edges = new ArrayList<>();
@@ -62,7 +62,7 @@ public class EdgeRepositoryH2DBTests {
 	}
 
 	@Test
-	public void getAllEdgesTest() {
+	public void getAllEdges() {
 		List<Edge> edges = edgeRepository.findAll();
 		Assert.assertNotNull(edges);
 		Assert.assertEquals(4, edges.size());
@@ -71,7 +71,7 @@ public class EdgeRepositoryH2DBTests {
 	}
 
 	@Test
-	public void getEdgeByIdTest() {
+	public void getEdgeById() {
 		Edge edge = edgeRepository.findById(5005).orElse(null);
 		Assert.assertNotNull(edge);
 		Assert.assertEquals("v1", edge.getNodeOne().getName());
@@ -79,7 +79,7 @@ public class EdgeRepositoryH2DBTests {
 	}
 
 	@Test
-	public void getEdgeByNodeOneAndNodeTwoTest() {
+	public void getEdgeByNodeOneAndNodeTwo() {
 		Node nodeOne = nodeRepository.getByName("v1");
 		Node nodeTwo = nodeRepository.getByName("v2");
 		Edge edge = edgeRepository.findEdgeByNodeOneAndNodeTwo(nodeOne, nodeTwo).orElse(null);
@@ -89,7 +89,7 @@ public class EdgeRepositoryH2DBTests {
 	}
 
 	@Test
-	public void getEdgeByNodeOneOrNodeTwoTest() {
+	public void getEdgeByNodeOneOrNodeTwo() {
 		Node nodeOne = nodeRepository.getByName("v1");
 		Node nodeTwo = nodeRepository.getByName("v2");
 		List<Edge> edges = edgeRepository.findEdgesByNodeOneOrNodeTwo(nodeOne, null);
@@ -101,10 +101,31 @@ public class EdgeRepositoryH2DBTests {
 		Assert.assertNotNull(edges);
 		Assert.assertNotEquals(0, edges.size());
 		edges.forEach(edge -> LOG.info(edge.toString()));
+		LOG.info("-------------");
+		edges = edgeRepository.findEdgesByNodeOneOrNodeTwo(nodeOne, nodeTwo);
+		Assert.assertNotNull(edges);
+		Assert.assertNotEquals(0, edges.size());
+		edges.forEach(edge -> LOG.info(edge.toString()));
+		LOG.info("-------------");
+		edges = edgeRepository.findEdgesByNodeOneOrNodeTwo(nodeTwo, nodeTwo);
+		Assert.assertNotNull(edges);
+		Assert.assertNotEquals(0, edges.size());
+		edges.forEach(edge -> LOG.info(edge.toString()));
 	}
 
 	@Test
-	public void deleteByIdTest() {
+	public void deleteEdgesInBatch() {
+		Node node = nodeRepository.getByName("v1");
+		List<Edge> edges = edgeRepository.findEdgesByNodeOneOrNodeTwo(node, node);
+		Assert.assertNotNull(edges);
+		edgeRepository.deleteInBatch(edges);
+		edges = edgeRepository.findAll();
+		Assert.assertNotNull(edges);
+		edges.forEach(edge -> LOG.info(edge.toString()));
+	}
+
+	@Test
+	public void deleteById() {
 		edgeRepository.deleteById(5005);
 		List<Edge> edges = edgeRepository.findAll();
 		Assert.assertNotNull(edges);
@@ -113,38 +134,7 @@ public class EdgeRepositoryH2DBTests {
 	}
 
 	@Test
-	public void deleteByNodeOneOrNodeTwoTest() {
-		Node nodeOne = nodeRepository.getByName("v3");
-		Node nodeTwo = nodeRepository.getByName("v2");
-		edgeRepository.deleteByNodeOneOrNodeTwo(nodeOne, null);
-		edgeRepository.deleteByNodeOneOrNodeTwo(null, nodeTwo);
-		Edge edge = edgeRepository.findById(5008).orElse(null);
-		Assert.assertNull(edge);
-		edge = edgeRepository.findById(5005).orElse(null);
-		Assert.assertNull(edge);
-		List<Edge> edges = edgeRepository.findAll();
-		Assert.assertNotNull(edges);
-		Assert.assertEquals(2, edges.size());
-		LOG.info("LIST count = " + edges.size());
-		edges.forEach(edg -> LOG.info(edg.toString()));
-	}
-
-	@Test
-	public void deleteByNodeOneAndNodeTwoTest() {
-		Node nodeOne = nodeRepository.getByName("v1");
-		Node nodeTwo = nodeRepository.getByName("v2");
-		edgeRepository.deleteByNodeOneAndNodeTwo(nodeOne, nodeTwo);
-		Edge edge = edgeRepository.findById(5005).orElse(null);
-		Assert.assertNull(edge);
-		List<Edge> edges = edgeRepository.findAll();
-		Assert.assertNotNull(edges);
-		Assert.assertEquals(3, edges.size());
-		LOG.info("LIST count = " + edges.size());
-		edges.forEach(edg -> LOG.info(edg.toString()));
-	}
-
-	@Test
-	public void deleteAllEdgesTest() {
+	public void deleteAllEdges() {
 		edgeRepository.deleteAllInBatch();
 		List<Edge> edges = edgeRepository.findAll();
 		Assert.assertNotNull(edges);

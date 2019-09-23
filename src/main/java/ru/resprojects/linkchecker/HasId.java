@@ -1,5 +1,7 @@
 package ru.resprojects.linkchecker;
 
+import java.util.Objects;
+
 /**
  * The interface indicates that the object has an identifier.
  */
@@ -23,7 +25,7 @@ public interface HasId {
      * @return true if entity has id, else false.
      */
     default boolean isNew() {
-        return getId() != null;
+        return Objects.isNull(getId());
     }
 
 }

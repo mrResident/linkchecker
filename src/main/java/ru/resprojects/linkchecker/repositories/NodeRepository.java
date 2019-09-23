@@ -10,7 +10,7 @@ import java.util.List;
 public interface NodeRepository extends JpaRepository<Node, Integer> {
 
     @Transactional
-    Node save(Node node);
+    <S extends Node> S save(S node);
 
     @Transactional
     <S extends Node> List<S> saveAll(Iterable<S> entities);

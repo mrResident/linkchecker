@@ -15,7 +15,6 @@ import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -136,8 +135,7 @@ public class GraphNodeServiceMockTests {
     public void exceptionThreeWhileDeleteNodeByNodeGraph() {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("Must not be null");
-        NodeGraph nodeGraph = null;
-        graphNodeService.delete(nodeGraph);
+        graphNodeService.delete((NodeGraph) null);
     }
 
     @Test
@@ -162,8 +160,7 @@ public class GraphNodeServiceMockTests {
     public void exceptionOneWhileDeleteNodeByName() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage("Node with NAME = null is not found");
-        String name = null;
-        graphNodeService.delete(name);
+        graphNodeService.delete((String) null);
     }
 
     @Test
@@ -188,8 +185,7 @@ public class GraphNodeServiceMockTests {
     public void exceptionOneWhileDeleteNodeById() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage("Node with ID = null is not found");
-        Integer id = null;
-        graphNodeService.delete(id);
+        graphNodeService.delete((Integer) null);
     }
 
     @Test
@@ -206,6 +202,13 @@ public class GraphNodeServiceMockTests {
     }
 
     @Test
+    public void exceptionWhileCreateNode() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Must not be null");
+        graphNodeService.create((NodeGraph) null);
+    }
+
+    @Test
     public void createNodes() {
         Set<NodeGraph> nodeGraphs = new HashSet<>();
         List<Node> nodes = new ArrayList<>();
@@ -214,20 +217,33 @@ public class GraphNodeServiceMockTests {
             nodes.add(new Node(5000 + i, "w" + i, 50, 0));
         });
         when(nodeRepository.saveAll(anyIterable())).thenReturn(nodes);
-
         Set<NodeGraph> actual = graphNodeService.create(nodeGraphs);
-
         Assert.assertNotNull(actual);
         Assert.assertEquals(5, actual.size());
     }
 
     @Test
-    public void exceptionWhileCreateNode() {
+    public void exceptionOneWhileCreateNodes() {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("Must not be null");
+        graphNodeService.create((Set<NodeGraph>) null);
+    }
 
-        NodeGraph nodeGraph = null;
-        graphNodeService.create(nodeGraph);
+    @Test
+    public void exceptionTwoWhileCreateNodes() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Collection does not be empty");
+        graphNodeService.create(new HashSet<>());
+    }
+
+    @Test
+    public void exceptionThreeWhileCreateNodes() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Collection does not be contain null element");
+        Set<NodeGraph> nodeGraphs = new HashSet<>();
+        nodeGraphs.add(new NodeGraph("v1"));
+        nodeGraphs.add(null);
+        graphNodeService.create(nodeGraphs);
     }
 
     @Test

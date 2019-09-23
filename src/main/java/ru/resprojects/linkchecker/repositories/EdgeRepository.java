@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface EdgeRepository extends JpaRepository<Edge, Integer> {
 
     @Transactional
-    Edge save(Edge edge);
+    <S extends Edge> S save(S edge);
 
     @Transactional
     <S extends Edge> List<S> saveAll(Iterable<S> entities);
@@ -21,17 +21,16 @@ public interface EdgeRepository extends JpaRepository<Edge, Integer> {
     void deleteById(int id);
 
     @Transactional
-    void deleteByNodeOneOrNodeTwo(Node nodeOne, Node nodeTwo);
-
-    @Transactional
-    void deleteByNodeOneAndNodeTwo(Node nodeOne, Node nodeTwo);
-
-    @Transactional
     void deleteAllInBatch();
+
+    @Transactional
+    void deleteInBatch(Iterable<Edge> entities);
 
     Optional<Edge> findEdgeByNodeOneAndNodeTwo(Node nodeOne, Node nodeTwo);
 
     List<Edge> findEdgesByNodeOneOrNodeTwo(Node nodeOne, Node nodeTwo);
+
+    boolean existsById(int id);
 
 }
 

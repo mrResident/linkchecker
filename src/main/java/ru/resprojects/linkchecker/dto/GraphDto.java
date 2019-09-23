@@ -147,7 +147,8 @@ public class GraphDto {
         @Override
         public String toString() {
             return "{"
-                + "\"name\": \"" + name + '"'
+                + "\"id\": \"" + getId() + '"'
+                + ", \"name\": \"" + name + '"'
                 + ", \"probability\":" + probability
                 + ", \"counter\":" + counter
                 + '}';
@@ -265,7 +266,8 @@ public class GraphDto {
         @Override
         public String toString() {
             return "{"
-                + "\"node\": \""
+                + "\"id\": \"" + getId() + '"'
+                + ", \"nodeOne\": \""
                 + nodeOne + '"'
                 + ", \"nodeTwo\":\""
                 + nodeTwo + '"'

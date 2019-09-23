@@ -14,8 +14,12 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
+import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
@@ -37,9 +41,124 @@ public class GraphEdgeServiceH2DBTests {
     private GraphEdgeService edgeService;
 
     @Test
+    public void createEdge() {
+        EdgeGraph edgeGraph = new EdgeGraph("v1", "v4");
+        EdgeGraph actual = edgeService.create(edgeGraph);
+        Assert.assertNotNull(actual);
+        Assert.assertEquals(new Integer(5009), actual.getId());
+        Set<EdgeGraph> egList = edgeService.getAll();
+        Assert.assertEquals(5, egList.size());
+        egList.forEach(eg -> LOG.debug("---- EDGE: " + eg));
+    }
+
+    @Test
+    public void exceptionOneWhileCreateEdge() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Must not be null");
+        edgeService.create((EdgeGraph) null);
+    }
+
+    @Test
+    public void exceptionTwoWhileCreateEdge() {
+        EdgeGraph edgeGraph = new EdgeGraph("v10", "v4");
+        thrown.expect(NotFoundException.class);
+        thrown.expectMessage("Node with NAME = v10 is not found");
+        edgeService.create(edgeGraph);
+    }
+
+    @Test
+    public void createEdges() {
+        Set<EdgeGraph> edgeGraphs = Stream.of(
+            new EdgeGraph("v2", "v3"),
+            new EdgeGraph("v2", "v5"),
+            new EdgeGraph("v3", "v5")
+        ).collect(Collectors.toSet());
+        Set<EdgeGraph> actual = edgeService.create(edgeGraphs);
+        Assert.assertFalse(actual.isEmpty());
+        Assert.assertFalse(actual.iterator().next().isNew());
+        actual.forEach(eg -> LOG.debug("---- RETURNED EDGE: " + eg));
+        Set<EdgeGraph> egList = edgeService.getAll();
+        Assert.assertEquals(7, egList.size());
+        egList.forEach(eg -> LOG.debug("---- EDGE: " + eg));
+    }
+
+    @Test
+    public void exceptionOneWhileCreateEdges() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Collection does not be empty");
+        edgeService.create(new HashSet<>());
+    }
+
+    @Test
+    public void exceptionTwoWhileCreateEdges() {
+        thrown.expect(NotFoundException.class);
+        thrown.expectMessage("Node with NAME = v21 is not found");
+        Set<EdgeGraph> edgeGraphs = Stream.of(
+            new EdgeGraph("v21", "v3"),
+            new EdgeGraph("v2", "v5"),
+            new EdgeGraph("v3", "v5")
+        ).collect(Collectors.toSet());
+        edgeService.create(edgeGraphs);
+    }
+
+    @Test
+    public void exceptionThreeWhileCreateEdges() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Collection does not be contain null element");
+        Set<EdgeGraph> edgeGraphs = Stream.of(
+            null,
+            new EdgeGraph("v2", "v5"),
+            new EdgeGraph("v3", "v5")
+        ).collect(Collectors.toSet());
+        edgeService.create(edgeGraphs);
+    }
+
+    @Test
+    public void deleteEdgeById() {
+        edgeService.delete(5005);
+        Set<EdgeGraph> egList = edgeService.getAll();
+        Assert.assertEquals(3, egList.size());
+        egList.forEach(eg -> LOG.debug("---- EDGE: " + eg));
+    }
+
+    @Test
+    public void exceptionWhileDeleteEdgeById() {
+        thrown.expect(NotFoundException.class);
+        thrown.expectMessage("Edge with ID = 5022 is not found");
+        edgeService.delete(5022);
+    }
+
+    @Test
+    public void deleteEdgeByNodeOneAndNodeTwoNames() {
+        edgeService.delete("v1", "v2");
+        Set<EdgeGraph> actual = edgeService.getAll();
+        actual.forEach(eg -> LOG.debug("---- EDGE: " + eg));
+    }
+
+    @Test
+    public void exceptionWhileDeleteEdgeByNodeOneAndNodeTwoNames() {
+        thrown.expect(NotFoundException.class);
+        thrown.expectMessage("Edge for nodes [v15, v2] is not found");
+        edgeService.delete("v15", "v2");
+    }
+
+    @Test
+    public void deleteEdgeByNodeName() {
+        edgeService.delete("v1");
+        Set<EdgeGraph> actual = edgeService.getAll();
+        actual.forEach(eg -> LOG.debug("---- EDGE: " + eg));
+    }
+
+    @Test
+    public void exceptionWhileDeleteEdgeByNodeName() {
+        thrown.expect(NotFoundException.class);
+        thrown.expectMessage("Edges for node v15 is not found");
+        edgeService.delete("v15");
+    }
+
+    @Test
     public void getAllEdges() {
         Set<EdgeGraph> actual = edgeService.getAll();
-
         Assert.assertEquals(4, actual.size());
         assertThat(actual.stream()
             .filter(eg -> eg.getId().equals(5007))
@@ -50,6 +169,27 @@ public class GraphEdgeServiceH2DBTests {
             .findFirst()
             .get().getNodeTwo()).isEqualTo("v5");
         actual.forEach(eg -> LOG.debug("---- EDGE: " + eg));
+    }
+
+    @Test
+    public void getEdgeById() {
+        EdgeGraph actual = edgeService.getById(5005);
+        Assert.assertNotNull(actual);
+        LOG.debug(actual.toString());
+    }
+
+    @Test
+    public void getEdgesByNodeName() {
+        Set<EdgeGraph> actual = edgeService.get("v1");
+        Assert.assertFalse(actual.isEmpty());
+        actual.forEach(eg -> LOG.debug("---- EDGE: " + eg));
+    }
+
+    @Test
+    public void getEdgeByNodeNameOneAndNodeNameTwo() {
+        EdgeGraph actual = edgeService.get("v1", "v2");
+        Assert.assertNotNull(actual);
+        LOG.debug(actual.toString());
     }
 
 }

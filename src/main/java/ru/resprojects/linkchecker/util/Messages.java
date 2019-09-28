@@ -15,6 +15,7 @@ public final class Messages {
     public static final String NODE_MSG_BY_OBJECT_ERROR = "Node %s is not found";
 
     public static final String EDGE_MSG_GET_ERROR = "Edge for nodes [%s, %s] is not found";
+    public static final String EDGE_MSG_ALREADY_PRESENT_ERROR = "Edge for nodes ([%s, %s], [%s, %s]) already present in the graph.";
     public static final String EDGE_MSG_GET_BY_NAME_ERROR = "Edges for node %s is not found";
 
     public static final String VALIDATOR_NODE_NOT_BLANK_NAME_MESSAGE = "value does not be empty";

@@ -276,12 +276,12 @@ public class GraphDto {
     }
 
     /**
-     * Set of graph nodes.
+     * Collection of graph nodes.
      */
     private Set<NodeGraph> nodes = new HashSet<>();
 
     /**
-     * Set of graph edges.
+     * Collection of graph edges.
      */
     private Set<EdgeGraph> edges = new HashSet<>();
 

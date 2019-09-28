@@ -17,6 +17,7 @@ import static ru.resprojects.linkchecker.util.Messages.*;
 public class GraphNodeServiceImpl implements GraphNodeService {
 
     private final NodeRepository nodeRepository;
+    private boolean isStateChanged;
 
     @Autowired
     public GraphNodeServiceImpl(NodeRepository nodeRepository) {
@@ -24,8 +25,19 @@ public class GraphNodeServiceImpl implements GraphNodeService {
     }
 
     @Override
+    public boolean isStateChanged() {
+        return isStateChanged;
+    }
+
+    @Override
+    public void resetCurrentState() {
+        isStateChanged = false;
+    }
+
+    @Override
     public NodeGraph create(final NodeGraph nodeGraph) {
         Assert.notNull(nodeGraph, MSG_NOT_NULL);
+        isStateChanged = true;
         return GraphUtil.nodeToNodeGraph(nodeRepository.save(
             GraphUtil.nodeGraphToNode(nodeGraph)));
     }
@@ -35,6 +47,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
         Assert.notNull(nodeGraphs, MSG_NOT_NULL);
         Assert.notEmpty(nodeGraphs, MSG_COLLECTION_EMPTY);
         nodeGraphs.forEach(nodeGraph -> Assert.notNull(nodeGraph, MSG_COLLECTION_CONTAIN_NULL));
+        isStateChanged = true;
         return GraphUtil.nodesToNodeGraphs(nodeRepository.saveAll(
             GraphUtil.nodeGraphsToNodes(nodeGraphs)));
     }
@@ -45,12 +58,14 @@ public class GraphNodeServiceImpl implements GraphNodeService {
         checkNotFound(nodeRepository.save(
             GraphUtil.nodeGraphToNode(nodeGraph)), NODE_MSG_UPDATE_ERROR + nodeGraph.getId()
         );
+        isStateChanged = true;
     }
 
     @Override
     public void delete(final Integer id) throws NotFoundException {
         if (nodeRepository.existsById(id)) {
             nodeRepository.deleteById(id);
+            isStateChanged = true;
         } else {
             throw new NotFoundException(String.format(MSG_BY_ID_ERROR, "Node", id));
         }
@@ -60,6 +75,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
     public void delete(final String name) throws NotFoundException {
         if (nodeRepository.existsByName(name)) {
             nodeRepository.deleteByName(name);
+            isStateChanged = true;
         } else {
             throw new NotFoundException(String.format(NODE_MSG_BY_NAME_ERROR, name));
         }
@@ -72,6 +88,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
             .findById(nodeGraph.getId()).orElse(null));
         if (nodeGraph.equals(nodeFromRepo)) {
             nodeRepository.deleteById(nodeGraph.getId());
+            isStateChanged = true;
         } else {
             throw new NotFoundException(String.format(
                 NODE_MSG_BY_OBJECT_ERROR, nodeGraph.toString())
@@ -82,6 +99,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
     @Override
     public void deleteAll() {
         nodeRepository.deleteAllInBatch();
+        isStateChanged = true;
     }
 
     @Override

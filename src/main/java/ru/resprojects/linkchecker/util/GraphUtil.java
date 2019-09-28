@@ -43,31 +43,33 @@ public final class GraphUtil {
     }
 
     /**
-     * Convert graph from DTO format {@link GraphDto} to graph in {@see <a href = https://github.com/jgrapht/jgrapht/blob/master/README.md>JGraphT</a>}
-     * format.
-     * @param graphDto graph in DTO format.
+     * Building graph in {@see <a href = https://github.com/jgrapht/jgrapht/blob/master/README.md>JGraphT</a>} format
+     * from collections of the nodes dto and edges dto format.
+     * @param nodesGraph collection of nodes dto {@link NodeGraph}.
+     * @param edgesGraph collection of edges dto {@link EdgeGraph}.
      * @return graph in JGraphT format.
      */
-    public static Graph<Node, DefaultEdge> graphDtoToGraph(final GraphDto graphDto) {
+    public static Graph<Node, DefaultEdge> graphBuilder(final Collection<NodeGraph> nodesGraph,
+        final Collection<EdgeGraph> edgesGraph) {
         Graph<Node, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
         Set<Node> nodes = new HashSet<>();
         Set<Edge> edges = new HashSet<>();
-        graphDto.getNodes().forEach(nodeGraph -> nodes.add(
+        nodesGraph.forEach(nodeGraph -> nodes.add(
             new Node(nodeGraph.getId(), nodeGraph.getName(), nodeGraph.getProbability(), 0)
         ));
-        graphDto.getEdges().forEach(edgeGraph -> {
-            Optional<Node> node1 = nodes.stream()
+        edgesGraph.forEach(edgeGraph -> {
+            Optional<Node> nodeOne = nodes.stream()
                 .filter(n -> n.getName()
                     .toLowerCase()
                     .equals(edgeGraph.getNodeOne().toLowerCase()))
                 .findFirst();
-            Optional<Node> node2 = nodes.stream()
+            Optional<Node> nodeTwo = nodes.stream()
                 .filter(n -> n.getName()
                     .toLowerCase()
                     .equals(edgeGraph.getNodeTwo().toLowerCase()))
                 .findFirst();
-            if (node1.isPresent() && node2.isPresent()) {
-                edges.add(new Edge(node1.get(), node2.get()));
+            if (nodeOne.isPresent() && nodeTwo.isPresent()) {
+                edges.add(new Edge(nodeOne.get(), nodeTwo.get()));
             }
         });
         nodes.forEach(graph::addVertex);
@@ -78,6 +80,17 @@ public final class GraphUtil {
     }
 
     /**
+     * Build GraphDto object from graph models - nodes and edges.
+     * @param nodes model of graph nodes, see {@link Node}.
+     * @param edges model of graph edges, see {@link Edge}.
+     * @return object of {@link GraphDto}.
+     */
+    public static GraphDto graphDtoBuilder(final Collection<Node> nodes,
+        final Collection<Edge> edges) {
+        return new GraphDto(nodesToNodeGraphs(nodes), edgesToEdgeGraphs(edges));
+    }
+
+    /**
      * Convert graph from {@see <a href = https://github.com/jgrapht/jgrapht/blob/master/README.md>JGraphT</a>} format
      * to graph DTO {@link GraphDto} format.
      * @param graph graph in JGraphT format.
@@ -85,21 +98,39 @@ public final class GraphUtil {
      */
     public static GraphDto graphToGraphDto(final Graph<Node, DefaultEdge> graph) {
         GraphDto result = new GraphDto();
+        result.setNodes(getNodesDtoFromGraph(graph));
+        result.setEdges(getEdgesDtoFromGraph(graph));
+        return result;
+    }
+
+    /**
+     * Converting JGraphT nodes to the GraphDto nodes {@link NodeGraph}
+     * @param graph graph in the JGraphT format.
+     * @return collection of GraphDto nodes.
+     */
+    public static Set<NodeGraph> getNodesDtoFromGraph(final Graph<Node, DefaultEdge> graph) {
         Set<NodeGraph> nodeGraphs = new HashSet<>();
-        Set<EdgeGraph> edgeGraphs = new HashSet<>();
         graph.vertexSet().forEach(node -> nodeGraphs.add(
             new NodeGraph(node.getId(), node.getName(),
                 node.getProbability(), node.getCounter())
         ));
+        return nodeGraphs;
+    }
+
+    /**
+     * Converting JGraphT edges to the GraphDto edges {@link NodeGraph}
+     * @param graph graph in the JGraphT format.
+     * @return collection of GraphDto edges.
+     */
+    public static Set<EdgeGraph> getEdgesDtoFromGraph(final Graph<Node, DefaultEdge> graph) {
+        Set<EdgeGraph> edgeGraphs = new HashSet<>();
         graph.edgeSet().forEach(edge -> edgeGraphs.add(
             new EdgeGraph(
                 graph.getEdgeSource(edge).getName(),
                 graph.getEdgeTarget(edge).getName()
             )
         ));
-        result.setNodes(nodeGraphs);
-        result.setEdges(edgeGraphs);
-        return result;
+        return edgeGraphs;
     }
 
     /**
@@ -111,6 +142,10 @@ public final class GraphUtil {
     public static Graph<Node, DefaultEdge> removeCyclesFromGraph(
         final Graph<Node, DefaultEdge> graph) {
         LOG.debug("Detect cycles in graph by Paton algorithm");
+        if (!checkGraphCycles(graph)) {
+            LOG.debug("Cycles not found!");
+            return graph;
+        }
         SimpleGraph<Node, DefaultEdge> result = new SimpleGraph<>(DefaultEdge.class);
         Graphs.addGraph(result, graph);
         while (true) {
@@ -136,6 +171,14 @@ public final class GraphUtil {
         return result;
     }
 
+    public static boolean checkGraphCycles(final Graph<Node, DefaultEdge> graph) {
+        SimpleGraph<Node, DefaultEdge> result = new SimpleGraph<>(DefaultEdge.class);
+        Graphs.addGraph(result, graph);
+        PatonCycleBase<Node, DefaultEdge> patonCycleBase = new PatonCycleBase<>(result);
+        Set<GraphPath<Node, DefaultEdge>> paths = patonCycleBase.getCycleBasis().getCyclesAsGraphPaths();
+        return !paths.isEmpty();
+    }
+
     /**
      * Export graph to {@see <a href = https://www.graphviz.org/ >GraphViz.dot</a>}
      * format.
@@ -143,7 +186,7 @@ public final class GraphUtil {
      * @return graph in GraphViz.dot format.
      */
     public static String exportToGraphViz(final GraphDto graphTo) {
-        Graph<Node, DefaultEdge> graph = graphDtoToGraph(graphTo);
+        Graph<Node, DefaultEdge> graph = graphBuilder(graphTo.getNodes(), graphTo.getEdges());
         ComponentNameProvider<Node> vertexIdProvider = component ->
             component.getName() + "_" + component.getId();
         ComponentNameProvider<Node> vertexNameProvider = Node::getName;
@@ -158,17 +201,6 @@ public final class GraphUtil {
             LOG.debug("Fail export graph to GraphViz format.");
         }
         return null;
-    }
-
-    /**
-     * Build GraphDto object from graph models - nodes and edges.
-     * @param nodes model of graph nodes, see {@link Node}.
-     * @param edges model of graph edges, see {@link Edge}.
-     * @return object of {@link GraphDto}.
-     */
-    public static GraphDto buildGraphDto(final Collection<Node> nodes,
-        final Collection<Edge> edges) {
-        return new GraphDto(nodesToNodeGraphs(nodes), edgesToEdgeGraphs(edges));
     }
 
     /**

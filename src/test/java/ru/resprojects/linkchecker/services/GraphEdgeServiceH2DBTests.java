@@ -67,6 +67,22 @@ public class GraphEdgeServiceH2DBTests {
     }
 
     @Test
+    public void exceptionThreeWhileCreateEdge() {
+        EdgeGraph edgeGraph = new EdgeGraph("v1", "v2");
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Edge for nodes ([v1, v2], [v2, v1]) already present in the graph.");
+        edgeService.create(edgeGraph);
+    }
+
+    @Test
+    public void exceptionFourWhileCreateEdge() {
+        EdgeGraph edgeGraph = new EdgeGraph("v2", "v1");
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Edge for nodes ([v2, v1], [v1, v2]) already present in the graph.");
+        edgeService.create(edgeGraph);
+    }
+
+    @Test
     public void createEdges() {
         Set<EdgeGraph> edgeGraphs = Stream.of(
             new EdgeGraph("v2", "v3"),
@@ -109,6 +125,17 @@ public class GraphEdgeServiceH2DBTests {
             null,
             new EdgeGraph("v2", "v5"),
             new EdgeGraph("v3", "v5")
+        ).collect(Collectors.toSet());
+        edgeService.create(edgeGraphs);
+    }
+
+    @Test
+    public void exceptionFourWhileCreateEdges() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Edge for nodes ([v1, v2], [v2, v1]) already present in the graph.");
+        Set<EdgeGraph> edgeGraphs = Stream.of(
+            new EdgeGraph("v1", "v2"),
+            new EdgeGraph("v2", "v5")
         ).collect(Collectors.toSet());
         edgeService.create(edgeGraphs);
     }
@@ -189,7 +216,10 @@ public class GraphEdgeServiceH2DBTests {
     public void getEdgeByNodeNameOneAndNodeNameTwo() {
         EdgeGraph actual = edgeService.get("v1", "v2");
         Assert.assertNotNull(actual);
+        Integer actualId = actual.getId();
         LOG.debug(actual.toString());
+        actual = edgeService.get("v2", "v1");
+        Assert.assertEquals(actualId, actual.getId()); //must equal because graph is undirected
     }
 
 }

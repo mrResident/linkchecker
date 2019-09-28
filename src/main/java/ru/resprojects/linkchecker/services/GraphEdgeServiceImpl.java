@@ -25,11 +25,31 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
 
     private final EdgeRepository edgeRepository;
     private final NodeRepository nodeRepository;
+    private boolean isStateChanged;
 
     @Autowired
     public GraphEdgeServiceImpl(EdgeRepository edgeRepository, NodeRepository nodeRepository) {
         this.edgeRepository = edgeRepository;
         this.nodeRepository = nodeRepository;
+    }
+
+    private boolean isPresent(final Node nodeOne, final Node nodeTwo) {
+        try {
+            get(nodeOne.getName(), nodeTwo.getName());
+            return true;
+        } catch (NotFoundException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isStateChanged() {
+        return isStateChanged;
+    }
+
+    @Override
+    public void resetCurrentState() {
+        isStateChanged = false;
     }
 
     @Override
@@ -43,7 +63,19 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
             nodeRepository.getByName(edgeGraph.getNodeTwo()),
             String.format(NODE_MSG_BY_NAME_ERROR, edgeGraph.getNodeTwo())
         );
+        if (isPresent(nodeOne, nodeTwo)) {
+            throw new IllegalArgumentException(
+                String.format(
+                    EDGE_MSG_ALREADY_PRESENT_ERROR,
+                    nodeOne.getName(),
+                    nodeTwo.getName(),
+                    nodeTwo.getName(),
+                    nodeOne.getName()
+                )
+            );
+        }
         Edge edge = new Edge(nodeOne, nodeTwo);
+        isStateChanged = true;
         return GraphUtil.edgeToEdgeGraph(edgeRepository.save(edge));
     }
 
@@ -62,6 +94,17 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
                 nodeRepository.getByName(edgeGraph.getNodeTwo()),
                 String.format(NODE_MSG_BY_NAME_ERROR, edgeGraph.getNodeTwo())
             );
+            if (isPresent(nodeOne, nodeTwo)) {
+                throw new IllegalArgumentException(
+                    String.format(
+                        EDGE_MSG_ALREADY_PRESENT_ERROR,
+                        nodeOne.getName(),
+                        nodeTwo.getName(),
+                        nodeTwo.getName(),
+                        nodeOne.getName()
+                    )
+                );
+            }
             Map<String, Node> nodeMap = new HashMap<>();
             nodeMap.put(edgeGraph.getNodeOne(), nodeOne);
             nodeMap.put(edgeGraph.getNodeTwo(), nodeTwo);
@@ -72,6 +115,7 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
                 nodes.get(eg).get(eg.getNodeOne()),
                 nodes.get(eg).get(eg.getNodeTwo()))
             ).collect(Collectors.toList());
+        isStateChanged = true;
         return GraphUtil.edgesToEdgeGraphs(edgeRepository.saveAll(edges));
     }
 
@@ -79,6 +123,7 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
     public void delete(final Integer id) throws NotFoundException {
         if (edgeRepository.existsById(id)) {
             edgeRepository.deleteById(id);
+            isStateChanged = true;
         } else {
             throw new NotFoundException(String.format(MSG_BY_ID_ERROR, "Edge", id));
         }
@@ -91,6 +136,7 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
             throw new NotFoundException(String.format(EDGE_MSG_GET_BY_NAME_ERROR, nodeName));
         }
         edgeRepository.deleteInBatch(edges);
+        isStateChanged = true;
     }
 
     @Override
@@ -98,6 +144,13 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
         Edge edge = checkNotFound(getEdge(nodeNameOne, nodeNameTwo),
             String.format(EDGE_MSG_GET_ERROR, nodeNameOne, nodeNameTwo));
         edgeRepository.delete(edge);
+        isStateChanged = true;
+    }
+
+    @Override
+    public void deleteAll() {
+        edgeRepository.deleteAllInBatch();
+        isStateChanged = true;
     }
 
     @Override
@@ -110,7 +163,8 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
     private Edge getEdge(final String nodeNameOne, final String nodeNameTwo) {
         Node nodeOne = nodeRepository.getByName(nodeNameOne);
         Node nodeTwo = nodeRepository.getByName(nodeNameTwo);
-        return edgeRepository.findEdgeByNodeOneAndNodeTwo(nodeOne, nodeTwo).orElse(null);
+        return edgeRepository.findEdgeByNodeOneAndNodeTwo(nodeOne, nodeTwo)
+            .orElse(edgeRepository.findEdgeByNodeOneAndNodeTwo(nodeTwo, nodeOne).orElse(null));
     }
 
     @Override

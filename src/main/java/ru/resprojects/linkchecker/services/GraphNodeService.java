@@ -9,7 +9,7 @@ import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
 /**
  * GraphNodeService - the interface for work with graph nodes.
  */
-public interface GraphNodeService {
+public interface GraphNodeService extends ChangedState {
 
     /**
      * Create node of the graph.

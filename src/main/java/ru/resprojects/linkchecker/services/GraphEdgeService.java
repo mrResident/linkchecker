@@ -9,7 +9,7 @@ import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 /**
  * GraphEdgeService - the interface for work with graph edges.
  */
-public interface GraphEdgeService {
+public interface GraphEdgeService extends ChangedState {
 
     /**
      * Create edge of the graph. Nodes that linked by the edge, must be
@@ -37,7 +37,7 @@ public interface GraphEdgeService {
     void delete(final Integer id) throws NotFoundException;
 
     /**
-     * Search edge   by unique name of the graph node and delete it from graph.
+     * Search edges by unique name of the graph node and delete them from graph.
      * Since the edge describes the connection of two nodes, the search occurs
      * on the node one or node two.
      * @param nodeName unique name of the graph node.
@@ -53,6 +53,11 @@ public interface GraphEdgeService {
      * @throws NotFoundException if edge is not found in the graph.
      */
     void delete(final String nodeNameOne, final String nodeNameTwo) throws NotFoundException;
+
+    /**
+     * Removing all edges from the graph.
+     */
+    void deleteAll();
 
     /**
      * Search edge of the graph by node one and node two and if edge contain

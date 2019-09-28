@@ -14,6 +14,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
+import ru.resprojects.linkchecker.util.Messages;
+import ru.resprojects.linkchecker.util.exeptions.ApplicationException;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
 import java.util.HashSet;
@@ -53,8 +55,8 @@ public class GraphEdgeServiceH2DBTests {
 
     @Test
     public void exceptionOneWhileCreateEdge() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Must not be null");
+        thrown.expect(ApplicationException.class);
+        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
         edgeService.create((EdgeGraph) null);
     }
 
@@ -69,7 +71,7 @@ public class GraphEdgeServiceH2DBTests {
     @Test
     public void exceptionThreeWhileCreateEdge() {
         EdgeGraph edgeGraph = new EdgeGraph("v1", "v2");
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(ApplicationException.class);
         thrown.expectMessage("Edge for nodes ([v1, v2], [v2, v1]) already present in the graph.");
         edgeService.create(edgeGraph);
     }
@@ -77,7 +79,7 @@ public class GraphEdgeServiceH2DBTests {
     @Test
     public void exceptionFourWhileCreateEdge() {
         EdgeGraph edgeGraph = new EdgeGraph("v2", "v1");
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(ApplicationException.class);
         thrown.expectMessage("Edge for nodes ([v2, v1], [v1, v2]) already present in the graph.");
         edgeService.create(edgeGraph);
     }
@@ -100,7 +102,7 @@ public class GraphEdgeServiceH2DBTests {
 
     @Test
     public void exceptionOneWhileCreateEdges() {
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(ApplicationException.class);
         thrown.expectMessage("Collection does not be empty");
         edgeService.create(new HashSet<>());
     }
@@ -119,7 +121,7 @@ public class GraphEdgeServiceH2DBTests {
 
     @Test
     public void exceptionThreeWhileCreateEdges() {
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(ApplicationException.class);
         thrown.expectMessage("Collection does not be contain null element");
         Set<EdgeGraph> edgeGraphs = Stream.of(
             null,
@@ -131,7 +133,7 @@ public class GraphEdgeServiceH2DBTests {
 
     @Test
     public void exceptionFourWhileCreateEdges() {
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(ApplicationException.class);
         thrown.expectMessage("Edge for nodes ([v1, v2], [v2, v1]) already present in the graph.");
         Set<EdgeGraph> edgeGraphs = Stream.of(
             new EdgeGraph("v1", "v2"),
@@ -151,7 +153,7 @@ public class GraphEdgeServiceH2DBTests {
     @Test
     public void exceptionWhileDeleteEdgeById() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Edge with ID = 5022 is not found");
+        thrown.expectMessage("EDGE with ID = 5022 is not found");
         edgeService.delete(5022);
     }
 
@@ -181,6 +183,13 @@ public class GraphEdgeServiceH2DBTests {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage("Edges for node v15 is not found");
         edgeService.delete("v15");
+    }
+
+    @Test
+    public void deleteAllEdges() {
+        edgeService.deleteAll();
+        Set<EdgeGraph> actual = edgeService.getAll();
+        Assert.assertTrue(actual.isEmpty());
     }
 
     @Test

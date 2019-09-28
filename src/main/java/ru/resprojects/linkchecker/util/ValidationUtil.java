@@ -1,6 +1,7 @@
 package ru.resprojects.linkchecker.util;
 
 import ru.resprojects.linkchecker.HasId;
+import ru.resprojects.linkchecker.util.exeptions.ErrorPlaceType;
 import ru.resprojects.linkchecker.util.exeptions.IllegalRequestDataException;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
@@ -19,22 +20,22 @@ public final class ValidationUtil {
     private ValidationUtil() {
     }
 
-    public static <T> T checkNotFoundWithId(T object, int id) {
-        return checkNotFound(object, "id=" + id);
+    public static <T> T checkNotFoundWithId(T object, int id, ErrorPlaceType place) {
+        return checkNotFound(object, "id=" + id, place);
     }
 
-    public static void checkNotFoundWithId(boolean found, int id) {
-        checkNotFound(found, "id=" + id);
+    public static void checkNotFoundWithId(boolean found, int id, ErrorPlaceType place) {
+        checkNotFound(found, "id=" + id, place);
     }
 
-    public static <T> T checkNotFound(T object, String msg) {
-        checkNotFound(object != null, msg);
+    public static <T> T checkNotFound(T object, String msg, ErrorPlaceType place) {
+        checkNotFound(object != null, msg, place);
         return object;
     }
 
-    public static void checkNotFound(boolean found, String arg) {
+    public static void checkNotFound(boolean found, String arg, ErrorPlaceType place) {
         if (!found) {
-            throw new NotFoundException(arg);
+            throw new NotFoundException(arg, place);
         }
     }
 

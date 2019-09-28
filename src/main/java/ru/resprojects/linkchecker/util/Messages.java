@@ -4,7 +4,7 @@ import static ru.resprojects.linkchecker.util.ValidationUtil.*;
 
 public final class Messages {
 
-    public static final String MSG_NOT_NULL = "Must not be null";
+    public static final String MSG_ARGUMENT_NULL = "Argument must not be null";
     public static final String MSG_COLLECTION_EMPTY = "Collection does not be empty";
     public static final String MSG_COLLECTION_CONTAIN_NULL = "Collection does not be contain null element";
 

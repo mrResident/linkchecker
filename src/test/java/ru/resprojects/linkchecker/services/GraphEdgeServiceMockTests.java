@@ -13,6 +13,8 @@ import ru.resprojects.linkchecker.model.Node;
 import ru.resprojects.linkchecker.repositories.EdgeRepository;
 import ru.resprojects.linkchecker.repositories.NodeRepository;
 import ru.resprojects.linkchecker.util.GraphUtil;
+import ru.resprojects.linkchecker.util.Messages;
+import ru.resprojects.linkchecker.util.exeptions.ApplicationException;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
 import java.util.ArrayList;
@@ -83,8 +85,8 @@ public class GraphEdgeServiceMockTests {
 
     @Test
     public void exceptionTwoWhileCreateEdge() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Must not be null");
+        thrown.expect(ApplicationException.class);
+        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
         edgeService.create((EdgeGraph) null);
     }
 
@@ -128,21 +130,21 @@ public class GraphEdgeServiceMockTests {
 
     @Test
     public void exceptionTwoWhileCreateEdges() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Must not be null");
+        thrown.expect(ApplicationException.class);
+        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
         edgeService.create((Set<EdgeGraph>) null);
     }
 
     @Test
     public void exceptionThreeWhileCreateEdges() {
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(ApplicationException.class);
         thrown.expectMessage("Collection does not be empty");
         edgeService.create(new HashSet<>());
     }
 
     @Test
     public void exceptionFourWhileCreateEdges() {
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(ApplicationException.class);
         thrown.expectMessage("Collection does not be contain null element");
         Set<EdgeGraph> edgeGraphs = new HashSet<>();
         edgeGraphs.add(new EdgeGraph("v1", "v2"));
@@ -165,7 +167,7 @@ public class GraphEdgeServiceMockTests {
     @Test
     public void exceptionWhileDeleteEdgeById() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Edge with ID = 5050 is not found");
+        thrown.expectMessage("EDGE with ID = 5050 is not found");
         when(edgeRepository.existsById(5050)).thenReturn(false);
         edgeService.delete(5050);
     }
@@ -252,7 +254,7 @@ public class GraphEdgeServiceMockTests {
     @Test
     public void exceptionWhileGetEdgeById() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Edge with ID = 7000 is not found");
+        thrown.expectMessage("EDGE with ID = 7000 is not found");
         edgeService.getById(7000);
     }
 

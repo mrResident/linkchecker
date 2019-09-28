@@ -1,12 +1,16 @@
 package ru.resprojects.linkchecker.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import ru.resprojects.linkchecker.repositories.NodeRepository;
 import ru.resprojects.linkchecker.util.GraphUtil;
+import ru.resprojects.linkchecker.util.exeptions.ApplicationException;
+import ru.resprojects.linkchecker.util.exeptions.ErrorPlaceType;
+import ru.resprojects.linkchecker.util.exeptions.ErrorType;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
+import java.util.Objects;
 import java.util.Set;
 
 import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
@@ -36,7 +40,14 @@ public class GraphNodeServiceImpl implements GraphNodeService {
 
     @Override
     public NodeGraph create(final NodeGraph nodeGraph) {
-        Assert.notNull(nodeGraph, MSG_NOT_NULL);
+        if (Objects.isNull(nodeGraph)) {
+            throw new ApplicationException(
+                ErrorType.DATA_ERROR,
+                ErrorPlaceType.NODE,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                MSG_ARGUMENT_NULL
+            );
+        }
         isStateChanged = true;
         return GraphUtil.nodeToNodeGraph(nodeRepository.save(
             GraphUtil.nodeGraphToNode(nodeGraph)));
@@ -44,9 +55,32 @@ public class GraphNodeServiceImpl implements GraphNodeService {
 
     @Override
     public Set<NodeGraph> create(Set<NodeGraph> nodeGraphs) {
-        Assert.notNull(nodeGraphs, MSG_NOT_NULL);
-        Assert.notEmpty(nodeGraphs, MSG_COLLECTION_EMPTY);
-        nodeGraphs.forEach(nodeGraph -> Assert.notNull(nodeGraph, MSG_COLLECTION_CONTAIN_NULL));
+        if (Objects.isNull(nodeGraphs)) {
+            throw new ApplicationException(
+                ErrorType.DATA_ERROR,
+                ErrorPlaceType.NODE,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                MSG_ARGUMENT_NULL
+            );
+        }
+        if (nodeGraphs.isEmpty()) {
+            throw new ApplicationException(
+                ErrorType.DATA_ERROR,
+                ErrorPlaceType.NODE,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                MSG_COLLECTION_EMPTY
+            );
+        }
+        nodeGraphs.forEach(nodeGraph -> {
+            if (Objects.isNull(nodeGraph)) {
+                throw new ApplicationException(
+                    ErrorType.DATA_ERROR,
+                    ErrorPlaceType.NODE,
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    MSG_COLLECTION_CONTAIN_NULL
+                );
+            }
+        });
         isStateChanged = true;
         return GraphUtil.nodesToNodeGraphs(nodeRepository.saveAll(
             GraphUtil.nodeGraphsToNodes(nodeGraphs)));
@@ -54,9 +88,17 @@ public class GraphNodeServiceImpl implements GraphNodeService {
 
     @Override
     public void update(final NodeGraph nodeGraph) throws NotFoundException {
-        Assert.notNull(nodeGraph, MSG_NOT_NULL);
+        if (Objects.isNull(nodeGraph)) {
+            throw new ApplicationException(
+                ErrorType.DATA_ERROR,
+                ErrorPlaceType.NODE,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                MSG_ARGUMENT_NULL
+            );
+        }
         checkNotFound(nodeRepository.save(
-            GraphUtil.nodeGraphToNode(nodeGraph)), NODE_MSG_UPDATE_ERROR + nodeGraph.getId()
+            GraphUtil.nodeGraphToNode(nodeGraph)), NODE_MSG_UPDATE_ERROR + nodeGraph.getId(),
+            ErrorPlaceType.NODE
         );
         isStateChanged = true;
     }
@@ -67,7 +109,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
             nodeRepository.deleteById(id);
             isStateChanged = true;
         } else {
-            throw new NotFoundException(String.format(MSG_BY_ID_ERROR, "Node", id));
+            throw new NotFoundException(String.format(MSG_BY_ID_ERROR, ErrorPlaceType.NODE, id), ErrorPlaceType.NODE);
         }
     }
 
@@ -77,13 +119,20 @@ public class GraphNodeServiceImpl implements GraphNodeService {
             nodeRepository.deleteByName(name);
             isStateChanged = true;
         } else {
-            throw new NotFoundException(String.format(NODE_MSG_BY_NAME_ERROR, name));
+            throw new NotFoundException(String.format(NODE_MSG_BY_NAME_ERROR, name), ErrorPlaceType.NODE);
         }
     }
 
     @Override
     public void delete(final NodeGraph nodeGraph) throws NotFoundException {
-        Assert.notNull(nodeGraph, MSG_NOT_NULL);
+        if (Objects.isNull(nodeGraph)) {
+            throw new ApplicationException(
+                ErrorType.DATA_ERROR,
+                ErrorPlaceType.NODE,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                MSG_ARGUMENT_NULL
+            );
+        }
         NodeGraph nodeFromRepo = GraphUtil.nodeToNodeGraph(nodeRepository
             .findById(nodeGraph.getId()).orElse(null));
         if (nodeGraph.equals(nodeFromRepo)) {
@@ -91,7 +140,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
             isStateChanged = true;
         } else {
             throw new NotFoundException(String.format(
-                NODE_MSG_BY_OBJECT_ERROR, nodeGraph.toString())
+                NODE_MSG_BY_OBJECT_ERROR, nodeGraph.toString()), ErrorPlaceType.NODE
             );
         }
     }
@@ -111,7 +160,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
     public NodeGraph get(final String name) throws NotFoundException {
         NodeGraph nodeGraph = GraphUtil.nodeToNodeGraph(nodeRepository.getByName(name));
         return checkNotFound(nodeGraph,
-            String.format(NODE_MSG_BY_NAME_ERROR, name));
+            String.format(NODE_MSG_BY_NAME_ERROR, name), ErrorPlaceType.NODE);
     }
 
     @Override
@@ -119,7 +168,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
         NodeGraph nodeGraph = GraphUtil.nodeToNodeGraph(nodeRepository
             .findById(id).orElse(null));
         return checkNotFound(nodeGraph,
-            String.format(MSG_BY_ID_ERROR, "Node", id));
+            String.format(MSG_BY_ID_ERROR, ErrorPlaceType.NODE, id), ErrorPlaceType.NODE);
     }
 
 }

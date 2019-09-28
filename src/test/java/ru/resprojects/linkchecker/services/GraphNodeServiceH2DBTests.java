@@ -14,6 +14,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
+import ru.resprojects.linkchecker.util.Messages;
+import ru.resprojects.linkchecker.util.exeptions.ApplicationException;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
 import java.util.HashSet;
@@ -65,7 +67,7 @@ public class GraphNodeServiceH2DBTests {
     @Test
     public void getNodeByIdNotFound() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node with ID = 5050 is not found");
+        thrown.expectMessage("NODE with ID = 5050 is not found");
         nodeService.getById(5050);
     }
 
@@ -128,7 +130,7 @@ public class GraphNodeServiceH2DBTests {
     @Test
     public void exceptionWhileDeleteNodeById() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node with ID = 5100 is not found");
+        thrown.expectMessage("NODE with ID = 5100 is not found");
         nodeService.delete(5100);
     }
 
@@ -168,8 +170,8 @@ public class GraphNodeServiceH2DBTests {
 
     @Test
     public void exceptionWhileCreateNode() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Must not be null");
+        thrown.expect(ApplicationException.class);
+        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
         nodeService.create((NodeGraph) null);
     }
 
@@ -187,8 +189,8 @@ public class GraphNodeServiceH2DBTests {
 
     @Test
     public void exceptionOneWhileNodeUpdate() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Must not be null");
+        thrown.expect(ApplicationException.class);
+        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
         nodeService.update(null);
     }
 

@@ -11,6 +11,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.resprojects.linkchecker.model.Node;
 import ru.resprojects.linkchecker.repositories.NodeRepository;
 import ru.resprojects.linkchecker.util.GraphUtil;
+import ru.resprojects.linkchecker.util.Messages;
+import ru.resprojects.linkchecker.util.exeptions.ApplicationException;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
 import java.util.ArrayList;
@@ -77,7 +79,7 @@ public class GraphNodeServiceMockTests {
     @Test
     public void getNodeByIdNotFound() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node with ID = 5000 is not found");
+        thrown.expectMessage("NODE with ID = 5000 is not found");
         graphNodeService.getById(5000);
     }
 
@@ -133,8 +135,8 @@ public class GraphNodeServiceMockTests {
 
     @Test
     public void exceptionThreeWhileDeleteNodeByNodeGraph() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Must not be null");
+        thrown.expect(ApplicationException.class);
+        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
         graphNodeService.delete((NodeGraph) null);
     }
 
@@ -166,7 +168,7 @@ public class GraphNodeServiceMockTests {
     @Test
     public void deleteNodeById() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node with ID = 5000 is not found");
+        thrown.expectMessage("NODE with ID = 5000 is not found");
         List<Node> nodes = Stream.of(
             new Node(5001, "v2", 60, 0),
             new Node(5002, "v3", 35, 0),
@@ -184,7 +186,7 @@ public class GraphNodeServiceMockTests {
     @Test
     public void exceptionOneWhileDeleteNodeById() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node with ID = null is not found");
+        thrown.expectMessage("NODE with ID = null is not found");
         graphNodeService.delete((Integer) null);
     }
 
@@ -203,8 +205,8 @@ public class GraphNodeServiceMockTests {
 
     @Test
     public void exceptionWhileCreateNode() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Must not be null");
+        thrown.expect(ApplicationException.class);
+        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
         graphNodeService.create((NodeGraph) null);
     }
 
@@ -224,21 +226,21 @@ public class GraphNodeServiceMockTests {
 
     @Test
     public void exceptionOneWhileCreateNodes() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Must not be null");
+        thrown.expect(ApplicationException.class);
+        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
         graphNodeService.create((Set<NodeGraph>) null);
     }
 
     @Test
     public void exceptionTwoWhileCreateNodes() {
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(ApplicationException.class);
         thrown.expectMessage("Collection does not be empty");
         graphNodeService.create(new HashSet<>());
     }
 
     @Test
     public void exceptionThreeWhileCreateNodes() {
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(ApplicationException.class);
         thrown.expectMessage("Collection does not be contain null element");
         Set<NodeGraph> nodeGraphs = new HashSet<>();
         nodeGraphs.add(new NodeGraph("v1"));
@@ -260,8 +262,8 @@ public class GraphNodeServiceMockTests {
 
     @Test
     public void exceptionOneWhileUpdateNode() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Must not be null");
+        thrown.expect(ApplicationException.class);
+        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
         graphNodeService.update(null);
     }
 

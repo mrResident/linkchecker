@@ -52,11 +52,11 @@ public class GraphEdgeServiceMockTests {
     public void init() {
         edgeService = new GraphEdgeServiceImpl(edgeRepository, nodeRepository);
         nodes = Stream.of(
-            new Node(5000, "v1", 43, 0),
-            new Node(5001, "v2", 60, 0),
-            new Node(5002, "v3", 35, 0),
-            new Node(5003, "v4", 56, 0),
-            new Node(5004, "v5", 20, 0)
+            new Node(5000, "v1", 0),
+            new Node(5001, "v2", 0),
+            new Node(5002, "v3", 0),
+            new Node(5003, "v4", 0),
+            new Node(5004, "v5", 0)
         ).collect(Collectors.toList());
     }
 

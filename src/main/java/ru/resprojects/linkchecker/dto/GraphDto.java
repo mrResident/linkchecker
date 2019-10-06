@@ -1,7 +1,5 @@
 package ru.resprojects.linkchecker.dto;
 
-import org.hibernate.validator.constraints.Range;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
@@ -30,14 +28,6 @@ public class GraphDto {
         private String name;
 
         /**
-         * Percentage value of probability failure node.
-         */
-        @Range(min = MIN_PROBABILITY_VALUE,
-            max = MAX_PROBABILITY_VALUE,
-            message = VALIDATOR_NODE_PROBABILITY_RANGE_MESSAGE)
-        private int probability;
-
-        /**
          * The number of passes through the graph node.
          */
         private int counter;
@@ -50,52 +40,21 @@ public class GraphDto {
 
         /**
          * Ctor.
-         * @param nodeGraph object of graph node.
-         */
-        public NodeGraph(final NodeGraph nodeGraph) {
-            this(nodeGraph.getId(), nodeGraph.getName(),
-                nodeGraph.probability, nodeGraph.counter);
-        }
-
-        /**
-         * Ctor.
          * @param name - unique graph node name.
          */
         public NodeGraph(final String name) {
-            this(name, NODE_PROBABILITY_DEFAULT);
-        }
-
-        /**
-         * Ctor.
-         * @param name - unique graph node name.
-         * @param probability - probability of failure node.
-         */
-        public NodeGraph(final String name, final int probability) {
-            this(name, probability, NODE_COUNTER_DEFAULT);
-        }
-
-        /**
-         * Ctor.
-         * @param name - unique graph node name.
-         * @param probability - probability of failure node.
-         * @param counter - the number of passes through the current node.
-         */
-        public NodeGraph(final String name, final int probability, final int counter) {
-            this(null, name, probability, counter);
+            this(null, name, NODE_COUNTER_DEFAULT);
         }
 
         /**
          * Ctor.
          * @param id - identity number of graph node.
          * @param name - unique graph node name.
-         * @param probability - probability of failure node.
          * @param counter - the number of passes through the current node.
          */
-        public NodeGraph(final Integer id, final String name,
-            final int probability, final int counter) {
+        public NodeGraph(final Integer id, final String name, final int counter) {
             super(id);
             this.name = name;
-            this.probability = probability;
             this.counter = counter;
         }
 
@@ -105,15 +64,6 @@ public class GraphDto {
 
         public void setName(final String name) {
             this.name = name;
-        }
-
-        public int getProbability() {
-            return probability;
-        }
-
-
-        public void setProbability(final int probability) {
-            this.probability = probability;
         }
 
         public int getCounter() {
@@ -133,15 +83,14 @@ public class GraphDto {
                 return false;
             }
             NodeGraph nodeGraph = (NodeGraph) o;
-            return Float.compare(nodeGraph.probability, probability) == 0
-                && Objects.equals(id, nodeGraph.id)
+            return Objects.equals(id, nodeGraph.id)
                 && counter == nodeGraph.counter
                 && name.equals(nodeGraph.name);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, name, probability, counter);
+            return Objects.hash(id, name, counter);
         }
 
         @Override
@@ -149,7 +98,6 @@ public class GraphDto {
             return "{"
                 + "\"id\": \"" + id + '"'
                 + ", \"name\": \"" + name + '"'
-                + ", \"probability\":" + probability
                 + ", \"counter\":" + counter
                 + '}';
         }

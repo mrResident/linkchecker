@@ -20,7 +20,6 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -94,7 +93,7 @@ public final class GraphUtil {
      */
     public static Set<NodeGraph> getNodesDtoFromGraph(final Graph<Node, DefaultEdge> graph) {
         return graph.vertexSet().stream()
-            .map(n -> new NodeGraph(n.getId(), n.getName(), n.getProbability(), n.getCounter()))
+            .map(n -> new NodeGraph(n.getId(), n.getName(), n.getCounter()))
             .collect(Collectors.toSet());
     }
 
@@ -210,8 +209,7 @@ public final class GraphUtil {
      */
     public static NodeGraph nodeToNodeGraph(final Node node) {
         if (node != null) {
-            return new NodeGraph(node.getId(), node.getName(),
-                node.getProbability(), node.getCounter());
+            return new NodeGraph(node.getId(), node.getName(), node.getCounter());
         } else {
             return null;
         }
@@ -227,7 +225,6 @@ public final class GraphUtil {
             return new Node(
                 nodeGraph.getId(),
                 nodeGraph.getName(),
-                nodeGraph.getProbability(),
                 nodeGraph.getCounter()
             );
         } else {

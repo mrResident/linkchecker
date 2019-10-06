@@ -10,22 +10,11 @@ import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
  */
 public final class ValidationUtil {
 
-    public static final int NODE_PROBABILITY_DEFAULT = 50;
     public static final int NODE_COUNTER_DEFAULT = 0;
     public static final int MIN_NAME_SIZE = 1;
     public static final int MAX_NAME_SIZE = 50;
-    public static final int MIN_PROBABILITY_VALUE = 0;
-    public static final int MAX_PROBABILITY_VALUE = 100;
 
     private ValidationUtil() {
-    }
-
-    public static <T> T checkNotFoundWithId(T object, int id, ErrorPlaceType place) {
-        return checkNotFound(object, "id=" + id, place);
-    }
-
-    public static void checkNotFoundWithId(boolean found, int id, ErrorPlaceType place) {
-        checkNotFound(found, "id=" + id, place);
     }
 
     public static <T> T checkNotFound(T object, String msg, ErrorPlaceType place) {

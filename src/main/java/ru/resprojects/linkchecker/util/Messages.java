@@ -22,8 +22,6 @@ public final class Messages {
     public static final String VALIDATOR_NODE_NOT_BLANK_NAME_MESSAGE = "Value must not be empty";
     public static final String VALIDATOR_NODE_NAME_RANGE_MESSAGE = "Value must be at range from "
         + MIN_NAME_SIZE + " to " + MAX_NAME_SIZE;
-    public static final String VALIDATOR_NODE_PROBABILITY_RANGE_MESSAGE = "Value must be at range from "
-        + MIN_PROBABILITY_VALUE + " to " + MAX_PROBABILITY_VALUE;
     public static final String VALIDATOR_NOT_NULL_MESSAGE = "Object must not be null";
 
 

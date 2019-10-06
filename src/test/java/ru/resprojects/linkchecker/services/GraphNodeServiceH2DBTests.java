@@ -84,7 +84,7 @@ public class GraphNodeServiceH2DBTests {
 
     @Test
     public void deleteNodeByNodeGraph() {
-        NodeGraph nodeGraph = new NodeGraph(5000, "v1", 43, 0);
+        NodeGraph nodeGraph = new NodeGraph(5000, "v1", 0);
         nodeService.delete(nodeGraph);
         Set<NodeGraph> actual = nodeService.getAll();
         Assert.assertEquals(4, actual.size());
@@ -92,7 +92,7 @@ public class GraphNodeServiceH2DBTests {
 
     @Test
     public void exceptionOneWhileDeleteNodeByNodeGraph() {
-        NodeGraph nodeGraph = new NodeGraph(5020, "v1", 43, 0);
+        NodeGraph nodeGraph = new NodeGraph(5020, "v1", 0);
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format("Node %s is not found", nodeGraph.toString()));
         nodeService.delete(nodeGraph);
@@ -100,7 +100,7 @@ public class GraphNodeServiceH2DBTests {
 
     @Test
     public void exceptionTwoWhileDeleteNodeByNodeGraph() {
-        NodeGraph nodeGraph = new NodeGraph(5000, "v1", 43, 1);
+        NodeGraph nodeGraph = new NodeGraph(5000, "v1", 1);
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format("Node %s is not found", nodeGraph.toString()));
         nodeService.delete(nodeGraph);
@@ -177,11 +177,10 @@ public class GraphNodeServiceH2DBTests {
 
     @Test
     public void nodeUpdate() {
-        NodeGraph nodeGraph = new NodeGraph(5000, "v1", 23, 1);
+        NodeGraph nodeGraph = new NodeGraph(5000, "v1", 1);
         nodeService.update(nodeGraph);
         NodeGraph actual = nodeService.get("v1");
         Assert.assertNotNull(actual);
-        Assert.assertEquals(23, actual.getProbability(), 0);
         Assert.assertEquals(1, actual.getCounter(), 0);
         Set<NodeGraph> nodeGraphs = nodeService.getAll();
         nodeGraphs.forEach(ng -> LOG.debug("---- NODE: " + ng));

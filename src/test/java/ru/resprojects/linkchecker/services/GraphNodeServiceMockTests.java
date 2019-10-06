@@ -50,11 +50,10 @@ public class GraphNodeServiceMockTests {
     @Test
     public void getNodeByName() {
         given(nodeRepository.getByName("v1")).willReturn(
-            new Node(5000, "v1", 50, 0)
+            new Node(5000, "v1", 0)
         );
         NodeGraph actual = graphNodeService.get("v1");
         assertThat(actual.getName()).isEqualTo("v1");
-        assertThat(actual.getProbability()).isEqualTo(50);
         assertThat(actual.getCounter()).isEqualTo(0);
     }
 
@@ -68,11 +67,10 @@ public class GraphNodeServiceMockTests {
     @Test
     public void getNodeById() {
         given(nodeRepository.findById(5000)).willReturn(
-            Optional.of(new Node(5000, "v1", 50, 0))
+            Optional.of(new Node(5000, "v1", 0))
         );
         NodeGraph actual = graphNodeService.getById(5000);
         assertThat(actual.getName()).isEqualTo("v1");
-        assertThat(actual.getProbability()).isEqualTo(50);
         assertThat(actual.getCounter()).isEqualTo(0);
     }
 
@@ -86,11 +84,11 @@ public class GraphNodeServiceMockTests {
     @Test
     public void getAllNodes() {
         List<Node> nodes = Stream.of(
-            new Node(5000, "v1", 43, 0),
-            new Node(5001, "v2", 60, 0),
-            new Node(5002, "v3", 35, 0),
-            new Node(5003, "v4", 56, 0),
-            new Node(5004, "v5", 20, 0)
+            new Node(5000, "v1", 0),
+            new Node(5001, "v2", 0),
+            new Node(5002, "v3", 0),
+            new Node(5003, "v4", 0),
+            new Node(5004, "v5", 0)
         ).collect(Collectors.toList());
         given(nodeRepository.findAll()).willReturn(nodes);
         Set<NodeGraph> actual = graphNodeService.getAll();
@@ -102,16 +100,16 @@ public class GraphNodeServiceMockTests {
     @Test
     public void deleteNodeByNodeGraph() {
         List<Node> nodes = Stream.of(
-            new Node(5001, "v2", 60, 0),
-            new Node(5002, "v3", 35, 0),
-            new Node(5003, "v4", 56, 0),
-            new Node(5004, "v5", 20, 0)
+            new Node(5001, "v2", 0),
+            new Node(5002, "v3", 0),
+            new Node(5003, "v4", 0),
+            new Node(5004, "v5", 0)
         ).collect(Collectors.toList());
         given(nodeRepository.findById(5000)).willReturn(
-            Optional.of(new Node(5000, "v1", 43, 0))
+            Optional.of(new Node(5000, "v1", 0))
         );
         given(nodeRepository.findAll()).willReturn(nodes);
-        NodeGraph nodeGraph = new NodeGraph(5000, "v1", 43, 0);
+        NodeGraph nodeGraph = new NodeGraph(5000, "v1", 0);
         graphNodeService.delete(nodeGraph);
         Set<NodeGraph> actual = graphNodeService.getAll();
         Assert.assertEquals(4, actual.size());
@@ -119,7 +117,7 @@ public class GraphNodeServiceMockTests {
 
     @Test
     public void exceptionOneWhileDeleteNodeByNodeGraph() {
-        NodeGraph nodeGraph = new NodeGraph(5000, "v1", 43, 0);
+        NodeGraph nodeGraph = new NodeGraph(5000, "v1", 0);
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format("Node %s is not found", nodeGraph.toString()));
         graphNodeService.delete(nodeGraph);
@@ -127,7 +125,7 @@ public class GraphNodeServiceMockTests {
 
     @Test
     public void exceptionTwoWhileDeleteNodeByNodeGraph() {
-        NodeGraph nodeGraph = new NodeGraph(null, "v1", 43, 0);
+        NodeGraph nodeGraph = new NodeGraph(null, "v1", 0);
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format("Node %s is not found", nodeGraph.toString()));
         graphNodeService.delete(nodeGraph);
@@ -145,10 +143,10 @@ public class GraphNodeServiceMockTests {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage("Node with NAME = v1 is not found");
         List<Node> nodes = Stream.of(
-            new Node(5001, "v2", 60, 0),
-            new Node(5002, "v3", 35, 0),
-            new Node(5003, "v4", 56, 0),
-            new Node(5004, "v5", 20, 0)
+            new Node(5001, "v2", 0),
+            new Node(5002, "v3", 0),
+            new Node(5003, "v4", 0),
+            new Node(5004, "v5", 0)
         ).collect(Collectors.toList());
         when(nodeRepository.existsByName("v1")).thenReturn(true).thenReturn(false);
         given(nodeRepository.findAll()).willReturn(nodes);
@@ -170,10 +168,10 @@ public class GraphNodeServiceMockTests {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage("NODE with ID = 5000 is not found");
         List<Node> nodes = Stream.of(
-            new Node(5001, "v2", 60, 0),
-            new Node(5002, "v3", 35, 0),
-            new Node(5003, "v4", 56, 0),
-            new Node(5004, "v5", 20, 0)
+            new Node(5001, "v2", 0),
+            new Node(5002, "v3", 0),
+            new Node(5003, "v4", 0),
+            new Node(5004, "v5", 0)
         ).collect(Collectors.toList());
         when(nodeRepository.existsById(5000)).thenReturn(true).thenReturn(false);
         given(nodeRepository.findAll()).willReturn(nodes);
@@ -216,7 +214,7 @@ public class GraphNodeServiceMockTests {
         List<Node> nodes = new ArrayList<>();
         IntStream.range(1, 6).forEach(i -> {
             nodeGraphs.add(new NodeGraph("w" + i));
-            nodes.add(new Node(5000 + i, "w" + i, 50, 0));
+            nodes.add(new Node(5000 + i, "w" + i, 0));
         });
         when(nodeRepository.saveAll(anyIterable())).thenReturn(nodes);
         Set<NodeGraph> actual = graphNodeService.create(nodeGraphs);
@@ -250,8 +248,8 @@ public class GraphNodeServiceMockTests {
 
     @Test
     public void updateNode() {
-        NodeGraph nodeGraph = new NodeGraph(5000, "v1", 23, 2);
-        Node node = new Node(5000, "v1", 23, 2);
+        NodeGraph nodeGraph = new NodeGraph(5000, "v1", 2);
+        Node node = new Node(5000, "v1", 2);
         when(nodeRepository.save(any(Node.class))).thenReturn(node);
         when(nodeRepository.findById(5000)).thenReturn(Optional.of(node));
         graphNodeService.update(nodeGraph);
@@ -271,7 +269,7 @@ public class GraphNodeServiceMockTests {
     public void exceptionTwoWhileUpdateNode() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage("Error while update node with id = 5000");
-        NodeGraph nodeGraph = new NodeGraph(5000, "v1", 50, 0);
+        NodeGraph nodeGraph = new NodeGraph(5000, "v1", 0);
         when(nodeRepository.save(any(Node.class))).thenReturn(null);
         graphNodeService.update(nodeGraph);
     }

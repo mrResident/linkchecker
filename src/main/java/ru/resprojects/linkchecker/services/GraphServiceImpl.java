@@ -131,9 +131,10 @@ public class GraphServiceImpl implements GraphService {
                 ErrorPlaceType.GRAPH
             );
         }
-        if (getRandomEvent(firstNode.getProbability())) {
-            return "NODE " + firstNode.getName() + " get crash";
-        }
+        //TODO Добавить событие на случайный сбой
+//        if (getRandomEvent(firstNode.getProbability())) {
+//            return "NODE " + firstNode.getName() + " get crash";
+//        }
         ShortestPathAlgorithm.SingleSourcePaths<Node, DefaultEdge> paths = dAlg.getPaths(firstNode);
         nodeNameList.stream().skip(1).forEach(name -> {
             Node nextNode = nodeGraphToNode(graphDto.getNodes().stream()

@@ -166,7 +166,7 @@ public class GraphServiceH2DBTests {
 
 	@Test
 	public void getGraphAfterAddedNewNode() {
-		graphService.getNodes().create(new NodeGraph("v6", 53));
+		graphService.getNodes().create(new NodeGraph("v6"));
 		GraphDto actual = graphService.get();
 		Assert.assertNotNull(actual);
 		Assert.assertEquals(6, actual.getNodes().size());
@@ -182,7 +182,7 @@ public class GraphServiceH2DBTests {
 
 	@Test
 	public void findPath() {
-		List<String> nodeNameList = Stream.of("v1", "v2", "v4").collect(Collectors.toList());
+		List<String> nodeNameList = Stream.of("v1", "v2", "v3").collect(Collectors.toList());
 		GraphDto graphDto = graphService.get();
 		Graph<Node, DefaultEdge> graph = graphBuilder(graphDto.getNodes(),
 			graphDto.getEdges());
@@ -196,10 +196,6 @@ public class GraphServiceH2DBTests {
 				String.format(NODE_MSG_BY_NAME_ERROR, nodeNameList.get(0)),
 				ErrorPlaceType.GRAPH
 			);
-		}
-		if (getRandomEvent(firstNode.getProbability())) {
-			LOG.debug("NODE " + firstNode.getName() + " get crash");
-			return;
 		}
 		ShortestPathAlgorithm.SingleSourcePaths<Node, DefaultEdge> paths = dAlg.getPaths(firstNode);
 		for (String name : nodeNameList) {
@@ -226,10 +222,6 @@ public class GraphServiceH2DBTests {
 					String.format(NODE_MSG_NOT_REACHABLE, nodeNameList.get(0), name),
 					ErrorPlaceType.GRAPH
 				);
-			}
-			if (getRandomEvent(nextNode.getProbability())) {
-				LOG.debug("NODE " + nextNode.getName() + " get crash");
-				break;
 			}
 		}
 		LOG.debug("THE END");

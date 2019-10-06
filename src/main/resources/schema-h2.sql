@@ -7,7 +7,6 @@ CREATE SEQUENCE global_seq MINVALUE 5000;
 CREATE TABLE nodes (
     id INT DEFAULT global_seq.nextval PRIMARY KEY,
     name VARCHAR NOT NULL,
-    probability INT DEFAULT 50 NOT NULL,
     counter INT DEFAULT 0 NOT NULL
 );
 CREATE UNIQUE INDEX nodes_unique_name_idx ON nodes(name);

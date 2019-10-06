@@ -69,18 +69,6 @@ public class ValidationModelTests {
         printViolationMessage(violations);
     }
 
-    @Test
-    public void tryCreateNodeWithProbabilityValueOutOfRange() {
-        Node node = new Node("v1", -1);
-        Set<ConstraintViolation<Node>> violations = validator.validate(node);
-        ConstraintViolation<Node> violation = violations.stream()
-            .filter(v -> Messages.VALIDATOR_NODE_PROBABILITY_RANGE_MESSAGE.equals(v.getMessage()))
-            .findFirst()
-            .orElse(null);
-        Assert.assertNotNull(violation);
-        printViolationMessage(violations);
-    }
-
     private static void printViolationMessage(Set<ConstraintViolation<Node>> violations) {
         violations.forEach(v -> {
             LOG.debug("VIOLATION INFO");

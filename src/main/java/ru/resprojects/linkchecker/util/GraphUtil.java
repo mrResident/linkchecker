@@ -19,10 +19,10 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
@@ -43,35 +43,33 @@ public final class GraphUtil {
     }
 
     /**
-     * Building graph in {@see <a href = https://github.com/jgrapht/jgrapht/blob/master/README.md>JGraphT</a>} format
-     * from collections of the nodes dto and edges dto format.
-     * @param nodesGraph collection of nodes dto {@link NodeGraph}.
-     * @param edgesGraph collection of edges dto {@link EdgeGraph}.
+     * Building graph in <a href = https://github.com/jgrapht/jgrapht/blob/master/README.md>JGraphT</a> format
+     * from collections of the nodes and edges.
+     * @param nodesGraph collection of nodes {@link NodeGraph}.
+     * @param edgesGraph collection of edges {@link EdgeGraph}.
      * @return graph in JGraphT format.
      */
     public static Graph<Node, DefaultEdge> graphBuilder(final Collection<NodeGraph> nodesGraph,
         final Collection<EdgeGraph> edgesGraph) {
         Graph<Node, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
-        Set<Node> nodes = new HashSet<>();
-        Set<Edge> edges = new HashSet<>();
-        nodesGraph.forEach(nodeGraph -> nodes.add(
-            new Node(nodeGraph.getId(), nodeGraph.getName(), nodeGraph.getProbability(), 0)
-        ));
-        edgesGraph.forEach(edgeGraph -> {
-            Optional<Node> nodeOne = nodes.stream()
-                .filter(n -> n.getName()
-                    .toLowerCase()
-                    .equals(edgeGraph.getNodeOne().toLowerCase()))
-                .findFirst();
-            Optional<Node> nodeTwo = nodes.stream()
-                .filter(n -> n.getName()
-                    .toLowerCase()
-                    .equals(edgeGraph.getNodeTwo().toLowerCase()))
-                .findFirst();
-            if (nodeOne.isPresent() && nodeTwo.isPresent()) {
-                edges.add(new Edge(nodeOne.get(), nodeTwo.get()));
-            }
-        });
+        Set<Node> nodes = nodeGraphsToNodes(nodesGraph);
+        Set<Edge> edges = edgesGraph.stream()
+            .map(eg -> {
+                Node nodeOne = nodes.stream()
+                    .filter(n -> n.getName().equalsIgnoreCase(eg.getNodeOne()))
+                    .findFirst()
+                    .orElse(null);
+                Node nodeTwo = nodes.stream()
+                    .filter(n -> n.getName().equalsIgnoreCase(eg.getNodeTwo()))
+                    .findFirst()
+                    .orElse(null);
+                if (Objects.nonNull(nodeOne) && Objects.nonNull(nodeTwo)) {
+                    return new Edge(eg.getId(), nodeOne, nodeTwo);
+                } else {
+                    return null;
+                } })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
         nodes.forEach(graph::addVertex);
         edges.forEach(edge -> graph.addEdge(
             edge.getNodeOne(), edge.getNodeTwo()
@@ -80,27 +78,13 @@ public final class GraphUtil {
     }
 
     /**
-     * Build GraphDto object from graph models - nodes and edges.
-     * @param nodes model of graph nodes, see {@link Node}.
-     * @param edges model of graph edges, see {@link Edge}.
-     * @return object of {@link GraphDto}.
-     */
-    public static GraphDto graphDtoBuilder(final Collection<Node> nodes,
-        final Collection<Edge> edges) {
-        return new GraphDto(nodesToNodeGraphs(nodes), edgesToEdgeGraphs(edges));
-    }
-
-    /**
      * Convert graph from {@see <a href = https://github.com/jgrapht/jgrapht/blob/master/README.md>JGraphT</a>} format
      * to graph DTO {@link GraphDto} format.
      * @param graph graph in JGraphT format.
-     * @return graph in DTO format.
+     * @return {@link GraphDto}.
      */
     public static GraphDto graphToGraphDto(final Graph<Node, DefaultEdge> graph) {
-        GraphDto result = new GraphDto();
-        result.setNodes(getNodesDtoFromGraph(graph));
-        result.setEdges(getEdgesDtoFromGraph(graph));
-        return result;
+        return new GraphDto(getNodesDtoFromGraph(graph), getEdgesDtoFromGraph(graph));
     }
 
     /**
@@ -109,12 +93,9 @@ public final class GraphUtil {
      * @return collection of GraphDto nodes.
      */
     public static Set<NodeGraph> getNodesDtoFromGraph(final Graph<Node, DefaultEdge> graph) {
-        Set<NodeGraph> nodeGraphs = new HashSet<>();
-        graph.vertexSet().forEach(node -> nodeGraphs.add(
-            new NodeGraph(node.getId(), node.getName(),
-                node.getProbability(), node.getCounter())
-        ));
-        return nodeGraphs;
+        return graph.vertexSet().stream()
+            .map(n -> new NodeGraph(n.getId(), n.getName(), n.getProbability(), n.getCounter()))
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -123,14 +104,9 @@ public final class GraphUtil {
      * @return collection of GraphDto edges.
      */
     public static Set<EdgeGraph> getEdgesDtoFromGraph(final Graph<Node, DefaultEdge> graph) {
-        Set<EdgeGraph> edgeGraphs = new HashSet<>();
-        graph.edgeSet().forEach(edge -> edgeGraphs.add(
-            new EdgeGraph(
-                graph.getEdgeSource(edge).getName(),
-                graph.getEdgeTarget(edge).getName()
-            )
-        ));
-        return edgeGraphs;
+        return graph.edgeSet().stream()
+            .map(e -> new EdgeGraph(graph.getEdgeSource(e).getName(), graph.getEdgeTarget(e).getName()))
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -142,7 +118,7 @@ public final class GraphUtil {
     public static Graph<Node, DefaultEdge> removeCyclesFromGraph(
         final Graph<Node, DefaultEdge> graph) {
         LOG.debug("Detect cycles in graph by Paton algorithm");
-        if (!checkGraphCycles(graph)) {
+        if (!isGraphContainCycles(graph)) {
             LOG.debug("Cycles not found!");
             return graph;
         }
@@ -171,7 +147,7 @@ public final class GraphUtil {
         return result;
     }
 
-    public static boolean checkGraphCycles(final Graph<Node, DefaultEdge> graph) {
+    public static boolean isGraphContainCycles(final Graph<Node, DefaultEdge> graph) {
         SimpleGraph<Node, DefaultEdge> result = new SimpleGraph<>(DefaultEdge.class);
         Graphs.addGraph(result, graph);
         PatonCycleBase<Node, DefaultEdge> patonCycleBase = new PatonCycleBase<>(result);
@@ -220,11 +196,11 @@ public final class GraphUtil {
      * @param nodeGraphs collection of graph node DTO
      * @return list of node model objects
      */
-    public static List<Node> nodeGraphsToNodes(final Collection<NodeGraph> nodeGraphs) {
+    public static Set<Node> nodeGraphsToNodes(final Collection<NodeGraph> nodeGraphs) {
         return nodeGraphs.stream()
             .filter(Objects::nonNull)
             .map(GraphUtil::nodeGraphToNode)
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -283,6 +259,41 @@ public final class GraphUtil {
         } else {
             return null;
         }
+    }
+
+    public static Set<Edge> getEdgesFromGraphDto(final GraphDto graph) {
+        return graph.getEdges().stream()
+            .map(eg -> {
+                Node nodeOne = nodeGraphToNode(graph.getNodes().stream()
+                    .filter(ng -> ng.getName().equalsIgnoreCase(eg.getNodeOne()))
+                    .findFirst()
+                    .orElse(null));
+                Node nodeTwo = nodeGraphToNode(graph.getNodes().stream()
+                    .filter(ng -> ng.getName().equalsIgnoreCase(eg.getNodeTwo()))
+                    .findFirst()
+                    .orElse(null));
+                if (Objects.nonNull(nodeOne) && Objects.nonNull(nodeTwo)) {
+                    return new Edge(eg.getId(), nodeOne, nodeTwo);
+                } else {
+                    return null;
+                } })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+    }
+
+    /**
+     * Get a pseudo random event with a given probability.
+     * @param probability of event
+     * @return true if pseudo random number less than probability.
+     */
+    public static boolean getRandomEvent(int probability) {
+        if (probability == 100) {
+            return true;
+        }
+        if (probability == 0) {
+            return false;
+        }
+        return ThreadLocalRandom.current().nextInt(100) < probability;
     }
 
 }

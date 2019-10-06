@@ -1,5 +1,6 @@
 package ru.resprojects.linkchecker.services;
 
+import ru.resprojects.linkchecker.model.Edge;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
 import java.util.Set;
@@ -9,7 +10,7 @@ import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 /**
  * GraphEdgeService - the interface for work with graph edges.
  */
-public interface GraphEdgeService extends ChangedState {
+public interface GraphEdgeService {
 
     /**
      * Create edge of the graph. Nodes that linked by the edge, must be
@@ -53,6 +54,8 @@ public interface GraphEdgeService extends ChangedState {
      * @throws NotFoundException if edge is not found in the graph.
      */
     void delete(final String nodeNameOne, final String nodeNameTwo) throws NotFoundException;
+
+    void delete(final Set<Edge> edges) throws NotFoundException;
 
     /**
      * Removing all edges from the graph.

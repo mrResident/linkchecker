@@ -134,20 +134,20 @@ public class GraphDto {
             }
             NodeGraph nodeGraph = (NodeGraph) o;
             return Float.compare(nodeGraph.probability, probability) == 0
-                && Objects.equals(getId(), nodeGraph.getId())
+                && Objects.equals(id, nodeGraph.id)
                 && counter == nodeGraph.counter
                 && name.equals(nodeGraph.name);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(getId(), name, probability, counter);
+            return Objects.hash(id, name, probability, counter);
         }
 
         @Override
         public String toString() {
             return "{"
-                + "\"id\": \"" + getId() + '"'
+                + "\"id\": \"" + id + '"'
                 + ", \"name\": \"" + name + '"'
                 + ", \"probability\":" + probability
                 + ", \"counter\":" + counter
@@ -255,21 +255,22 @@ public class GraphDto {
             if (o == null || getClass() != o.getClass()) return false;
             EdgeGraph edgeGraph = (EdgeGraph) o;
             return nodeOne.equals(edgeGraph.nodeOne)
-                && nodeTwo.equals(edgeGraph.nodeTwo);
+                && nodeTwo.equals(edgeGraph.nodeTwo)
+                && Objects.equals(id, edgeGraph.id);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(nodeOne, nodeTwo);
+            return Objects.hash(id, nodeOne, nodeTwo);
         }
 
         @Override
         public String toString() {
             return "{"
-                + "\"id\": \"" + getId() + '"'
+                + "\"id\": \"" + id + '"'
                 + ", \"nodeOne\": \""
                 + nodeOne + '"'
-                + ", \"nodeTwo\":\""
+                + ", \"nodeTwo\": \""
                 + nodeTwo + '"'
                 + '}';
         }
@@ -293,8 +294,8 @@ public class GraphDto {
 
     /**
      * Ctor.
-     * @param nodes - set of graph nodes.
-     * @param edges - set of graph edges.
+     * @param nodes - collection of graph nodes {@link NodeGraph}.
+     * @param edges - collection of graph edges {@link EdgeGraph}.
      */
     public GraphDto(final Set<NodeGraph> nodes, final Set<EdgeGraph> edges) {
         this.nodes = nodes;

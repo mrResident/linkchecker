@@ -29,7 +29,6 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
 
     private final EdgeRepository edgeRepository;
     private final NodeRepository nodeRepository;
-    private boolean isStateChanged;
 
     @Autowired
     public GraphEdgeServiceImpl(EdgeRepository edgeRepository, NodeRepository nodeRepository) {
@@ -44,16 +43,6 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
         } catch (NotFoundException e) {
             return false;
         }
-    }
-
-    @Override
-    public boolean isStateChanged() {
-        return isStateChanged;
-    }
-
-    @Override
-    public void resetCurrentState() {
-        isStateChanged = false;
     }
 
     @Override
@@ -91,7 +80,6 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
             );
         }
         Edge edge = new Edge(nodeOne, nodeTwo);
-        isStateChanged = true;
         return GraphUtil.edgeToEdgeGraph(edgeRepository.save(edge));
     }
 
@@ -157,7 +145,6 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
                 nodes.get(eg).get(eg.getNodeOne()),
                 nodes.get(eg).get(eg.getNodeTwo()))
             ).collect(Collectors.toList());
-        isStateChanged = true;
         return GraphUtil.edgesToEdgeGraphs(edgeRepository.saveAll(edges));
     }
 
@@ -165,7 +152,6 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
     public void delete(final Integer id) throws NotFoundException {
         if (edgeRepository.existsById(id)) {
             edgeRepository.deleteById(id);
-            isStateChanged = true;
         } else {
             throw new NotFoundException(String.format(MSG_BY_ID_ERROR, ErrorPlaceType.EDGE, id), ErrorPlaceType.EDGE);
         }
@@ -178,7 +164,6 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
             throw new NotFoundException(String.format(EDGE_MSG_GET_BY_NAME_ERROR, nodeName), ErrorPlaceType.EDGE);
         }
         edgeRepository.deleteInBatch(edges);
-        isStateChanged = true;
     }
 
     @Override
@@ -187,13 +172,16 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
             String.format(EDGE_MSG_GET_ERROR, nodeNameOne, nodeNameTwo),
             ErrorPlaceType.EDGE);
         edgeRepository.delete(edge);
-        isStateChanged = true;
+    }
+
+    @Override
+    public void delete(Set<Edge> edges) throws NotFoundException {
+        edgeRepository.deleteInBatch(edges);
     }
 
     @Override
     public void deleteAll() {
         edgeRepository.deleteAllInBatch();
-        isStateChanged = true;
     }
 
     @Override

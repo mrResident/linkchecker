@@ -234,14 +234,14 @@ public class GraphNodeServiceMockTests {
     @Test
     public void exceptionTwoWhileCreateNodes() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Collection does not be empty");
+        thrown.expectMessage("Collection must not be empty");
         graphNodeService.create(new HashSet<>());
     }
 
     @Test
     public void exceptionThreeWhileCreateNodes() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Collection does not be contain null element");
+        thrown.expectMessage("Collection must not contain a null item");
         Set<NodeGraph> nodeGraphs = new HashSet<>();
         nodeGraphs.add(new NodeGraph("v1"));
         nodeGraphs.add(null);

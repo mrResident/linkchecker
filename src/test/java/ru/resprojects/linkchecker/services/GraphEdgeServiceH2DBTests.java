@@ -72,7 +72,7 @@ public class GraphEdgeServiceH2DBTests {
     public void exceptionThreeWhileCreateEdge() {
         EdgeGraph edgeGraph = new EdgeGraph("v1", "v2");
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Edge for nodes ([v1, v2], [v2, v1]) already present in the graph.");
+        thrown.expectMessage("Edge for nodes ([v1, v2], [v2, v1]) already present in the graph");
         edgeService.create(edgeGraph);
     }
 
@@ -80,7 +80,7 @@ public class GraphEdgeServiceH2DBTests {
     public void exceptionFourWhileCreateEdge() {
         EdgeGraph edgeGraph = new EdgeGraph("v2", "v1");
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Edge for nodes ([v2, v1], [v1, v2]) already present in the graph.");
+        thrown.expectMessage("Edge for nodes ([v2, v1], [v1, v2]) already present in the graph");
         edgeService.create(edgeGraph);
     }
 
@@ -103,7 +103,7 @@ public class GraphEdgeServiceH2DBTests {
     @Test
     public void exceptionOneWhileCreateEdges() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Collection does not be empty");
+        thrown.expectMessage("Collection must not be empty");
         edgeService.create(new HashSet<>());
     }
 
@@ -122,7 +122,7 @@ public class GraphEdgeServiceH2DBTests {
     @Test
     public void exceptionThreeWhileCreateEdges() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Collection does not be contain null element");
+        thrown.expectMessage("Collection must not contain a null item");
         Set<EdgeGraph> edgeGraphs = Stream.of(
             null,
             new EdgeGraph("v2", "v5"),
@@ -134,7 +134,7 @@ public class GraphEdgeServiceH2DBTests {
     @Test
     public void exceptionFourWhileCreateEdges() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Edge for nodes ([v1, v2], [v2, v1]) already present in the graph.");
+        thrown.expectMessage("Edge for nodes ([v1, v2], [v2, v1]) already present in the graph");
         Set<EdgeGraph> edgeGraphs = Stream.of(
             new EdgeGraph("v1", "v2"),
             new EdgeGraph("v2", "v5")

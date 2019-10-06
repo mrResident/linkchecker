@@ -10,7 +10,7 @@ abstract public class BaseDto implements HasId {
     /**
      * ID of transport object.
      */
-    private Integer id;
+    protected Integer id;
 
     /**
      * Default ctor.

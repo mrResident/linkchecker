@@ -138,14 +138,14 @@ public class GraphEdgeServiceMockTests {
     @Test
     public void exceptionThreeWhileCreateEdges() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Collection does not be empty");
+        thrown.expectMessage("Collection must not be empty");
         edgeService.create(new HashSet<>());
     }
 
     @Test
     public void exceptionFourWhileCreateEdges() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Collection does not be contain null element");
+        thrown.expectMessage("Collection must not contain a null item");
         Set<EdgeGraph> edgeGraphs = new HashSet<>();
         edgeGraphs.add(new EdgeGraph("v1", "v2"));
         edgeGraphs.add(null);

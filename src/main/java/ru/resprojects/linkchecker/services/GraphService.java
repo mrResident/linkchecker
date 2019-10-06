@@ -1,6 +1,7 @@
 package ru.resprojects.linkchecker.services;
 
 import ru.resprojects.linkchecker.dto.GraphDto;
+import ru.resprojects.linkchecker.util.exeptions.ApplicationException;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
 import java.util.Set;
@@ -8,44 +9,48 @@ import java.util.Set;
 import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
 
 /**
- * GraphService - the interface for work with graph. Graph may be represented
- * how one big linked graph with subgraphs and may be represented how set of
- * unlinked graphs.
+ * GraphService - the interface for work with <a href = https://en.wikipedia.org/wiki/Graph_(discrete_mathematics)#Graph>undirected graph</a>.
  */
 public interface GraphService {
 
     /**
-     * Checking input graph data, removing cycles from input graph and saving
-     * to DB.
+     * Checking input graph data, removing cycles from input graph and saving it
+     * to the DB.
      * @param graphTo graph {@link GraphDto}
      * @return graph.
+     * @throws ApplicationException if found errors.
      */
-    GraphDto create(final GraphDto graphTo);
+    GraphDto create(final GraphDto graphTo) throws ApplicationException;
 
     /**
      * Get graph.
      * @return graph {@link GraphDto}
-     * @throws NotFoundException if graph not found in database or corrupted.
      */
-    GraphDto get() throws NotFoundException;
+    GraphDto get();
 
     /**
-     * Remove all graph.
+     * Remove graph.
      */
     void clear();
 
     /**
-     * Remove subgraph from graph. If subgraph is not found, throws exception.
-     * @param graphDto subgraph.
-     * @throws NotFoundException if graph not found in database or corrupted.
+     * Checking route between nodes.
+     * @param nodeNameSet collection of the unique nodes name.
+     * @return check result in JSON format.
+     * @throws NotFoundException if route is not found
      */
-    void delete(final GraphDto graphDto) throws NotFoundException;
+    String checkRoute(final Set<String> nodeNameSet) throws NotFoundException;
 
     /**
-     * Checking route between nodes.
-     * @param nodes set of graph nodes. {@link GraphDto.NodeGraph}
-     * @return check result in JSON format.
+     * Get access to nodes of the graph.
+     * @return {@link GraphNodeService}
      */
-    String checkRoute(final Set<NodeGraph> nodes);
+    GraphNodeService getNodes();
+
+    /**
+     * Get access to edges of the graph.
+     * @return {@link GraphEdgeService}
+     */
+    GraphEdgeService getEdges();
 }
 

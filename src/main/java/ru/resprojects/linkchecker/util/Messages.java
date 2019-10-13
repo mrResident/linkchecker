@@ -5,8 +5,10 @@ import static ru.resprojects.linkchecker.util.ValidationUtil.*;
 public final class Messages {
 
     public static final String MSG_ARGUMENT_NULL = "Argument must not be null";
+
     public static final String MSG_COLLECTION_EMPTY = "Collection must not be empty";
     public static final String MSG_COLLECTION_CONTAIN_NULL = "Collection must not contain a null item";
+    public static final String MSG_COLLECTION_CONTAIN_ONE_ELEMENT = "Collection must have more than one element";
 
     public static final String MSG_BY_ID_ERROR = "%s with ID = %d is not found";
 
@@ -14,6 +16,7 @@ public final class Messages {
     public static final String NODE_MSG_BY_NAME_ERROR = "Node with NAME = %s is not found";
     public static final String NODE_MSG_BY_OBJECT_ERROR = "Node %s is not found";
     public static final String NODE_MSG_NOT_REACHABLE = "Nodes %s and %s are not reachable to each other";
+    public static final String NODE_MSG_IS_FAULT = "Node %s is fault";
 
     public static final String EDGE_MSG_GET_ERROR = "Edge for nodes [%s, %s] is not found";
     public static final String EDGE_MSG_ALREADY_PRESENT_ERROR = "Edge for nodes ([%s, %s], [%s, %s]) already present in the graph";

@@ -1,9 +1,5 @@
 package ru.resprojects.linkchecker.services;
 
-import org.jgrapht.Graph;
-import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
-import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
-import org.jgrapht.graph.DefaultEdge;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,40 +9,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
 import ru.resprojects.linkchecker.dto.GraphDto;
-import ru.resprojects.linkchecker.model.AbstractNamedEntity;
-import ru.resprojects.linkchecker.model.Node;
-import ru.resprojects.linkchecker.util.GraphUtil;
 import ru.resprojects.linkchecker.util.Messages;
 import ru.resprojects.linkchecker.util.exeptions.ApplicationException;
-import ru.resprojects.linkchecker.util.exeptions.ErrorPlaceType;
-import ru.resprojects.linkchecker.util.exeptions.ErrorType;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
-import static ru.resprojects.linkchecker.util.GraphUtil.getRandomEvent;
-import static ru.resprojects.linkchecker.util.GraphUtil.graphBuilder;
-import static ru.resprojects.linkchecker.util.GraphUtil.nodeGraphToNode;
 import static ru.resprojects.linkchecker.util.Messages.MSG_ARGUMENT_NULL;
+import static ru.resprojects.linkchecker.util.Messages.MSG_COLLECTION_CONTAIN_ONE_ELEMENT;
 import static ru.resprojects.linkchecker.util.Messages.MSG_COLLECTION_EMPTY;
 import static ru.resprojects.linkchecker.util.Messages.NODE_MSG_BY_NAME_ERROR;
-import static ru.resprojects.linkchecker.util.Messages.NODE_MSG_NOT_REACHABLE;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LinkcheckerApplication.class)
@@ -108,14 +93,14 @@ public class GraphServiceH2DBTests {
 	}
 
 	@Test
-	public void exceptionOneWhileCreateGraph() {
+	public void createGraphNullArgumentException() {
 		thrown.expect(ApplicationException.class);
 		thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
 		graphService.create(null);
 	}
 
 	@Test
-	public void exceptionTwoWhileCreateGraph() {
+	public void createGraphEmptyCollectionException() {
 		thrown.expect(ApplicationException.class);
 		thrown.expectMessage("NODES: " + Messages.MSG_COLLECTION_EMPTY);
 		GraphDto graphDto = new GraphDto();
@@ -174,56 +159,50 @@ public class GraphServiceH2DBTests {
 	}
 
 	@Test
-	public void exceptionOneCheckRoute() {
-		Set<String> nodeNames = Stream.of("v1", "v2", "v3", "v7").collect(Collectors.toSet());
-		thrown.expect(NotFoundException.class);
-		graphService.checkRoute(nodeNames);
+	public void checkNodesRoute() {
+		Set<String> nodeNames = Stream.of("v1", "v2", "v3", "v5").collect(Collectors.toSet());
+		int faultCount = 0;
+		Map<String, Integer> nodeErrorStat = new HashMap<>();
+		for (int i = 0; i < 100; i++) {
+			try {
+				LOG.debug(graphService.checkRoute(nodeNames));
+			} catch (ApplicationException e) {
+				String node = e.getMessage().split(" ")[1];
+				LOG.debug(node);
+				if (!nodeErrorStat.containsKey(node)) {
+					nodeErrorStat.put(node, 1);
+				} else {
+					Integer val = nodeErrorStat.get(node);
+					nodeErrorStat.put(node, ++val);
+				}
+				faultCount++;
+			}
+		}
+		LOG.debug(graphService.get().toString());
+		LOG.debug("FAULT COUNT for CHECK ROUTE = " + faultCount);
+		nodeErrorStat.forEach((key, value) -> LOG.debug("NODE " + key + " error count = " + value));
 	}
 
 	@Test
-	public void findPath() {
-		List<String> nodeNameList = Stream.of("v1", "v2", "v3").collect(Collectors.toList());
-		GraphDto graphDto = graphService.get();
-		Graph<Node, DefaultEdge> graph = graphBuilder(graphDto.getNodes(),
-			graphDto.getEdges());
-		DijkstraShortestPath<Node, DefaultEdge> dAlg = new DijkstraShortestPath<>(graph);
-		Node firstNode = nodeGraphToNode(graphDto.getNodes().stream()
-			.filter(ng -> ng.getName().equalsIgnoreCase(nodeNameList.get(0)))
-			.findFirst()
-			.orElse(null));
-		if (Objects.isNull(firstNode)) {
-			throw new NotFoundException(
-				String.format(NODE_MSG_BY_NAME_ERROR, nodeNameList.get(0)),
-				ErrorPlaceType.GRAPH
-			);
-		}
-		ShortestPathAlgorithm.SingleSourcePaths<Node, DefaultEdge> paths = dAlg.getPaths(firstNode);
-		for (String name : nodeNameList) {
-			if (name.equals(nodeNameList.get(0))) {
-				continue;
-			}
-			Node nextNode = nodeGraphToNode(graphDto.getNodes().stream()
-				.filter(ng -> ng.getName().equalsIgnoreCase(name))
-				.findFirst()
-				.orElse(null));
-			if (Objects.isNull(nextNode)) {
-				throw new NotFoundException(
-					String.format(NODE_MSG_BY_NAME_ERROR, nodeNameList.get(0)),
-					ErrorPlaceType.GRAPH
-				);
-			}
-			LOG.debug("NEXT NODE: " + nextNode.getName());
-			List<Node> findNodes = paths.getPath(nextNode).getVertexList();
-			List<String> findNodesName = findNodes.stream()
-				.map(AbstractNamedEntity::getName)
-				.collect(Collectors.toList());
-			if (!nodeNameList.containsAll(findNodesName)) {
-				throw new NotFoundException(
-					String.format(NODE_MSG_NOT_REACHABLE, nodeNameList.get(0), name),
-					ErrorPlaceType.GRAPH
-				);
-			}
-		}
-		LOG.debug("THE END");
+	public void checkRouteNullCollectionException() {
+		thrown.expect(ApplicationException.class);
+		thrown.expectMessage(MSG_ARGUMENT_NULL);
+		graphService.checkRoute(null);
 	}
+
+	@Test
+	public void checkRouteEmptyCollectionException() {
+		thrown.expect(ApplicationException.class);
+		thrown.expectMessage(MSG_COLLECTION_EMPTY);
+		graphService.checkRoute(new HashSet<>());
+	}
+
+	@Test
+	public void checkRouteCollectionHaveOneElementException() {
+		Set<String> nodeNames = Stream.of("v10").collect(Collectors.toSet());
+		thrown.expect(ApplicationException.class);
+		thrown.expectMessage(MSG_COLLECTION_CONTAIN_ONE_ELEMENT);
+		graphService.checkRoute(nodeNames);
+	}
+
 }

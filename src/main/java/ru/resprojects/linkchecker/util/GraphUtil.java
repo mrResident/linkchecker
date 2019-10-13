@@ -18,7 +18,9 @@ import ru.resprojects.linkchecker.model.Node;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -31,7 +33,7 @@ import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 /**
  * Helper class for work with graph.
  */
-public final class GraphUtil {
+public class GraphUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(GraphUtil.class);
 
@@ -51,8 +53,12 @@ public final class GraphUtil {
     public static Graph<Node, DefaultEdge> graphBuilder(final Collection<NodeGraph> nodesGraph,
         final Collection<EdgeGraph> edgesGraph) {
         Graph<Node, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
+        if (Objects.isNull(nodesGraph) || Objects.isNull(edgesGraph)) {
+            return graph;
+        }
         Set<Node> nodes = nodeGraphsToNodes(nodesGraph);
         Set<Edge> edges = edgesGraph.stream()
+            .filter(Objects::nonNull)
             .map(eg -> {
                 Node nodeOne = nodes.stream()
                     .filter(n -> n.getName().equalsIgnoreCase(eg.getNodeOne()))
@@ -79,10 +85,13 @@ public final class GraphUtil {
     /**
      * Convert graph from {@see <a href = https://github.com/jgrapht/jgrapht/blob/master/README.md>JGraphT</a>} format
      * to graph DTO {@link GraphDto} format.
+     * ATTENTION: GraphDto will return edges without IDs,
+     * because graph in JGraphT format does not store IDs for edges!
      * @param graph graph in JGraphT format.
      * @return {@link GraphDto}.
      */
     public static GraphDto graphToGraphDto(final Graph<Node, DefaultEdge> graph) {
+        if (Objects.isNull(graph)) return new GraphDto();
         return new GraphDto(getNodesDtoFromGraph(graph), getEdgesDtoFromGraph(graph));
     }
 
@@ -91,7 +100,8 @@ public final class GraphUtil {
      * @param graph graph in the JGraphT format.
      * @return collection of GraphDto nodes.
      */
-    public static Set<NodeGraph> getNodesDtoFromGraph(final Graph<Node, DefaultEdge> graph) {
+    private static Set<NodeGraph> getNodesDtoFromGraph(final Graph<Node, DefaultEdge> graph) {
+        if (Objects.isNull(graph)) return new HashSet<>();
         return graph.vertexSet().stream()
             .map(n -> new NodeGraph(n.getId(), n.getName(), n.getCounter()))
             .collect(Collectors.toSet());
@@ -100,9 +110,10 @@ public final class GraphUtil {
     /**
      * Converting JGraphT edges to the GraphDto edges {@link NodeGraph}
      * @param graph graph in the JGraphT format.
-     * @return collection of GraphDto edges.
+     * @return collection of GraphDto edges without IDs.
      */
-    public static Set<EdgeGraph> getEdgesDtoFromGraph(final Graph<Node, DefaultEdge> graph) {
+    private static Set<EdgeGraph> getEdgesDtoFromGraph(final Graph<Node, DefaultEdge> graph) {
+        if (Objects.isNull(graph)) return new HashSet<>();
         return graph.edgeSet().stream()
             .map(e -> new EdgeGraph(graph.getEdgeSource(e).getName(), graph.getEdgeTarget(e).getName()))
             .collect(Collectors.toSet());
@@ -111,6 +122,8 @@ public final class GraphUtil {
     /**
      * Find a cycle basis of an undirected graph using a variant of Paton's
      * algorithm from {@see <a href = https://github.com/jgrapht/jgrapht/blob/master/README.md>JGraphT</a>} library.
+     * NOTE: while removing cycles algorithm each time returns a random set of
+     * graph edges for the same graph.
      * @param graph graph in JGraphT format.
      * @return graph in JGraphT format without cycles.
      */
@@ -146,11 +159,12 @@ public final class GraphUtil {
         return result;
     }
 
-    public static boolean isGraphContainCycles(final Graph<Node, DefaultEdge> graph) {
+    private static boolean isGraphContainCycles(final Graph<Node, DefaultEdge> graph) {
         SimpleGraph<Node, DefaultEdge> result = new SimpleGraph<>(DefaultEdge.class);
         Graphs.addGraph(result, graph);
         PatonCycleBase<Node, DefaultEdge> patonCycleBase = new PatonCycleBase<>(result);
-        Set<GraphPath<Node, DefaultEdge>> paths = patonCycleBase.getCycleBasis().getCyclesAsGraphPaths();
+        Set<GraphPath<Node, DefaultEdge>> paths = patonCycleBase.getCycleBasis()
+            .getCyclesAsGraphPaths();
         return !paths.isEmpty();
     }
 
@@ -161,6 +175,7 @@ public final class GraphUtil {
      * @return graph in GraphViz.dot format.
      */
     public static String exportToGraphViz(final GraphDto graphTo) {
+        if (Objects.isNull(graphTo)) return "";
         Graph<Node, DefaultEdge> graph = graphBuilder(graphTo.getNodes(), graphTo.getEdges());
         ComponentNameProvider<Node> vertexIdProvider = component ->
             component.getName() + "_" + component.getId();
@@ -175,15 +190,16 @@ public final class GraphUtil {
         } catch (Exception e) {
             LOG.debug("Fail export graph to GraphViz format.");
         }
-        return null;
+        return "";
     }
 
     /**
      * Converting collection of {@link Node} into set of {@link NodeGraph}
      * @param nodes node model objects collection.
-     * @return set of graph node DTO
+     * @return collection of graph node DTO or empty collection if nodes is null.
      */
     public static Set<NodeGraph> nodesToNodeGraphs(final Collection<Node> nodes) {
+        if (Objects.isNull(nodes)) return new HashSet<>();
         return nodes.stream()
             .filter(Objects::nonNull)
             .map(GraphUtil::nodeToNodeGraph)
@@ -191,11 +207,13 @@ public final class GraphUtil {
     }
 
     /**
-     * Converting collection of {@link NodeGraph} to the list of {@link Node}
+     * Converting collection of {@link NodeGraph} to collection of {@link Node}
      * @param nodeGraphs collection of graph node DTO
-     * @return list of node model objects
+     * @return collection of node model objects or empty collection if
+     * nodeGraphs is null.
      */
     public static Set<Node> nodeGraphsToNodes(final Collection<NodeGraph> nodeGraphs) {
+        if (Objects.isNull(nodeGraphs)) return new HashSet<>();
         return nodeGraphs.stream()
             .filter(Objects::nonNull)
             .map(GraphUtil::nodeGraphToNode)
@@ -209,7 +227,11 @@ public final class GraphUtil {
      */
     public static NodeGraph nodeToNodeGraph(final Node node) {
         if (node != null) {
-            return new NodeGraph(node.getId(), node.getName(), node.getCounter());
+            return new NodeGraph(
+                node.getId(),
+                node.getName(),
+                node.getCounter()
+            );
         } else {
             return null;
         }
@@ -233,11 +255,12 @@ public final class GraphUtil {
     }
 
     /**
-     * Converting collection of {@link Edge} to set of {@link EdgeGraph}
+     * Converting collection of {@link Edge} to collection of {@link EdgeGraph}
      * @param edges model objects collection.
-     * @return set of graph edge DTO
+     * @return collection of graph edge DTO or empty collection if param is null.
      */
     public static Set<EdgeGraph> edgesToEdgeGraphs(final Collection<Edge> edges) {
+        if (Objects.isNull(edges)) return new HashSet<>();
         return edges.stream()
             .filter(Objects::nonNull)
             .map(GraphUtil::edgeToEdgeGraph)
@@ -258,6 +281,11 @@ public final class GraphUtil {
         }
     }
 
+    /**
+     * Getting graph edges {@link Edge} from graph data transfer object {@link GraphDto}
+     * @param graph graph data transfer object
+     * @return collection of graph edges.
+     */
     public static Set<Edge> getEdgesFromGraphDto(final GraphDto graph) {
         return graph.getEdges().stream()
             .map(eg -> {
@@ -279,18 +307,21 @@ public final class GraphUtil {
     }
 
     /**
-     * Get a pseudo random event with a given probability.
-     * @param probability of event
-     * @return true if pseudo random number less than probability.
+     * Node random failure generator.
+     * @param nodes node graph collection
+     * @return map with key as node graph name and value as fault of node graph
+     * state or null if node graph collection is empty or null.
      */
-    public static boolean getRandomEvent(int probability) {
-        if (probability == 100) {
-            return true;
+    public static Map<String, Boolean> getRandomNodeFault(Collection<NodeGraph> nodes) {
+        Map<String, Boolean> result = new HashMap<>();
+        if (Objects.isNull(nodes) || nodes.isEmpty()) {
+            return result;
         }
-        if (probability == 0) {
-            return false;
-        }
-        return ThreadLocalRandom.current().nextInt(100) < probability;
+        nodes.forEach(nodeGraph -> {
+            boolean isFault = ThreadLocalRandom.current().nextInt(100) >= 90;
+            result.put(nodeGraph.getName(), isFault);
+        });
+        return result;
     }
 
 }

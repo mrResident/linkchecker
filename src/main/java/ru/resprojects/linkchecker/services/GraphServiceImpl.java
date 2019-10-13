@@ -20,6 +20,7 @@ import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,10 +28,7 @@ import java.util.stream.Collectors;
 import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
 import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 import static ru.resprojects.linkchecker.util.GraphUtil.*;
-import static ru.resprojects.linkchecker.util.Messages.MSG_ARGUMENT_NULL;
-import static ru.resprojects.linkchecker.util.Messages.MSG_COLLECTION_EMPTY;
-import static ru.resprojects.linkchecker.util.Messages.NODE_MSG_BY_NAME_ERROR;
-import static ru.resprojects.linkchecker.util.Messages.NODE_MSG_NOT_REACHABLE;
+import static ru.resprojects.linkchecker.util.Messages.*;
 
 @Service
 public class GraphServiceImpl implements GraphService {
@@ -111,12 +109,23 @@ public class GraphServiceImpl implements GraphService {
                 ErrorType.DATA_ERROR,
                 ErrorPlaceType.GRAPH,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                "NODES: " + MSG_COLLECTION_EMPTY
+                MSG_COLLECTION_EMPTY
+            );
+        }
+        if (nodeNameSet.size() == 1) {
+            LOG.debug("Stopping check route because the collection of" +
+                " nodes have only one element");
+            throw new ApplicationException(
+                ErrorType.DATA_ERROR,
+                ErrorPlaceType.GRAPH,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                MSG_COLLECTION_CONTAIN_ONE_ELEMENT
             );
         }
         LOG.debug("Checking graph for cycles. If cycles is found, they will be removed.");
         GraphDto graphDto = removeGraphCycles(new GraphDto(nodes.getAll(),
             edges.getAll()));
+        Map<String, Boolean> faultNodes = getRandomNodeFault(graphDto.getNodes());
         List<String> nodeNameList = new ArrayList<>(nodeNameSet);
         Graph<Node, DefaultEdge> graph = graphBuilder(graphDto.getNodes(),
             graphDto.getEdges());
@@ -131,11 +140,13 @@ public class GraphServiceImpl implements GraphService {
                 ErrorPlaceType.GRAPH
             );
         }
-        //TODO Добавить событие на случайный сбой
-//        if (getRandomEvent(firstNode.getProbability())) {
-//            return "NODE " + firstNode.getName() + " get crash";
-//        }
         ShortestPathAlgorithm.SingleSourcePaths<Node, DefaultEdge> paths = dAlg.getPaths(firstNode);
+        if (faultNodes.getOrDefault(firstNode.getName(), false)) {
+            throw new NotFoundException(
+                String.format(NODE_MSG_IS_FAULT, firstNode.getName()),
+                ErrorPlaceType.GRAPH
+            );
+        }
         nodeNameList.stream().skip(1).forEach(name -> {
             Node nextNode = nodeGraphToNode(graphDto.getNodes().stream()
                 .filter(ng -> ng.getName().equalsIgnoreCase(name))
@@ -143,7 +154,13 @@ public class GraphServiceImpl implements GraphService {
                 .orElse(null));
             if (Objects.isNull(nextNode)) {
                 throw new NotFoundException(
-                    String.format(NODE_MSG_BY_NAME_ERROR, nodeNameList.get(0)),
+                    String.format(NODE_MSG_BY_NAME_ERROR, name),
+                    ErrorPlaceType.GRAPH
+                );
+            }
+            if (faultNodes.getOrDefault(nextNode.getName(), false)) {
+                throw new NotFoundException(
+                    String.format(NODE_MSG_IS_FAULT, name),
                     ErrorPlaceType.GRAPH
                 );
             }
@@ -158,7 +175,15 @@ public class GraphServiceImpl implements GraphService {
                 );
             }
         });
-        return null;
+        nodeNameList.forEach(name ->
+            graphDto.getNodes().stream()
+                .filter(ng -> ng.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .ifPresent(ng -> {
+                    ng.setCounter(ng.getCounter() + 1);
+                    nodes.update(ng);
+                }));
+        return String.format("Route for nodes %s is found", nodeNameList.toString());
     }
 
     private GraphDto removeGraphCycles(final GraphDto graph) {

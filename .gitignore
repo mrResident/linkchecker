@@ -4,6 +4,7 @@ target/
 !**/src/main/**
 !**/src/test/**
 TestRESTful/
+code_coverage_report/
 *.log
 *.gz
 

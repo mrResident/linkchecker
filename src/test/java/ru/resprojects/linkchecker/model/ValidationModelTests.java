@@ -7,7 +7,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.resprojects.linkchecker.LinkcheckerApplication;
 import ru.resprojects.linkchecker.util.Messages;
 
 import javax.validation.ConstraintViolation;
@@ -17,6 +20,8 @@ import javax.validation.ValidatorFactory;
 import java.util.Set;
 
 @RunWith(SpringRunner.class)
+@SpringBootTest(classes = LinkcheckerApplication.class)
+@ActiveProfiles(profiles = "moc_test")
 public class ValidationModelTests {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidationModelTests.class);

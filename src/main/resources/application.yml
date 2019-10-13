@@ -55,8 +55,11 @@ spring:
     initialization-mode: always
     platform: h2
 ---
-
 spring:
+  profiles: moc_test
+---
+spring:
+  profiles: test, dev, prod
   jpa:
     properties:
       hibernate:
@@ -64,6 +67,8 @@ spring:
           batch_size: 10
         order_inserts: true
         order_updates: true
+---
+spring:
   output:
     ansi:
       enabled: always

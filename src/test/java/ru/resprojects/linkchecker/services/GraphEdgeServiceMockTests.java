@@ -6,8 +6,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.resprojects.linkchecker.LinkcheckerApplication;
 import ru.resprojects.linkchecker.model.Edge;
 import ru.resprojects.linkchecker.model.Node;
 import ru.resprojects.linkchecker.repositories.EdgeRepository;
@@ -33,6 +36,8 @@ import static org.mockito.Mockito.when;
 import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 
 @RunWith(SpringRunner.class)
+@SpringBootTest(classes = LinkcheckerApplication.class)
+@ActiveProfiles(profiles = "moc_test")
 public class GraphEdgeServiceMockTests {
 
     @Rule

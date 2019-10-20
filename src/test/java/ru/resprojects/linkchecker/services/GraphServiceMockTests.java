@@ -11,8 +11,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.resprojects.linkchecker.AppProperties;
+import ru.resprojects.linkchecker.LinkcheckerApplication;
 import ru.resprojects.linkchecker.util.GraphUtil;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
@@ -28,14 +33,13 @@ import static org.mockito.BDDMockito.when;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
 import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
-import static ru.resprojects.linkchecker.util.Messages.NODE_MSG_BY_NAME_ERROR;
-import static ru.resprojects.linkchecker.util.Messages.NODE_MSG_IS_FAULT;
-import static ru.resprojects.linkchecker.util.Messages.NODE_MSG_NOT_REACHABLE;
 
 //How to use PowerMock https://www.baeldung.com/intro-to-powermock
 //How to use PowerMock and SpringRunner https://stackoverflow.com/a/57780838
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(SpringRunner.class)
+@SpringBootTest(classes = LinkcheckerApplication.class)
+@ActiveProfiles(profiles = "moc_test")
 @PrepareForTest(GraphUtil.class)
 @PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "javax.xml.transform.*", "org.xml.*", "javax.management.*", "javax.net.ssl.*", "com.sun.org.apache.xalan.internal.xsltc.trax.*"})
 public class GraphServiceMockTests {
@@ -53,12 +57,15 @@ public class GraphServiceMockTests {
     @MockBean
     private GraphNodeService nodeService;
 
+    @Autowired
+    private AppProperties properties;
+
     private Set<NodeGraph> nodeGraphSet;
     private Set<EdgeGraph> edgeGraphSet;
 
     @Before
     public void init() {
-        graphService = new GraphServiceImpl(edgeService, nodeService);
+        graphService = new GraphServiceImpl(edgeService, nodeService, properties);
         nodeGraphSet = Stream.of(
             new NodeGraph(5000, "v1", 0),
             new NodeGraph(5001, "v2", 0),
@@ -77,7 +84,7 @@ public class GraphServiceMockTests {
     @Test
     public void checkRouteNodeFaultException() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage(String.format(NODE_MSG_IS_FAULT, "v1"));
+        thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_IS_FAULT"), "v1"));
         spy(GraphUtil.class);
         Map<String, Boolean> nodesFault = new HashMap<>();
         nodesFault.put("v1", true);
@@ -92,7 +99,7 @@ public class GraphServiceMockTests {
     @Test
     public void checkRouteNodeNotReachableException() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage(String.format(NODE_MSG_NOT_REACHABLE, "v1", "v4"));
+        thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_NOT_REACHABLE"), "v1", "v4"));
         spy(GraphUtil.class);
         Map<String, Boolean> nodesFault = new HashMap<>();
         nodesFault.put("v1", false);
@@ -108,7 +115,7 @@ public class GraphServiceMockTests {
     @Test
     public void checkRouteNodeNotFoundException() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage(String.format(NODE_MSG_BY_NAME_ERROR, "v7"));
+        thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), "v7"));
         spy(GraphUtil.class);
         Map<String, Boolean> nodesFault = new HashMap<>();
         nodesFault.put("v1", false);

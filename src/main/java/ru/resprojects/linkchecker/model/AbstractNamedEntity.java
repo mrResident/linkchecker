@@ -6,7 +6,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import static ru.resprojects.linkchecker.util.ValidationUtil.*;
-import static ru.resprojects.linkchecker.util.Messages.*;
 
 /**
  * Abstract base class for named database entity.

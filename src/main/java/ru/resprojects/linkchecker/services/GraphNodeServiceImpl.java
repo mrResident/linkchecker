@@ -3,6 +3,7 @@ package ru.resprojects.linkchecker.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ru.resprojects.linkchecker.AppProperties;
 import ru.resprojects.linkchecker.repositories.NodeRepository;
 import ru.resprojects.linkchecker.util.GraphUtil;
 import ru.resprojects.linkchecker.util.exeptions.ApplicationException;
@@ -15,16 +16,17 @@ import java.util.Set;
 
 import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
 import static ru.resprojects.linkchecker.util.ValidationUtil.checkNotFound;
-import static ru.resprojects.linkchecker.util.Messages.*;
 
 @Service
 public class GraphNodeServiceImpl implements GraphNodeService {
 
     private final NodeRepository nodeRepository;
+    private final AppProperties properties;
 
     @Autowired
-    public GraphNodeServiceImpl(NodeRepository nodeRepository) {
+    public GraphNodeServiceImpl(final NodeRepository nodeRepository, final AppProperties properties) {
         this.nodeRepository = nodeRepository;
+        this.properties = properties;
     }
 
     @Override
@@ -34,7 +36,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
                 ErrorType.DATA_ERROR,
                 ErrorPlaceType.NODE,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                MSG_ARGUMENT_NULL
+                properties.getAppMsg().get("MSG_ARGUMENT_NULL")
             );
         }
         return GraphUtil.nodeToNodeGraph(nodeRepository.save(
@@ -48,7 +50,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
                 ErrorType.DATA_ERROR,
                 ErrorPlaceType.NODE,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                MSG_ARGUMENT_NULL
+                properties.getAppMsg().get("MSG_ARGUMENT_NULL")
             );
         }
         if (nodeGraphs.isEmpty()) {
@@ -56,7 +58,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
                 ErrorType.DATA_ERROR,
                 ErrorPlaceType.NODE,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                MSG_COLLECTION_EMPTY
+                properties.getAppMsg().get("MSG_COLLECTION_EMPTY")
             );
         }
         nodeGraphs.forEach(nodeGraph -> {
@@ -65,7 +67,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
                     ErrorType.DATA_ERROR,
                     ErrorPlaceType.NODE,
                     HttpStatus.UNPROCESSABLE_ENTITY,
-                    MSG_COLLECTION_CONTAIN_NULL
+                    properties.getAppMsg().get("MSG_COLLECTION_CONTAIN_NULL")
                 );
             }
         });
@@ -80,11 +82,11 @@ public class GraphNodeServiceImpl implements GraphNodeService {
                 ErrorType.DATA_ERROR,
                 ErrorPlaceType.NODE,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                MSG_ARGUMENT_NULL
+                properties.getAppMsg().get("MSG_ARGUMENT_NULL")
             );
         }
         checkNotFound(nodeRepository.save(
-            GraphUtil.nodeGraphToNode(nodeGraph)), NODE_MSG_UPDATE_ERROR + nodeGraph.getId(),
+            GraphUtil.nodeGraphToNode(nodeGraph)), properties.getNodeMsg().get("NODE_MSG_UPDATE_ERROR") + nodeGraph.getId(),
             ErrorPlaceType.NODE
         );
     }
@@ -94,7 +96,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
         if (nodeRepository.existsById(id)) {
             nodeRepository.deleteById(id);
         } else {
-            throw new NotFoundException(String.format(MSG_BY_ID_ERROR, ErrorPlaceType.NODE, id), ErrorPlaceType.NODE);
+            throw new NotFoundException(String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), ErrorPlaceType.NODE, id), ErrorPlaceType.NODE);
         }
     }
 
@@ -103,7 +105,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
         if (nodeRepository.existsByName(name)) {
             nodeRepository.deleteByName(name);
         } else {
-            throw new NotFoundException(String.format(NODE_MSG_BY_NAME_ERROR, name), ErrorPlaceType.NODE);
+            throw new NotFoundException(String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), name), ErrorPlaceType.NODE);
         }
     }
 
@@ -114,7 +116,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
                 ErrorType.DATA_ERROR,
                 ErrorPlaceType.NODE,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                MSG_ARGUMENT_NULL
+                properties.getAppMsg().get("MSG_ARGUMENT_NULL")
             );
         }
         NodeGraph nodeFromRepo = GraphUtil.nodeToNodeGraph(nodeRepository
@@ -123,7 +125,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
             nodeRepository.deleteById(nodeGraph.getId());
         } else {
             throw new NotFoundException(String.format(
-                NODE_MSG_BY_OBJECT_ERROR, nodeGraph.toString()), ErrorPlaceType.NODE
+                properties.getNodeMsg().get("NODE_MSG_BY_OBJECT_ERROR"), nodeGraph.toString()), ErrorPlaceType.NODE
             );
         }
     }
@@ -142,7 +144,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
     public NodeGraph get(final String name) throws NotFoundException {
         NodeGraph nodeGraph = GraphUtil.nodeToNodeGraph(nodeRepository.getByName(name));
         return checkNotFound(nodeGraph,
-            String.format(NODE_MSG_BY_NAME_ERROR, name), ErrorPlaceType.NODE);
+            String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), name), ErrorPlaceType.NODE);
     }
 
     @Override
@@ -150,7 +152,7 @@ public class GraphNodeServiceImpl implements GraphNodeService {
         NodeGraph nodeGraph = GraphUtil.nodeToNodeGraph(nodeRepository
             .findById(id).orElse(null));
         return checkNotFound(nodeGraph,
-            String.format(MSG_BY_ID_ERROR, ErrorPlaceType.NODE, id), ErrorPlaceType.NODE);
+            String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), ErrorPlaceType.NODE, id), ErrorPlaceType.NODE);
     }
 
 }

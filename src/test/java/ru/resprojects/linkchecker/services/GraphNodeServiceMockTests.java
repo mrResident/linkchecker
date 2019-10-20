@@ -6,15 +6,16 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.resprojects.linkchecker.AppProperties;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
 import ru.resprojects.linkchecker.model.Node;
 import ru.resprojects.linkchecker.repositories.NodeRepository;
 import ru.resprojects.linkchecker.util.GraphUtil;
-import ru.resprojects.linkchecker.util.Messages;
 import ru.resprojects.linkchecker.util.exeptions.ApplicationException;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
@@ -47,9 +48,12 @@ public class GraphNodeServiceMockTests {
     @MockBean
     private NodeRepository nodeRepository;
 
+    @Autowired
+    private AppProperties properties;
+
     @Before
     public void init() {
-        graphNodeService = new GraphNodeServiceImpl(nodeRepository);
+        graphNodeService = new GraphNodeServiceImpl(nodeRepository, properties);
     }
 
     @Test
@@ -65,7 +69,7 @@ public class GraphNodeServiceMockTests {
     @Test
     public void getNodeByNameNotFound() throws NotFoundException {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node with NAME = v1 is not found");
+        thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), "v1"));
         graphNodeService.get("v1");
     }
 
@@ -82,7 +86,7 @@ public class GraphNodeServiceMockTests {
     @Test
     public void getNodeByIdNotFound() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("NODE with ID = 5000 is not found");
+        thrown.expectMessage( String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), "NODE", 5000));
         graphNodeService.getById(5000);
     }
 
@@ -124,7 +128,7 @@ public class GraphNodeServiceMockTests {
     public void exceptionOneWhileDeleteNodeByNodeGraph() {
         NodeGraph nodeGraph = new NodeGraph(5000, "v1", 0);
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage(String.format("Node %s is not found", nodeGraph.toString()));
+        thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_OBJECT_ERROR"), nodeGraph.toString()));
         graphNodeService.delete(nodeGraph);
     }
 
@@ -132,21 +136,21 @@ public class GraphNodeServiceMockTests {
     public void exceptionTwoWhileDeleteNodeByNodeGraph() {
         NodeGraph nodeGraph = new NodeGraph(null, "v1", 0);
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage(String.format("Node %s is not found", nodeGraph.toString()));
+        thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_OBJECT_ERROR"), nodeGraph.toString()));
         graphNodeService.delete(nodeGraph);
     }
 
     @Test
     public void exceptionThreeWhileDeleteNodeByNodeGraph() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
+        thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
         graphNodeService.delete((NodeGraph) null);
     }
 
     @Test
     public void deleteNodeByName() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node with NAME = v1 is not found");
+        thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), "v1"));
         List<Node> nodes = Stream.of(
             new Node(5001, "v2", 0),
             new Node(5002, "v3", 0),
@@ -164,14 +168,14 @@ public class GraphNodeServiceMockTests {
     @Test
     public void exceptionOneWhileDeleteNodeByName() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node with NAME = null is not found");
+        thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), "null"));
         graphNodeService.delete((String) null);
     }
 
     @Test
     public void deleteNodeById() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("NODE with ID = 5000 is not found");
+        thrown.expectMessage( String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), "NODE", 5000));
         List<Node> nodes = Stream.of(
             new Node(5001, "v2", 0),
             new Node(5002, "v3", 0),
@@ -189,7 +193,7 @@ public class GraphNodeServiceMockTests {
     @Test
     public void exceptionOneWhileDeleteNodeById() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("NODE with ID = null is not found");
+        thrown.expectMessage( String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), "NODE", null));
         graphNodeService.delete((Integer) null);
     }
 
@@ -209,7 +213,7 @@ public class GraphNodeServiceMockTests {
     @Test
     public void exceptionWhileCreateNode() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
+        thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
         graphNodeService.create((NodeGraph) null);
     }
 
@@ -230,21 +234,21 @@ public class GraphNodeServiceMockTests {
     @Test
     public void exceptionOneWhileCreateNodes() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
+        thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
         graphNodeService.create((Set<NodeGraph>) null);
     }
 
     @Test
     public void exceptionTwoWhileCreateNodes() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Collection must not be empty");
+        thrown.expectMessage(properties.getAppMsg().get("MSG_COLLECTION_EMPTY"));
         graphNodeService.create(new HashSet<>());
     }
 
     @Test
     public void exceptionThreeWhileCreateNodes() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Collection must not contain a null item");
+        thrown.expectMessage(properties.getAppMsg().get("MSG_COLLECTION_CONTAIN_NULL"));
         Set<NodeGraph> nodeGraphs = new HashSet<>();
         nodeGraphs.add(new NodeGraph("v1"));
         nodeGraphs.add(null);
@@ -266,14 +270,14 @@ public class GraphNodeServiceMockTests {
     @Test
     public void exceptionOneWhileUpdateNode() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
+        thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
         graphNodeService.update(null);
     }
 
     @Test
     public void exceptionTwoWhileUpdateNode() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Error while update node with id = 5000");
+        thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_UPDATE_ERROR"), 5000));
         NodeGraph nodeGraph = new NodeGraph(5000, "v1", 0);
         when(nodeRepository.save(any(Node.class))).thenReturn(null);
         graphNodeService.update(nodeGraph);

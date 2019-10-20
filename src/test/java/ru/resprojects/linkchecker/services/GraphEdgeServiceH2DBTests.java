@@ -13,8 +13,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.resprojects.linkchecker.AppProperties;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
-import ru.resprojects.linkchecker.util.Messages;
 import ru.resprojects.linkchecker.util.exeptions.ApplicationException;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
@@ -42,6 +42,9 @@ public class GraphEdgeServiceH2DBTests {
     @Autowired
     private GraphEdgeService edgeService;
 
+    @Autowired
+    private AppProperties properties;
+
     @Test
     public void createEdge() {
         EdgeGraph edgeGraph = new EdgeGraph("v1", "v4");
@@ -56,7 +59,7 @@ public class GraphEdgeServiceH2DBTests {
     @Test
     public void exceptionOneWhileCreateEdge() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
+        thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
         edgeService.create((EdgeGraph) null);
     }
 
@@ -64,7 +67,7 @@ public class GraphEdgeServiceH2DBTests {
     public void exceptionTwoWhileCreateEdge() {
         EdgeGraph edgeGraph = new EdgeGraph("v10", "v4");
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node with NAME = v10 is not found");
+        thrown.expectMessage( String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), "v10"));
         edgeService.create(edgeGraph);
     }
 
@@ -72,7 +75,7 @@ public class GraphEdgeServiceH2DBTests {
     public void exceptionThreeWhileCreateEdge() {
         EdgeGraph edgeGraph = new EdgeGraph("v1", "v2");
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Edge for nodes ([v1, v2], [v2, v1]) already present in the graph");
+        thrown.expectMessage(String.format(properties.getEdgeMsg().get("EDGE_MSG_ALREADY_PRESENT_ERROR"), "v1", "v2", "v2", "v1"));
         edgeService.create(edgeGraph);
     }
 
@@ -80,7 +83,7 @@ public class GraphEdgeServiceH2DBTests {
     public void exceptionFourWhileCreateEdge() {
         EdgeGraph edgeGraph = new EdgeGraph("v2", "v1");
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Edge for nodes ([v2, v1], [v1, v2]) already present in the graph");
+        thrown.expectMessage(String.format(properties.getEdgeMsg().get("EDGE_MSG_ALREADY_PRESENT_ERROR"), "v2", "v1", "v1", "v2"));
         edgeService.create(edgeGraph);
     }
 
@@ -103,14 +106,14 @@ public class GraphEdgeServiceH2DBTests {
     @Test
     public void exceptionOneWhileCreateEdges() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Collection must not be empty");
+        thrown.expectMessage(properties.getAppMsg().get("MSG_COLLECTION_EMPTY"));
         edgeService.create(new HashSet<>());
     }
 
     @Test
     public void exceptionTwoWhileCreateEdges() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node with NAME = v21 is not found");
+        thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), "v21"));
         Set<EdgeGraph> edgeGraphs = Stream.of(
             new EdgeGraph("v21", "v3"),
             new EdgeGraph("v2", "v5"),
@@ -122,7 +125,7 @@ public class GraphEdgeServiceH2DBTests {
     @Test
     public void exceptionThreeWhileCreateEdges() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Collection must not contain a null item");
+        thrown.expectMessage(properties.getAppMsg().get("MSG_COLLECTION_CONTAIN_NULL"));
         Set<EdgeGraph> edgeGraphs = Stream.of(
             null,
             new EdgeGraph("v2", "v5"),
@@ -134,7 +137,7 @@ public class GraphEdgeServiceH2DBTests {
     @Test
     public void exceptionFourWhileCreateEdges() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage("Edge for nodes ([v1, v2], [v2, v1]) already present in the graph");
+        thrown.expectMessage(String.format(properties.getEdgeMsg().get("EDGE_MSG_ALREADY_PRESENT_ERROR"), "v1", "v2", "v2", "v1"));
         Set<EdgeGraph> edgeGraphs = Stream.of(
             new EdgeGraph("v1", "v2"),
             new EdgeGraph("v2", "v5")
@@ -153,7 +156,7 @@ public class GraphEdgeServiceH2DBTests {
     @Test
     public void exceptionWhileDeleteEdgeById() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("EDGE with ID = 5022 is not found");
+        thrown.expectMessage(String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), "EDGE", 5022));
         edgeService.delete(5022);
     }
 
@@ -167,7 +170,7 @@ public class GraphEdgeServiceH2DBTests {
     @Test
     public void exceptionWhileDeleteEdgeByNodeOneAndNodeTwoNames() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Edge for nodes [v15, v2] is not found");
+        thrown.expectMessage(String.format(properties.getEdgeMsg().get("EDGE_MSG_GET_ERROR"), "v15", "v2"));
         edgeService.delete("v15", "v2");
     }
 
@@ -181,7 +184,7 @@ public class GraphEdgeServiceH2DBTests {
     @Test
     public void exceptionWhileDeleteEdgeByNodeName() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Edges for node v15 is not found");
+        thrown.expectMessage(String.format(properties.getEdgeMsg().get("EDGE_MSG_GET_BY_NAME_ERROR"), "v15"));
         edgeService.delete("v15");
     }
 

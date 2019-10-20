@@ -3,6 +3,7 @@ package ru.resprojects.linkchecker.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ru.resprojects.linkchecker.AppProperties;
 import ru.resprojects.linkchecker.model.Edge;
 import ru.resprojects.linkchecker.model.Node;
 import ru.resprojects.linkchecker.repositories.EdgeRepository;
@@ -22,18 +23,20 @@ import java.util.stream.Collectors;
 
 import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 import static ru.resprojects.linkchecker.util.ValidationUtil.checkNotFound;
-import static ru.resprojects.linkchecker.util.Messages.*;
 
 @Service
 public class GraphEdgeServiceImpl implements GraphEdgeService {
 
     private final EdgeRepository edgeRepository;
     private final NodeRepository nodeRepository;
+    private final AppProperties properties;
 
     @Autowired
-    public GraphEdgeServiceImpl(EdgeRepository edgeRepository, NodeRepository nodeRepository) {
+    public GraphEdgeServiceImpl(final EdgeRepository edgeRepository,
+        final NodeRepository nodeRepository, final AppProperties properties) {
         this.edgeRepository = edgeRepository;
         this.nodeRepository = nodeRepository;
+        this.properties = properties;
     }
 
     private boolean isPresent(final Node nodeOne, final Node nodeTwo) {
@@ -52,17 +55,17 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
                 ErrorType.DATA_ERROR,
                 ErrorPlaceType.EDGE,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                MSG_ARGUMENT_NULL
+                properties.getAppMsg().get("MSG_ARGUMENT_NULL")
             );
         }
         Node nodeOne = checkNotFound(
             nodeRepository.getByName(edgeGraph.getNodeOne()),
-            String.format(NODE_MSG_BY_NAME_ERROR, edgeGraph.getNodeOne()),
+            String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), edgeGraph.getNodeOne()),
             ErrorPlaceType.EDGE
         );
         Node nodeTwo = checkNotFound(
             nodeRepository.getByName(edgeGraph.getNodeTwo()),
-            String.format(NODE_MSG_BY_NAME_ERROR, edgeGraph.getNodeTwo()),
+            String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), edgeGraph.getNodeTwo()),
             ErrorPlaceType.EDGE
         );
         if (isPresent(nodeOne, nodeTwo)) {
@@ -71,7 +74,7 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
                 ErrorPlaceType.EDGE,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 String.format(
-                    EDGE_MSG_ALREADY_PRESENT_ERROR,
+                    properties.getEdgeMsg().get("EDGE_MSG_ALREADY_PRESENT_ERROR"),
                     nodeOne.getName(),
                     nodeTwo.getName(),
                     nodeTwo.getName(),
@@ -90,7 +93,7 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
                 ErrorType.DATA_ERROR,
                 ErrorPlaceType.EDGE,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                MSG_ARGUMENT_NULL
+                properties.getAppMsg().get("MSG_ARGUMENT_NULL")
             );
         }
         if (edgeGraphs.isEmpty()) {
@@ -98,7 +101,7 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
                 ErrorType.DATA_ERROR,
                 ErrorPlaceType.EDGE,
                 HttpStatus.UNPROCESSABLE_ENTITY,
-                MSG_COLLECTION_EMPTY
+                properties.getAppMsg().get("MSG_COLLECTION_EMPTY")
             );
         }
         Map<EdgeGraph, Map<String, Node>> nodes = new HashMap<>();
@@ -108,17 +111,17 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
                     ErrorType.DATA_ERROR,
                     ErrorPlaceType.EDGE,
                     HttpStatus.UNPROCESSABLE_ENTITY,
-                    MSG_COLLECTION_CONTAIN_NULL
+                    properties.getAppMsg().get("MSG_COLLECTION_CONTAIN_NULL")
                 );
             }
             Node nodeOne = checkNotFound(
                 nodeRepository.getByName(edgeGraph.getNodeOne()),
-                String.format(NODE_MSG_BY_NAME_ERROR, edgeGraph.getNodeOne()),
+                String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), edgeGraph.getNodeOne()),
                 ErrorPlaceType.EDGE
             );
             Node nodeTwo = checkNotFound(
                 nodeRepository.getByName(edgeGraph.getNodeTwo()),
-                String.format(NODE_MSG_BY_NAME_ERROR, edgeGraph.getNodeTwo()),
+                String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), edgeGraph.getNodeTwo()),
                 ErrorPlaceType.EDGE
             );
             if (isPresent(nodeOne, nodeTwo)) {
@@ -127,7 +130,7 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
                     ErrorPlaceType.EDGE,
                     HttpStatus.UNPROCESSABLE_ENTITY,
                     String.format(
-                        EDGE_MSG_ALREADY_PRESENT_ERROR,
+                        properties.getEdgeMsg().get("EDGE_MSG_ALREADY_PRESENT_ERROR"),
                         nodeOne.getName(),
                         nodeTwo.getName(),
                         nodeTwo.getName(),
@@ -153,7 +156,7 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
         if (edgeRepository.existsById(id)) {
             edgeRepository.deleteById(id);
         } else {
-            throw new NotFoundException(String.format(MSG_BY_ID_ERROR, ErrorPlaceType.EDGE, id), ErrorPlaceType.EDGE);
+            throw new NotFoundException(String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), ErrorPlaceType.EDGE, id), ErrorPlaceType.EDGE);
         }
     }
 
@@ -161,7 +164,7 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
     public void delete(final String nodeName) throws NotFoundException {
         List<Edge> edges = getEdges(nodeName);
         if (edges.isEmpty()) {
-            throw new NotFoundException(String.format(EDGE_MSG_GET_BY_NAME_ERROR, nodeName), ErrorPlaceType.EDGE);
+            throw new NotFoundException(String.format(properties.getEdgeMsg().get("EDGE_MSG_GET_BY_NAME_ERROR"), nodeName), ErrorPlaceType.EDGE);
         }
         edgeRepository.deleteInBatch(edges);
     }
@@ -169,7 +172,7 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
     @Override
     public void delete(final String nodeNameOne, final String nodeNameTwo) throws NotFoundException {
         Edge edge = checkNotFound(getEdge(nodeNameOne, nodeNameTwo),
-            String.format(EDGE_MSG_GET_ERROR, nodeNameOne, nodeNameTwo),
+            String.format(properties.getEdgeMsg().get("EDGE_MSG_GET_ERROR"), nodeNameOne, nodeNameTwo),
             ErrorPlaceType.EDGE);
         edgeRepository.delete(edge);
     }
@@ -188,7 +191,7 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
     public EdgeGraph get(final String nodeNameOne, final String nodeNameTwo) throws NotFoundException {
         EdgeGraph edgeGraph = GraphUtil.edgeToEdgeGraph(getEdge(nodeNameOne, nodeNameTwo));
         return checkNotFound(edgeGraph,
-            String.format(EDGE_MSG_GET_ERROR, nodeNameOne, nodeNameTwo),
+            String.format(properties.getEdgeMsg().get("EDGE_MSG_GET_ERROR"), nodeNameOne, nodeNameTwo),
             ErrorPlaceType.EDGE);
     }
 
@@ -213,7 +216,7 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
     public EdgeGraph getById(final Integer id) throws NotFoundException {
         EdgeGraph edgeGraph = GraphUtil.edgeToEdgeGraph(edgeRepository.findById(id)
             .orElse(null));
-        return checkNotFound(edgeGraph, String.format(MSG_BY_ID_ERROR, ErrorPlaceType.EDGE, id),
+        return checkNotFound(edgeGraph, String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), ErrorPlaceType.EDGE, id),
             ErrorPlaceType.EDGE);
     }
 

@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
-import ru.resprojects.linkchecker.util.Messages;
+import ru.resprojects.linkchecker.util.ValidationUtil;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -45,12 +45,12 @@ public class ValidationModelTests {
         Set<ConstraintViolation<Node>> violations = validator.validate(node);
         Assert.assertEquals(2, violations.size());
         ConstraintViolation<Node> violation = violations.stream()
-            .filter(v -> Messages.VALIDATOR_NODE_NOT_BLANK_NAME_MESSAGE.equals(v.getMessage()))
+            .filter(v -> ValidationUtil.VALIDATOR_NODE_NOT_BLANK_NAME_MESSAGE.equals(v.getMessage()))
             .findFirst()
             .orElse(null);
         Assert.assertNotNull(violation);
         violation = violations.stream()
-            .filter(v -> Messages.VALIDATOR_NODE_NAME_RANGE_MESSAGE.equals(v.getMessage()))
+            .filter(v -> ValidationUtil.VALIDATOR_NODE_NAME_RANGE_MESSAGE.equals(v.getMessage()))
             .findFirst()
             .orElse(null);
         Assert.assertNotNull(violation);
@@ -67,7 +67,7 @@ public class ValidationModelTests {
         Set<ConstraintViolation<Node>> violations = validator.validate(node);
         Assert.assertEquals(1, violations.size());
         ConstraintViolation<Node> violation = violations.stream()
-            .filter(v -> Messages.VALIDATOR_NODE_NAME_RANGE_MESSAGE.equals(v.getMessage()))
+            .filter(v -> ValidationUtil.VALIDATOR_NODE_NAME_RANGE_MESSAGE.equals(v.getMessage()))
             .findFirst()
             .orElse(null);
         Assert.assertNotNull(violation);

@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import static ru.resprojects.linkchecker.util.ValidationUtil.*;
-import static ru.resprojects.linkchecker.util.Messages.*;
 
 /**
  * Class for transfer object that implements graph.

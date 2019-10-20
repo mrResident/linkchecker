@@ -13,8 +13,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.resprojects.linkchecker.AppProperties;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
-import ru.resprojects.linkchecker.util.Messages;
 import ru.resprojects.linkchecker.util.exeptions.ApplicationException;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
@@ -41,6 +41,9 @@ public class GraphNodeServiceH2DBTests {
     @Autowired
     GraphNodeService nodeService;
 
+    @Autowired
+    AppProperties properties;
+
     @Test
     public void getNodeByName() {
         NodeGraph nodeGraph = nodeService.get("v1");
@@ -60,14 +63,14 @@ public class GraphNodeServiceH2DBTests {
     @Test
     public void getNodeByNameNotFound() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node with NAME = v11 is not found");
+        thrown.expectMessage( String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), "v11"));
         nodeService.get("v11");
     }
 
     @Test
     public void getNodeByIdNotFound() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("NODE with ID = 5050 is not found");
+        thrown.expectMessage(String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), "NODE", 5050));
         nodeService.getById(5050);
     }
 
@@ -94,7 +97,7 @@ public class GraphNodeServiceH2DBTests {
     public void exceptionOneWhileDeleteNodeByNodeGraph() {
         NodeGraph nodeGraph = new NodeGraph(5020, "v1", 0);
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage(String.format("Node %s is not found", nodeGraph.toString()));
+        thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_OBJECT_ERROR"), nodeGraph.toString()));
         nodeService.delete(nodeGraph);
     }
 
@@ -102,7 +105,7 @@ public class GraphNodeServiceH2DBTests {
     public void exceptionTwoWhileDeleteNodeByNodeGraph() {
         NodeGraph nodeGraph = new NodeGraph(5000, "v1", 1);
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage(String.format("Node %s is not found", nodeGraph.toString()));
+        thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_OBJECT_ERROR"), nodeGraph.toString()));
         nodeService.delete(nodeGraph);
     }
 
@@ -116,7 +119,7 @@ public class GraphNodeServiceH2DBTests {
     @Test
     public void exceptionWhileDeleteNodeByName() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Node with NAME = v10 is not found");
+        thrown.expectMessage( String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), "v10"));
         nodeService.delete("v10");
     }
 
@@ -130,7 +133,7 @@ public class GraphNodeServiceH2DBTests {
     @Test
     public void exceptionWhileDeleteNodeById() {
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("NODE with ID = 5100 is not found");
+        thrown.expectMessage(String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), "NODE", 5100));
         nodeService.delete(5100);
     }
 
@@ -171,7 +174,7 @@ public class GraphNodeServiceH2DBTests {
     @Test
     public void exceptionWhileCreateNode() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
+        thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
         nodeService.create((NodeGraph) null);
     }
 
@@ -189,7 +192,7 @@ public class GraphNodeServiceH2DBTests {
     @Test
     public void exceptionOneWhileNodeUpdate() {
         thrown.expect(ApplicationException.class);
-        thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
+        thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
         nodeService.update(null);
     }
 

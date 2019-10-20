@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -13,9 +14,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RunWith(SpringRunner.class)
+@SpringBootTest(classes = LinkcheckerApplication.class)
 public class LinkcheckerApplicationTests {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LinkcheckerApplicationTests.class);
+
+	@Autowired
+	private AppProperties prop;
 
 	@Test
 	public void contextLoads() {
@@ -30,6 +35,9 @@ public class LinkcheckerApplicationTests {
 		genericCollection(stringSet);
 		genericCollection(intSet);
 		genericCollection(doubleSet);
+		LOG.debug(prop.getAppMsg().toString());
+		LOG.debug(prop.getNodeMsg().toString());
+		LOG.debug(prop.getEdgeMsg().toString());
 	}
 
 	private <T> void genericCollection(final Set<T> coll) {

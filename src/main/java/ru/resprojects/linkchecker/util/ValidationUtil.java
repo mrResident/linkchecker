@@ -13,6 +13,10 @@ public final class ValidationUtil {
     public static final int NODE_COUNTER_DEFAULT = 0;
     public static final int MIN_NAME_SIZE = 1;
     public static final int MAX_NAME_SIZE = 50;
+    public static final String VALIDATOR_NOT_NULL_MESSAGE = "Object must not be null";
+    public static final String VALIDATOR_NODE_NOT_BLANK_NAME_MESSAGE = "Value must not be empty";
+    public static final String VALIDATOR_NODE_NAME_RANGE_MESSAGE = "Value must be at range from "
+        + MIN_NAME_SIZE + " to " + MAX_NAME_SIZE;
 
     private ValidationUtil() {
     }

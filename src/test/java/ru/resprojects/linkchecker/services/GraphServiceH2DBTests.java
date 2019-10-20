@@ -13,11 +13,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.resprojects.linkchecker.AppProperties;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
 import ru.resprojects.linkchecker.dto.GraphDto;
-import ru.resprojects.linkchecker.util.Messages;
 import ru.resprojects.linkchecker.util.exeptions.ApplicationException;
-import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,10 +27,6 @@ import java.util.stream.Stream;
 
 import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
-import static ru.resprojects.linkchecker.util.Messages.MSG_ARGUMENT_NULL;
-import static ru.resprojects.linkchecker.util.Messages.MSG_COLLECTION_CONTAIN_ONE_ELEMENT;
-import static ru.resprojects.linkchecker.util.Messages.MSG_COLLECTION_EMPTY;
-import static ru.resprojects.linkchecker.util.Messages.NODE_MSG_BY_NAME_ERROR;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LinkcheckerApplication.class)
@@ -47,7 +42,10 @@ public class GraphServiceH2DBTests {
 	public ExpectedException thrown = ExpectedException.none();
 
 	@Autowired
-	GraphService graphService;
+	private GraphService graphService;
+
+	@Autowired
+	private AppProperties properties;
 
 	@Test
 	public void createGraph() {
@@ -95,14 +93,14 @@ public class GraphServiceH2DBTests {
 	@Test
 	public void createGraphNullArgumentException() {
 		thrown.expect(ApplicationException.class);
-		thrown.expectMessage(Messages.MSG_ARGUMENT_NULL);
+		thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
 		graphService.create(null);
 	}
 
 	@Test
 	public void createGraphEmptyCollectionException() {
 		thrown.expect(ApplicationException.class);
-		thrown.expectMessage("NODES: " + Messages.MSG_COLLECTION_EMPTY);
+		thrown.expectMessage("NODES: " + properties.getAppMsg().get("MSG_COLLECTION_EMPTY"));
 		GraphDto graphDto = new GraphDto();
 		graphDto.setNodes(new HashSet<>());
 		graphDto.setEdges(Stream.of(
@@ -186,14 +184,14 @@ public class GraphServiceH2DBTests {
 	@Test
 	public void checkRouteNullCollectionException() {
 		thrown.expect(ApplicationException.class);
-		thrown.expectMessage(MSG_ARGUMENT_NULL);
+		thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
 		graphService.checkRoute(null);
 	}
 
 	@Test
 	public void checkRouteEmptyCollectionException() {
 		thrown.expect(ApplicationException.class);
-		thrown.expectMessage(MSG_COLLECTION_EMPTY);
+		thrown.expectMessage(properties.getAppMsg().get("MSG_COLLECTION_EMPTY"));
 		graphService.checkRoute(new HashSet<>());
 	}
 
@@ -201,7 +199,7 @@ public class GraphServiceH2DBTests {
 	public void checkRouteCollectionHaveOneElementException() {
 		Set<String> nodeNames = Stream.of("v10").collect(Collectors.toSet());
 		thrown.expect(ApplicationException.class);
-		thrown.expectMessage(MSG_COLLECTION_CONTAIN_ONE_ELEMENT);
+		thrown.expectMessage(properties.getAppMsg().get("MSG_COLLECTION_CONTAIN_ONE_ELEMENT"));
 		graphService.checkRoute(nodeNames);
 	}
 

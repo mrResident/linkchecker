@@ -41,7 +41,9 @@ import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 @SpringBootTest(classes = LinkcheckerApplication.class)
 @ActiveProfiles(profiles = "moc_test")
 @PrepareForTest(GraphUtil.class)
-@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "javax.xml.transform.*", "org.xml.*", "javax.management.*", "javax.net.ssl.*", "com.sun.org.apache.xalan.internal.xsltc.trax.*"})
+@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*",
+    "javax.xml.transform.*", "org.xml.*", "javax.management.*",
+    "javax.net.ssl.*", "com.sun.org.apache.xalan.internal.xsltc.trax.*"})
 public class GraphServiceMockTests {
 
     private static final Logger LOG = LoggerFactory.getLogger(GraphServiceMockTests.class);

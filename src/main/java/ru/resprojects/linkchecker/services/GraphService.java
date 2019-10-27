@@ -6,8 +6,6 @@ import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
 import java.util.Set;
 
-import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
-
 /**
  * GraphService - the interface for work with <a href = https://en.wikipedia.org/wiki/Graph_(discrete_mathematics)#Graph>undirected graph</a>.
  */
@@ -40,6 +38,12 @@ public interface GraphService {
      * @throws NotFoundException if route is not found
      */
     String checkRoute(final Set<String> nodeNameSet) throws NotFoundException;
+
+    /**
+     * Exporting graph to <a href = https://www.graphviz.org/about/>graphviz</a> format.
+     * @return string data in graphviz format.
+     */
+    String exportToGraphViz();
 
     /**
      * Get access to nodes of the graph.

@@ -33,7 +33,7 @@ public final class ValidationUtil {
     }
 
     public static void checkNew(HasId bean) {
-        if (!bean.isNew()) {
+        if (bean.getId() != null) {
             throw new IllegalRequestDataException(bean + " must be new (id=null)");
         }
     }

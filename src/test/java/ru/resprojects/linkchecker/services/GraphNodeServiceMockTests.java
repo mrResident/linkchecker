@@ -67,7 +67,7 @@ public class GraphNodeServiceMockTests {
     }
 
     @Test
-    public void getNodeByNameNotFound() throws NotFoundException {
+    public void getNodeByNameNotFoundException() throws NotFoundException {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), "v1"));
         graphNodeService.get("v1");
@@ -84,7 +84,7 @@ public class GraphNodeServiceMockTests {
     }
 
     @Test
-    public void getNodeByIdNotFound() {
+    public void getNodeByIdNotFoundException() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage( String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), "NODE", 5000));
         graphNodeService.getById(5000);
@@ -125,7 +125,7 @@ public class GraphNodeServiceMockTests {
     }
 
     @Test
-    public void exceptionOneWhileDeleteNodeByNodeGraph() {
+    public void deleteNodeByNodeGraphNotFoundException() {
         NodeGraph nodeGraph = new NodeGraph(5000, "v1", 0);
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_OBJECT_ERROR"), nodeGraph.toString()));
@@ -133,7 +133,7 @@ public class GraphNodeServiceMockTests {
     }
 
     @Test
-    public void exceptionTwoWhileDeleteNodeByNodeGraph() {
+    public void deleteNodeByNodeGraphWithNullIdNotFoundException() {
         NodeGraph nodeGraph = new NodeGraph(null, "v1", 0);
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_OBJECT_ERROR"), nodeGraph.toString()));
@@ -141,7 +141,7 @@ public class GraphNodeServiceMockTests {
     }
 
     @Test
-    public void exceptionThreeWhileDeleteNodeByNodeGraph() {
+    public void deleteNodeByNodeGraphNullArgumentException() {
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
         graphNodeService.delete((NodeGraph) null);
@@ -166,7 +166,7 @@ public class GraphNodeServiceMockTests {
     }
 
     @Test
-    public void exceptionOneWhileDeleteNodeByName() {
+    public void deleteNodeByNameNotFoundException() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), "null"));
         graphNodeService.delete((String) null);
@@ -191,7 +191,7 @@ public class GraphNodeServiceMockTests {
     }
 
     @Test
-    public void exceptionOneWhileDeleteNodeById() {
+    public void deleteNodeByIdNotFoundException() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage( String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), "NODE", null));
         graphNodeService.delete((Integer) null);
@@ -211,7 +211,21 @@ public class GraphNodeServiceMockTests {
     }
 
     @Test
-    public void exceptionWhileCreateNode() {
+    public void createNodeIsPresentException() {
+        thrown.expect(ApplicationException.class);
+        NodeGraph nodeGraph = new NodeGraph("v1");
+        thrown.expectMessage(String.format(
+            properties.getNodeMsg().get("NODE_MSG_ALREADY_PRESENT_ERROR"),
+            nodeGraph.getName()
+        ));
+        Node node = new Node("v1");
+        node.setId(5000);
+        when(nodeRepository.getByName(any(String.class))).thenReturn(node);
+        graphNodeService.create(nodeGraph);
+    }
+
+    @Test
+    public void createNodeNullArgumentException() {
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
         graphNodeService.create((NodeGraph) null);
@@ -232,21 +246,35 @@ public class GraphNodeServiceMockTests {
     }
 
     @Test
-    public void exceptionOneWhileCreateNodes() {
+    public void createNodesIsPresentException() {
+        thrown.expect(ApplicationException.class);
+        thrown.expectMessage(String.format(
+            properties.getNodeMsg().get("NODE_MSG_ALREADY_PRESENT_ERROR"),
+            "w1"
+        ));
+        Set<NodeGraph> nodeGraphs = new HashSet<>();
+        nodeGraphs.add(new NodeGraph("w1"));
+        Node node = new Node(5000, "w1", 0);
+        when(nodeRepository.getByName(any(String.class))).thenReturn(node);
+        graphNodeService.create(nodeGraphs);
+    }
+
+    @Test
+    public void createNodesNullArgumentException() {
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
         graphNodeService.create((Set<NodeGraph>) null);
     }
 
     @Test
-    public void exceptionTwoWhileCreateNodes() {
+    public void createNodesEmptyCollectionException() {
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(properties.getAppMsg().get("MSG_COLLECTION_EMPTY"));
         graphNodeService.create(new HashSet<>());
     }
 
     @Test
-    public void exceptionThreeWhileCreateNodes() {
+    public void createNodesCollectionContainNullException() {
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(properties.getAppMsg().get("MSG_COLLECTION_CONTAIN_NULL"));
         Set<NodeGraph> nodeGraphs = new HashSet<>();
@@ -268,14 +296,14 @@ public class GraphNodeServiceMockTests {
     }
 
     @Test
-    public void exceptionOneWhileUpdateNode() {
+    public void updateNodeNullArgumentException() {
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
         graphNodeService.update(null);
     }
 
     @Test
-    public void exceptionTwoWhileUpdateNode() {
+    public void updateNodeWhileUpdateException() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_UPDATE_ERROR"), 5000));
         NodeGraph nodeGraph = new NodeGraph(5000, "v1", 0);

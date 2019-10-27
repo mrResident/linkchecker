@@ -14,6 +14,7 @@ import ru.resprojects.linkchecker.dto.GraphDto;
 import ru.resprojects.linkchecker.model.AbstractNamedEntity;
 import ru.resprojects.linkchecker.model.Edge;
 import ru.resprojects.linkchecker.model.Node;
+import ru.resprojects.linkchecker.util.GraphUtil;
 import ru.resprojects.linkchecker.util.exeptions.ApplicationException;
 import ru.resprojects.linkchecker.util.exeptions.ErrorPlaceType;
 import ru.resprojects.linkchecker.util.exeptions.ErrorType;
@@ -83,6 +84,11 @@ public class GraphServiceImpl implements GraphService {
     @Override
     public GraphDto get() {
         return removeGraphCycles(new GraphDto(nodes.getAll(), edges.getAll()));
+    }
+
+    @Override
+    public String exportToGraphViz() {
+        return GraphUtil.exportToGraphViz(get());
     }
 
     @Override

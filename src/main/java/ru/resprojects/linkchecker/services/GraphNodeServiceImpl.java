@@ -29,6 +29,15 @@ public class GraphNodeServiceImpl implements GraphNodeService {
         this.properties = properties;
     }
 
+    private boolean isPresent(final NodeGraph nodeGraph) {
+        try {
+            get(nodeGraph.getName());
+            return true;
+        } catch (NotFoundException e) {
+            return false;
+        }
+    }
+
     @Override
     public NodeGraph create(final NodeGraph nodeGraph) {
         if (Objects.isNull(nodeGraph)) {
@@ -37,6 +46,17 @@ public class GraphNodeServiceImpl implements GraphNodeService {
                 ErrorPlaceType.NODE,
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 properties.getAppMsg().get("MSG_ARGUMENT_NULL")
+            );
+        }
+        if (isPresent(nodeGraph)) {
+            throw new ApplicationException(
+                ErrorType.DATA_ERROR,
+                ErrorPlaceType.NODE,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                String.format(
+                    properties.getNodeMsg().get("NODE_MSG_ALREADY_PRESENT_ERROR"),
+                    nodeGraph.getName()
+                )
             );
         }
         return GraphUtil.nodeToNodeGraph(nodeRepository.save(
@@ -70,6 +90,17 @@ public class GraphNodeServiceImpl implements GraphNodeService {
                     properties.getAppMsg().get("MSG_COLLECTION_CONTAIN_NULL")
                 );
             }
+            if (isPresent(nodeGraph)) {
+                throw new ApplicationException(
+                    ErrorType.DATA_ERROR,
+                    ErrorPlaceType.NODE,
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    String.format(
+                        properties.getNodeMsg().get("NODE_MSG_ALREADY_PRESENT_ERROR"),
+                        nodeGraph.getName()
+                    )
+                );
+            }
         });
         return GraphUtil.nodesToNodeGraphs(nodeRepository.saveAll(
             GraphUtil.nodeGraphsToNodes(nodeGraphs)));
@@ -86,7 +117,8 @@ public class GraphNodeServiceImpl implements GraphNodeService {
             );
         }
         checkNotFound(nodeRepository.save(
-            GraphUtil.nodeGraphToNode(nodeGraph)), properties.getNodeMsg().get("NODE_MSG_UPDATE_ERROR") + nodeGraph.getId(),
+            GraphUtil.nodeGraphToNode(nodeGraph)),
+            properties.getNodeMsg().get("NODE_MSG_UPDATE_ERROR") + nodeGraph.getId(),
             ErrorPlaceType.NODE
         );
     }
@@ -96,7 +128,10 @@ public class GraphNodeServiceImpl implements GraphNodeService {
         if (nodeRepository.existsById(id)) {
             nodeRepository.deleteById(id);
         } else {
-            throw new NotFoundException(String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), ErrorPlaceType.NODE, id), ErrorPlaceType.NODE);
+            throw new NotFoundException(String.format(
+                properties.getAppMsg().get("MSG_BY_ID_ERROR"),
+                ErrorPlaceType.NODE, id
+            ), ErrorPlaceType.NODE);
         }
     }
 
@@ -105,7 +140,10 @@ public class GraphNodeServiceImpl implements GraphNodeService {
         if (nodeRepository.existsByName(name)) {
             nodeRepository.deleteByName(name);
         } else {
-            throw new NotFoundException(String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), name), ErrorPlaceType.NODE);
+            throw new NotFoundException(String.format(
+                properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"),
+                name
+            ), ErrorPlaceType.NODE);
         }
     }
 
@@ -125,8 +163,9 @@ public class GraphNodeServiceImpl implements GraphNodeService {
             nodeRepository.deleteById(nodeGraph.getId());
         } else {
             throw new NotFoundException(String.format(
-                properties.getNodeMsg().get("NODE_MSG_BY_OBJECT_ERROR"), nodeGraph.toString()), ErrorPlaceType.NODE
-            );
+                properties.getNodeMsg().get("NODE_MSG_BY_OBJECT_ERROR"),
+                nodeGraph.toString()
+            ), ErrorPlaceType.NODE);
         }
     }
 
@@ -144,7 +183,10 @@ public class GraphNodeServiceImpl implements GraphNodeService {
     public NodeGraph get(final String name) throws NotFoundException {
         NodeGraph nodeGraph = GraphUtil.nodeToNodeGraph(nodeRepository.getByName(name));
         return checkNotFound(nodeGraph,
-            String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), name), ErrorPlaceType.NODE);
+            String.format(
+                properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"),
+                name
+            ), ErrorPlaceType.NODE);
     }
 
     @Override
@@ -152,7 +194,10 @@ public class GraphNodeServiceImpl implements GraphNodeService {
         NodeGraph nodeGraph = GraphUtil.nodeToNodeGraph(nodeRepository
             .findById(id).orElse(null));
         return checkNotFound(nodeGraph,
-            String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), ErrorPlaceType.NODE, id), ErrorPlaceType.NODE);
+            String.format(
+                properties.getAppMsg().get("MSG_BY_ID_ERROR"),
+                ErrorPlaceType.NODE, id
+            ), ErrorPlaceType.NODE);
     }
 
 }

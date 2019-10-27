@@ -96,7 +96,7 @@ public class GraphEdgeServiceH2DBTests {
         ).collect(Collectors.toSet());
         Set<EdgeGraph> actual = edgeService.create(edgeGraphs);
         Assert.assertFalse(actual.isEmpty());
-        Assert.assertFalse(actual.iterator().next().isNew());
+        Assert.assertNotNull(actual.iterator().next().getId());
         actual.forEach(eg -> LOG.debug("---- RETURNED EDGE: " + eg));
         Set<EdgeGraph> egList = edgeService.getAll();
         Assert.assertEquals(7, egList.size());

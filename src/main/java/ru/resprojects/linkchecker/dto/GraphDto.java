@@ -1,5 +1,6 @@
 package ru.resprojects.linkchecker.dto;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
@@ -226,12 +227,12 @@ public class GraphDto {
     /**
      * Collection of graph nodes.
      */
-    private Set<NodeGraph> nodes = new HashSet<>();
+    private Set<@Valid NodeGraph> nodes = new HashSet<>();
 
     /**
      * Collection of graph edges.
      */
-    private Set<EdgeGraph> edges = new HashSet<>();
+    private Set<@Valid EdgeGraph> edges = new HashSet<>();
 
     /**
      * Default ctor.

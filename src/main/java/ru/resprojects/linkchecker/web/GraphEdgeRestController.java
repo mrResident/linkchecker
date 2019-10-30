@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import ru.resprojects.linkchecker.services.GraphService;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Set;
@@ -24,6 +26,10 @@ import java.util.Set;
 import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 import static ru.resprojects.linkchecker.web.GraphRestController.REST_URL;
 
+/**
+ * REST controller for work with edges of the data graph
+ */
+@Validated
 @RestController
 @RequestMapping(value = GraphEdgeRestController.EDGE_REST_URL,
     produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,7 +45,7 @@ public class GraphEdgeRestController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EdgeGraph> create(@RequestBody EdgeGraph edge) {
+    public ResponseEntity<EdgeGraph> create(@RequestBody @Valid EdgeGraph edge) {
         EdgeGraph created = this.graphService.getEdges().create(edge);
         URI uri = MvcUriComponentsBuilder.fromController(getClass())
             .path(EDGE_REST_URL)
@@ -48,8 +54,9 @@ public class GraphEdgeRestController {
         return ResponseEntity.created(uri).body(created);
     }
 
+    //How to validate data in collections https://stackoverflow.com/a/54394177
     @PostMapping(value = "/byBatch", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Collection<EdgeGraph>> createByBatch(@RequestBody Set<EdgeGraph> edges) {
+    public ResponseEntity<Collection<EdgeGraph>> createByBatch(@RequestBody @Valid Set<EdgeGraph> edges) {
         Set<EdgeGraph> created = this.graphService.getEdges().create(edges);
         URI uri = MvcUriComponentsBuilder.fromController(getClass())
             .path(EDGE_REST_URL)

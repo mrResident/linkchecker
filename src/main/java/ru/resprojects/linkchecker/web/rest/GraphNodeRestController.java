@@ -1,4 +1,4 @@
-package ru.resprojects.linkchecker.web;
+package ru.resprojects.linkchecker.web.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
-import static ru.resprojects.linkchecker.web.GraphRestController.REST_URL;
+import static ru.resprojects.linkchecker.web.rest.GraphRestController.REST_URL;
 
 /**
  * REST controller for work with nodes of the data graph

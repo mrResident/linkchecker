@@ -1,5 +1,8 @@
 package ru.resprojects.linkchecker.util.exeptions;
 
+import java.util.Arrays;
+import java.util.StringJoiner;
+
 /**
  * Data class for exception handler.
  */
@@ -9,6 +12,9 @@ public class ErrorInfo {
     private ErrorType type;
     private ErrorPlaceType place;
     private String[] messages;
+
+    public ErrorInfo() {
+    }
 
     /**
      * Ctor.
@@ -54,5 +60,15 @@ public class ErrorInfo {
 
     public void setMessages(String[] messages) {
         this.messages = messages;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", ErrorInfo.class.getSimpleName() + "[", "]")
+            .add("url='" + url + "'")
+            .add("type=" + type)
+            .add("place=" + place)
+            .add("messages=" + Arrays.toString(messages))
+            .toString();
     }
 }

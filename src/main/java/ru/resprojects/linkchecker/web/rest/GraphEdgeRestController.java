@@ -1,4 +1,4 @@
-package ru.resprojects.linkchecker.web;
+package ru.resprojects.linkchecker.web.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
-import static ru.resprojects.linkchecker.web.GraphRestController.REST_URL;
+import static ru.resprojects.linkchecker.web.rest.GraphRestController.REST_URL;
 
 /**
  * REST controller for work with edges of the data graph

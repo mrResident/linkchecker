@@ -1,4 +1,4 @@
-package ru.resprojects.linkchecker.web;
+package ru.resprojects.linkchecker.web.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -30,7 +30,7 @@ import java.util.Set;
 @RequestMapping(value = GraphRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class GraphRestController {
 
-    static final String REST_URL = "/v1/graph";
+    static final String REST_URL = "/rest/v1/graph";
 
     private GraphService graphService;
 
@@ -43,8 +43,7 @@ public class GraphRestController {
     public ResponseEntity<?> options() {
         return ResponseEntity
             .ok()
-            .allow(HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS,
-                HttpMethod.DELETE)
+            .allow(HttpMethod.GET, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.OPTIONS)
             .build();
     }
 
@@ -58,7 +57,7 @@ public class GraphRestController {
         return ResponseEntity.ok(this.graphService.exportToGraphViz());
     }
 
-    @PostMapping(value = "/checkroute", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/checkroute", produces = MediaType.TEXT_HTML_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> checkRoute(@RequestBody Set<String> nodeNames) {
         return ResponseEntity.ok(this.graphService.checkRoute(nodeNames));
     }

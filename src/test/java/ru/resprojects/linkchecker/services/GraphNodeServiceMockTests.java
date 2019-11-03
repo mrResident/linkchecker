@@ -51,6 +51,13 @@ public class GraphNodeServiceMockTests {
     @Autowired
     private AppProperties properties;
 
+    private List<Node> nodes = Stream.of(
+        new Node(5001, "v2", 0),
+        new Node(5002, "v3", 0),
+        new Node(5003, "v4", 0),
+        new Node(5004, "v5", 0)
+    ).collect(Collectors.toList());
+
     @Before
     public void init() {
         graphNodeService = new GraphNodeServiceImpl(nodeRepository, properties);
@@ -108,12 +115,6 @@ public class GraphNodeServiceMockTests {
 
     @Test
     public void deleteNodeByNodeGraph() {
-        List<Node> nodes = Stream.of(
-            new Node(5001, "v2", 0),
-            new Node(5002, "v3", 0),
-            new Node(5003, "v4", 0),
-            new Node(5004, "v5", 0)
-        ).collect(Collectors.toList());
         given(nodeRepository.findById(5000)).willReturn(
             Optional.of(new Node(5000, "v1", 0))
         );
@@ -151,12 +152,6 @@ public class GraphNodeServiceMockTests {
     public void deleteNodeByName() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), "v1"));
-        List<Node> nodes = Stream.of(
-            new Node(5001, "v2", 0),
-            new Node(5002, "v3", 0),
-            new Node(5003, "v4", 0),
-            new Node(5004, "v5", 0)
-        ).collect(Collectors.toList());
         when(nodeRepository.existsByName("v1")).thenReturn(true).thenReturn(false);
         given(nodeRepository.findAll()).willReturn(nodes);
         graphNodeService.delete("v1");
@@ -176,12 +171,6 @@ public class GraphNodeServiceMockTests {
     public void deleteNodeById() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage( String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), "NODE", 5000));
-        List<Node> nodes = Stream.of(
-            new Node(5001, "v2", 0),
-            new Node(5002, "v3", 0),
-            new Node(5003, "v4", 0),
-            new Node(5004, "v5", 0)
-        ).collect(Collectors.toList());
         when(nodeRepository.existsById(5000)).thenReturn(true).thenReturn(false);
         given(nodeRepository.findAll()).willReturn(nodes);
         graphNodeService.delete(5000);

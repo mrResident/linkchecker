@@ -1,0 +1,51 @@
+{
+  "nodes": [
+    {
+      "id": 5000,
+      "name": "v1",
+      "counter": 0
+    },
+    {
+      "id": 5001,
+      "name": "v2",
+      "counter": 0
+    },
+    {
+      "id": 5002,
+      "name": "v3",
+      "counter": 0
+    },
+    {
+      "id": 5003,
+      "name": "v4",
+      "counter": 0
+    },
+    {
+      "id": 5004,
+      "name": "v5",
+      "counter": 0
+    }
+  ],
+  "edges": [
+    {
+      "id": 5006,
+      "nodeOne": "v1",
+      "nodeTwo": "v3"
+    },
+    {
+      "id": 5005,
+      "nodeOne": "v1",
+      "nodeTwo": "v2"
+    },
+    {
+      "id": 5007,
+      "nodeOne": "v1",
+      "nodeTwo": "v5"
+    },
+    {
+      "id": 5008,
+      "nodeOne": "v3",
+      "nodeTwo": "v4"
+    }
+  ]
+}

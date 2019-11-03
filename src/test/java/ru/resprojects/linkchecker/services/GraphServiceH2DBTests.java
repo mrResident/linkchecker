@@ -47,6 +47,15 @@ public class GraphServiceH2DBTests {
 	@Autowired
 	private AppProperties properties;
 
+	private Set<EdgeGraph> edgeGraphSet = Stream.of(
+		new EdgeGraph("v1", "v2"),
+		new EdgeGraph("v1", "v3"),
+		new EdgeGraph("v1", "v4"),
+		new EdgeGraph("v2", "v3"),
+		new EdgeGraph("v2", "v4"),
+		new EdgeGraph("v3", "v4")
+	).collect(Collectors.toSet());
+
 	@Test
 	public void createGraph() {
 		GraphDto graphDto = new GraphDto();
@@ -56,14 +65,7 @@ public class GraphServiceH2DBTests {
 			new NodeGraph("v3"),
 			new NodeGraph("v4")
 		).collect(Collectors.toSet()));
-		graphDto.setEdges(Stream.of(
-			new EdgeGraph("v1", "v2"),
-			new EdgeGraph("v1", "v3"),
-			new EdgeGraph("v1", "v4"),
-			new EdgeGraph("v2", "v3"),
-			new EdgeGraph("v2", "v4"),
-			new EdgeGraph("v3", "v4")
-		).collect(Collectors.toSet()));
+		graphDto.setEdges(edgeGraphSet);
 		GraphDto actual = graphService.create(graphDto);
 		Assert.assertNotNull(actual);
 		LOG.debug(actual.toString());
@@ -77,14 +79,7 @@ public class GraphServiceH2DBTests {
 			new NodeGraph("v2"),
 			new NodeGraph("v3")
 		).collect(Collectors.toSet()));
-		graphDto.setEdges(Stream.of(
-			new EdgeGraph("v1", "v2"),
-			new EdgeGraph("v1", "v3"),
-			new EdgeGraph("v1", "v4"),
-			new EdgeGraph("v2", "v3"),
-			new EdgeGraph("v2", "v4"),
-			new EdgeGraph("v3", "v4")
-		).collect(Collectors.toSet()));
+		graphDto.setEdges(edgeGraphSet);
 		GraphDto actual = graphService.create(graphDto);
 		Assert.assertNotNull(actual);
 		LOG.debug(actual.toString());
@@ -103,14 +98,7 @@ public class GraphServiceH2DBTests {
 		thrown.expectMessage("NODES: " + properties.getAppMsg().get("MSG_COLLECTION_EMPTY"));
 		GraphDto graphDto = new GraphDto();
 		graphDto.setNodes(new HashSet<>());
-		graphDto.setEdges(Stream.of(
-			new EdgeGraph("v1", "v2"),
-			new EdgeGraph("v1", "v3"),
-			new EdgeGraph("v1", "v4"),
-			new EdgeGraph("v2", "v3"),
-			new EdgeGraph("v2", "v4"),
-			new EdgeGraph("v3", "v4")
-		).collect(Collectors.toSet()));
+		graphDto.setEdges(edgeGraphSet);
 		graphService.create(graphDto);
 	}
 

@@ -157,11 +157,15 @@ public class GraphNodeServiceImpl implements GraphNodeService {
                 properties.getAppMsg().get("MSG_ARGUMENT_NULL")
             );
         }
-        NodeGraph nodeFromRepo = GraphUtil.nodeToNodeGraph(nodeRepository
-            .findById(nodeGraph.getId()).orElse(null));
-        if (nodeGraph.equals(nodeFromRepo)) {
-            nodeRepository.deleteById(nodeGraph.getId());
-        } else {
+        try {
+            NodeGraph nodeFromRepo = GraphUtil.nodeToNodeGraph(nodeRepository
+                .findById(nodeGraph.getId()).orElse(null));
+            if (nodeGraph.equals(nodeFromRepo)) {
+                nodeRepository.deleteById(nodeGraph.getId());
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
             throw new NotFoundException(String.format(
                 properties.getNodeMsg().get("NODE_MSG_BY_OBJECT_ERROR"),
                 nodeGraph.toString()

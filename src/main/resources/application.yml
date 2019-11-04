@@ -69,6 +69,9 @@ spring:
         order_updates: true
 ---
 spring:
+  http:
+    converters:
+      preferred-json-mapper: gson
   output:
     ansi:
       enabled: always
@@ -78,7 +81,6 @@ logging:
     org.springframework: error
     ru.resprojects: debug
   pattern:
-#    console: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
     file: "%d %p %c{1.} [%t] %m%n"
     console: "%clr(%d{HH:mm:ss.SSS}){yellow} %clr(%-5p) %clr(---){faint} %clr([%t]){cyan} %clr(%logger{36}){blue} %clr(:){red} %clr(%msg){faint}%n"
   file:

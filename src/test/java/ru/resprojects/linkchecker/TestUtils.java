@@ -1,16 +1,9 @@
 package ru.resprojects.linkchecker;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import ru.resprojects.linkchecker.dto.GraphDto;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.lang.reflect.Type;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,25 +30,20 @@ public class TestUtils {
     private TestUtils() {
     }
 
-    public static String loadJsonFromFile(String sourceFileName) throws IOException {
-        try(InputStream is = TestUtils.class.getResourceAsStream(sourceFileName)) {
-            try(BufferedReader br = new BufferedReader(new InputStreamReader(is,
-                StandardCharsets.UTF_8))) {
-                StringBuilder sb = new StringBuilder();
-                br.lines().forEach(s -> sb.append(s).append('\n'));
-                return sb.toString();
-            }
-        }
+    public static String mapToJson(Object obj, Type type) {
+        return new Gson().toJson(obj, type);
     }
 
-    public static String mapToJson(Object obj) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(obj);
+    public static String mapToJson(Object obj) {
+        return new Gson().toJson(obj);
     }
 
-    public static <T> T mapFromJson(String json, Class<T> clazz) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(json, clazz);
+    public static <T> T mapFromJson(String json, Type type) {
+        return new Gson().fromJson(json, type);
+    }
+
+    public static <T> T mapFromJson(String json, Class<T> clazz) {
+        return new Gson().fromJson(json, clazz);
     }
 
 }

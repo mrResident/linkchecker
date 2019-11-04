@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
-import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.boot.test.json.GsonTester;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.resprojects.linkchecker.dto.GraphDto;
 
@@ -18,19 +18,19 @@ import static ru.resprojects.linkchecker.TestUtils.*;
 public class JsonGraphDtoTests {
 
     @Autowired
-    private JacksonTester<GraphDto> jsonGraph;
+    private GsonTester<GraphDto> jsonGraph;
 
     @Autowired
-    private JacksonTester<GraphDto.NodeGraph> jsonNodeGraph;
+    private GsonTester<GraphDto.NodeGraph> jsonNodeGraph;
 
     @Autowired
-    private JacksonTester<GraphDto.EdgeGraph> jsonEdgeGraph;
+    private GsonTester<GraphDto.EdgeGraph> jsonEdgeGraph;
 
     @Autowired
-    private JacksonTester<Set<GraphDto.NodeGraph>> jsonNodesGraph;
+    private GsonTester<Set<GraphDto.NodeGraph>> jsonNodesGraph;
 
     @Autowired
-    private JacksonTester<Set<GraphDto.EdgeGraph>> jsonEdgesGraph;
+    private GsonTester<Set<GraphDto.EdgeGraph>> jsonEdgesGraph;
 
 
     @Test

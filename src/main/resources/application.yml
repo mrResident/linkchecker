@@ -1,0 +1,106 @@
+spring:
+  profiles:
+    active: dev
+---
+spring:
+  profiles: prod
+  jpa:
+    show-sql: false
+    database: postgresql
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    open-in-view: false
+  datasource:
+    url: jdbc:postgresql://192.168.20.234:5432/linkchecker
+    username: user
+    password: password
+    platform: postgresql
+    initialization-mode: never
+---
+spring:
+  profiles: dev
+  jpa:
+    show-sql: true
+    database: postgresql
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        generate_statistics: true
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    open-in-view: false
+  datasource:
+    url: jdbc:postgresql://192.168.20.234:5432/linkchecker
+    username: user
+    password: password
+    platform: postgresql
+    initialization-mode: always
+---
+spring:
+  profiles: test
+  jpa:
+    show-sql: true
+    database: h2
+    open-in-view: false
+    properties:
+      hibernate:
+        generate_statistics: true
+  datasource:
+    url: jdbc:h2:mem:linkchecker;DB_CLOSE_ON_EXIT=FALSE
+    initialization-mode: always
+    platform: h2
+---
+spring:
+  profiles: moc_test
+---
+spring:
+  profiles: test, dev, prod
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 10
+        order_inserts: true
+        order_updates: true
+---
+spring:
+  http:
+    converters:
+      preferred-json-mapper: gson
+  output:
+    ansi:
+      enabled: always
+
+logging:
+  level:
+    org.springframework: error
+    ru.resprojects: debug
+  pattern:
+    file: "%d %p %c{1.} [%t] %m%n"
+    console: "%clr(%d{HH:mm:ss.SSS}){yellow} %clr(%-5p) %clr(---){faint} %clr([%t]){cyan} %clr(%logger{36}){blue} %clr(:){red} %clr(%msg){faint}%n"
+  file:
+    name: app.log
+
+appmsg:
+  app-msg:
+    MSG_ARGUMENT_NULL: "Argument must not be null"
+    MSG_COLLECTION_EMPTY: "Collection must not be empty"
+    MSG_COLLECTION_CONTAIN_NULL: "Collection must not contain a null item"
+    MSG_COLLECTION_CONTAIN_ONE_ELEMENT: "Collection must have more than one element"
+    MSG_BY_ID_ERROR: "%s with ID = %d is not found"
+  edge-msg:
+    EDGE_MSG_GET_ERROR: "Edge for nodes [%s, %s] is not found"
+    EDGE_MSG_ALREADY_PRESENT_ERROR: "Edge for nodes ([%s, %s], [%s, %s]) already present in the graph"
+    EDGE_MSG_GET_BY_NAME_ERROR: "Edges for node %s is not found"
+  node-msg:
+    NODE_MSG_ALREADY_PRESENT_ERROR: "Node %s already present in the graph"
+    NODE_MSG_UPDATE_ERROR: "Error while update node with id = "
+    NODE_MSG_BY_NAME_ERROR: "Node with NAME = %s is not found"
+    NODE_MSG_BY_OBJECT_ERROR: "Node %s is not found"
+    NODE_MSG_NOT_REACHABLE: "Nodes %s and %s are not reachable to each other"
+    NODE_MSG_IS_FAULT: "Node %s is fault"

@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Linkchecker (тестовое задание)</title>
+
+    <link rel="stylesheet" th:href="@{webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">RESPROJECTS.RU</a>
+</nav>
+
+<div class="container-fluid">
+    <div class="container">
+
+        <h1>Linkchecker (тестовое задание)</h1>
+
+        <h1>Linkchecker (тестовое задание)</h1>
+
+        <p>
+            Разработать REST-сервис, проверяющий работоспособность любой последовательности узлов.
+            Каждый узел имеет уникальное имя, вероятность, с которой откажет при обращении к нему, и счетчик успешно выполненных запросов.
+        </p>
+
+        <p>Сервис должен реализовывать два POST-метода:</p>
+
+        <ol>
+            <li><b>setNodes</b> - устанавливает граф из узлов, описанных выше. Формат входных данных - JSON. Программа должна исключать циклические связи узлов.</li>
+            <li><b>checkRoute</b> - принимает набор вершин (или их идентификаторов) в формате JSON и проходит по этим вершинам, проверяя на каждом пройденном узле, не отказал ли он.
+                Если путь существует в графе и ни один из узлов пути не отказал, следует увеличить счетчик в каждом из узлов пути. В противном случае отображать ошибку в ответе POST-метода (произвольный формат).</li>
+        </ol>
+
+        <p>Узлы и связи должны храниться в базе данных.</p>
+
+        <b>Используемый стек</b>: spring boot, spring data, ORM (Hibernate)
+    </div>
+</div>
+<!-- /.container -->
+
+<script type="text/javascript" th:src="@{webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+</body>
+</html>

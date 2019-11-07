@@ -1,0 +1,22 @@
+[
+  {
+    "id": 5006,
+    "nodeOne": "v1",
+    "nodeTwo": "v3"
+  },
+  {
+    "id": 5005,
+    "nodeOne": "v1",
+    "nodeTwo": "v2"
+  },
+  {
+    "id": 5007,
+    "nodeOne": "v1",
+    "nodeTwo": "v5"
+  },
+  {
+    "id": 5008,
+    "nodeOne": "v3",
+    "nodeTwo": "v4"
+  }
+]

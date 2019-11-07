@@ -15,6 +15,7 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.resprojects.linkchecker.AppProperties;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
+import ru.resprojects.linkchecker.TestUtils;
 import ru.resprojects.linkchecker.util.exeptions.ApplicationException;
 import ru.resprojects.linkchecker.util.exeptions.NotFoundException;
 
@@ -57,14 +58,14 @@ public class GraphEdgeServiceH2DBTests {
     }
 
     @Test
-    public void exceptionOneWhileCreateEdge() {
+    public void createEdgeNullArgumentException() {
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
         edgeService.create((EdgeGraph) null);
     }
 
     @Test
-    public void exceptionTwoWhileCreateEdge() {
+    public void createEdgeNodeNotFoundException() {
         EdgeGraph edgeGraph = new EdgeGraph("v10", "v4");
         thrown.expect(NotFoundException.class);
         thrown.expectMessage( String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), "v10"));
@@ -72,7 +73,7 @@ public class GraphEdgeServiceH2DBTests {
     }
 
     @Test
-    public void exceptionThreeWhileCreateEdge() {
+    public void createEdgeAlreadyPresentException() {
         EdgeGraph edgeGraph = new EdgeGraph("v1", "v2");
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(String.format(properties.getEdgeMsg().get("EDGE_MSG_ALREADY_PRESENT_ERROR"), "v1", "v2", "v2", "v1"));
@@ -80,7 +81,7 @@ public class GraphEdgeServiceH2DBTests {
     }
 
     @Test
-    public void exceptionFourWhileCreateEdge() {
+    public void createEdgeAlreadyPresentVariantTwoException() {
         EdgeGraph edgeGraph = new EdgeGraph("v2", "v1");
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(String.format(properties.getEdgeMsg().get("EDGE_MSG_ALREADY_PRESENT_ERROR"), "v2", "v1", "v1", "v2"));
@@ -104,14 +105,14 @@ public class GraphEdgeServiceH2DBTests {
     }
 
     @Test
-    public void exceptionOneWhileCreateEdges() {
+    public void createEdgesEmptyCollectionException() {
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(properties.getAppMsg().get("MSG_COLLECTION_EMPTY"));
         edgeService.create(new HashSet<>());
     }
 
     @Test
-    public void exceptionTwoWhileCreateEdges() {
+    public void createEdgesNodeNotFoundException() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), "v21"));
         Set<EdgeGraph> edgeGraphs = Stream.of(
@@ -123,7 +124,7 @@ public class GraphEdgeServiceH2DBTests {
     }
 
     @Test
-    public void exceptionThreeWhileCreateEdges() {
+    public void createEdgesCollectionContainNullException() {
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(properties.getAppMsg().get("MSG_COLLECTION_CONTAIN_NULL"));
         Set<EdgeGraph> edgeGraphs = Stream.of(
@@ -135,7 +136,7 @@ public class GraphEdgeServiceH2DBTests {
     }
 
     @Test
-    public void exceptionFourWhileCreateEdges() {
+    public void createEdgesEdgeAlreadyPresentException() {
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(String.format(properties.getEdgeMsg().get("EDGE_MSG_ALREADY_PRESENT_ERROR"), "v1", "v2", "v2", "v1"));
         Set<EdgeGraph> edgeGraphs = Stream.of(
@@ -154,7 +155,7 @@ public class GraphEdgeServiceH2DBTests {
     }
 
     @Test
-    public void exceptionWhileDeleteEdgeById() {
+    public void deleteEdgeByIdNotFoundException() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), "EDGE", 5022));
         edgeService.delete(5022);
@@ -168,7 +169,7 @@ public class GraphEdgeServiceH2DBTests {
     }
 
     @Test
-    public void exceptionWhileDeleteEdgeByNodeOneAndNodeTwoNames() {
+    public void deleteEdgeByNodeOneAndNodeTwoNamesNotFoundException() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format(properties.getEdgeMsg().get("EDGE_MSG_GET_ERROR"), "v15", "v2"));
         edgeService.delete("v15", "v2");
@@ -182,7 +183,7 @@ public class GraphEdgeServiceH2DBTests {
     }
 
     @Test
-    public void exceptionWhileDeleteEdgeByNodeName() {
+    public void deleteEdgeByNodeNameNotFoundException() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format(properties.getEdgeMsg().get("EDGE_MSG_GET_BY_NAME_ERROR"), "v15"));
         edgeService.delete("v15");
@@ -214,20 +215,41 @@ public class GraphEdgeServiceH2DBTests {
     public void getEdgeById() {
         EdgeGraph actual = edgeService.getById(5005);
         Assert.assertNotNull(actual);
+        Assert.assertEquals(TestUtils.edgeGraph, actual);
         LOG.debug(actual.toString());
+    }
+
+    @Test
+    public void getEdgeByIdNotFoundException() {
+        thrown.expect(NotFoundException.class);
+        thrown.expectMessage(String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), "EDGE", 7000));
+        edgeService.getById(7000);
     }
 
     @Test
     public void getEdgesByNodeName() {
         Set<EdgeGraph> actual = edgeService.get("v1");
+        Set<EdgeGraph> expected = TestUtils.edgesGraph.stream()
+            .filter(eg -> eg.getId() != 5008)
+            .collect(Collectors.toSet());
         Assert.assertFalse(actual.isEmpty());
+        Assert.assertEquals(expected.size(), actual.size());
+        assertThat(actual).containsAnyOf(expected.iterator().next());
         actual.forEach(eg -> LOG.debug("---- EDGE: " + eg));
+    }
+
+    @Test
+    public void getEdgesByNodeNameNotFoundException() {
+        thrown.expect(NotFoundException.class);
+        thrown.expectMessage(String.format(properties.getEdgeMsg().get("EDGE_MSG_GET_BY_NAME_ERROR"), "v100"));
+        edgeService.get("v100");
     }
 
     @Test
     public void getEdgeByNodeNameOneAndNodeNameTwo() {
         EdgeGraph actual = edgeService.get("v1", "v2");
         Assert.assertNotNull(actual);
+        Assert.assertEquals(TestUtils.edgeGraph, actual);
         Integer actualId = actual.getId();
         LOG.debug(actual.toString());
         actual = edgeService.get("v2", "v1");

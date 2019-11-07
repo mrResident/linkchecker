@@ -111,14 +111,14 @@ public class GraphDto {
         /**
          * Unique name of first graph node.
          */
-        @NotBlank
+        @NotBlank(message = "nodeOne: " + VALIDATOR_NODE_NOT_BLANK_NAME_MESSAGE)
         @Size(min = MIN_NAME_SIZE, max = MAX_NAME_SIZE)
         private String nodeOne;
 
         /**
          * Unique name of second graph node.
          */
-        @NotBlank
+        @NotBlank(message = "nodeTwo: " + VALIDATOR_NODE_NOT_BLANK_NAME_MESSAGE)
         @Size(min = MIN_NAME_SIZE, max = MAX_NAME_SIZE)
         private String nodeTwo;
 

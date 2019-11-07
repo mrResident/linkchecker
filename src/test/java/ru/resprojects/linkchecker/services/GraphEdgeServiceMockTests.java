@@ -84,7 +84,7 @@ public class GraphEdgeServiceMockTests {
     }
 
     @Test
-    public void exceptionOneWhileCreateEdge() {
+    public void createEdgeNodeNotFoundException() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format(properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), "v1"));
         EdgeGraph edgeGraph = new EdgeGraph("v1", "v2");
@@ -93,7 +93,7 @@ public class GraphEdgeServiceMockTests {
     }
 
     @Test
-    public void exceptionTwoWhileCreateEdge() {
+    public void createEdgeNullArgumentException() {
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
         edgeService.create((EdgeGraph) null);
@@ -121,7 +121,7 @@ public class GraphEdgeServiceMockTests {
     }
 
     @Test
-    public void exceptionOneWhileCreateEdges() {
+    public void createEdgesNodeNotFoundException() {
         List<Edge> edges = Stream.of(
             new Edge(5005,nodes.get(0), nodes.get(1)),
             new Edge(5006,nodes.get(0), nodes.get(2)),
@@ -138,21 +138,21 @@ public class GraphEdgeServiceMockTests {
     }
 
     @Test
-    public void exceptionTwoWhileCreateEdges() {
+    public void createEdgesNullArgumentException() {
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(properties.getAppMsg().get("MSG_ARGUMENT_NULL"));
         edgeService.create((Set<EdgeGraph>) null);
     }
 
     @Test
-    public void exceptionThreeWhileCreateEdges() {
+    public void createEdgesEmptyCollectionException() {
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(properties.getAppMsg().get("MSG_COLLECTION_EMPTY"));
         edgeService.create(new HashSet<>());
     }
 
     @Test
-    public void exceptionFourWhileCreateEdges() {
+    public void createEdgesCollectionContainNullException() {
         thrown.expect(ApplicationException.class);
         thrown.expectMessage(properties.getAppMsg().get("MSG_COLLECTION_CONTAIN_NULL"));
         Set<EdgeGraph> edgeGraphs = new HashSet<>();
@@ -174,7 +174,7 @@ public class GraphEdgeServiceMockTests {
     }
 
     @Test
-    public void exceptionWhileDeleteEdgeById() {
+    public void deleteEdgeByIdNotFoundException() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), "EDGE", 5050));
         when(edgeRepository.existsById(5050)).thenReturn(false);
@@ -200,7 +200,7 @@ public class GraphEdgeServiceMockTests {
     }
 
     @Test
-    public void exceptionWhileDeleteEdgesByNodeName() {
+    public void deleteEdgesByNodeNameNotFoundException() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format(properties.getEdgeMsg().get("EDGE_MSG_GET_BY_NAME_ERROR"), "v1"));
         List<Edge> emptyList = new ArrayList<>();
@@ -220,7 +220,7 @@ public class GraphEdgeServiceMockTests {
     }
 
     @Test
-    public void exceptionWhileDeleteEdgeByNodeNameOneAndNodeNameTwo() {
+    public void deleteEdgeByNodeNameOneAndNodeNameTwoNotFoundException() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format(properties.getEdgeMsg().get("EDGE_MSG_GET_ERROR"), "v1", "v2"));
         edgeService.delete("v1", "v2");
@@ -261,7 +261,7 @@ public class GraphEdgeServiceMockTests {
     }
 
     @Test
-    public void exceptionWhileGetEdgeById() {
+    public void getEdgeByIdNotFoundException() {
         thrown.expect(NotFoundException.class);
         thrown.expectMessage(String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), "EDGE", 7000));
         edgeService.getById(7000);

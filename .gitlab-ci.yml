@@ -43,7 +43,7 @@ package:
   script:
     - echo "Packing into an executable jar file using maven"
     - mvn package
-    - "cp target/linkchecker-0.0.1-SNAPSHOT.jar linkchecker.jar"
+    - "cp target/linkchecker-0.1.0.jar linkchecker.jar"
     - "ls -l"
 
   artifacts:

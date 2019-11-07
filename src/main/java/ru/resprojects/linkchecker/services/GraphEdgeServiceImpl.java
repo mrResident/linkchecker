@@ -204,7 +204,12 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
 
     @Override
     public Set<EdgeGraph> get(final String nodeName) {
-        return GraphUtil.edgesToEdgeGraphs(getEdges(nodeName));
+        List<Edge> result = getEdges(nodeName);
+        if (result.isEmpty()) {
+            throw new NotFoundException(String.format(properties.getEdgeMsg()
+                .get("EDGE_MSG_GET_BY_NAME_ERROR"), nodeName), ErrorPlaceType.EDGE);
+        }
+        return GraphUtil.edgesToEdgeGraphs(result);
     }
 
     private List<Edge> getEdges(final String nodeName) {
@@ -216,8 +221,8 @@ public class GraphEdgeServiceImpl implements GraphEdgeService {
     public EdgeGraph getById(final Integer id) throws NotFoundException {
         EdgeGraph edgeGraph = GraphUtil.edgeToEdgeGraph(edgeRepository.findById(id)
             .orElse(null));
-        return checkNotFound(edgeGraph, String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"), ErrorPlaceType.EDGE, id),
-            ErrorPlaceType.EDGE);
+        return checkNotFound(edgeGraph, String.format(properties.getAppMsg().get("MSG_BY_ID_ERROR"),
+            ErrorPlaceType.EDGE, id), ErrorPlaceType.EDGE);
     }
 
     @Override

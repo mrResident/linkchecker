@@ -30,10 +30,6 @@ public class TestUtils {
     private TestUtils() {
     }
 
-    public static String mapToJson(Object obj, Type type) {
-        return new Gson().toJson(obj, type);
-    }
-
     public static String mapToJson(Object obj) {
         return new Gson().toJson(obj);
     }

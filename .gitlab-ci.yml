@@ -69,9 +69,9 @@ package:
     - "echo \"#!/bin/bash\" >> lnkchkr/linkchecker_linux_demo_debug.sh"
     - "echo \"java -jar linkchecker.jar --spring.profiles.active=demo,debug\" >> lnkchkr/linkchecker_linux_demo_debug.sh"
     - "echo \"#!/bin/bash\" >> lnkchkr/linkchecker_linux_production.sh"
-    - "echo \"java -jar linkchecker.jar\" >> lnkchkr/linkchecker_linux_production.sh"
+    - "echo \"java -jar linkchecker.jar --spring.profiles.active=production\" >> lnkchkr/linkchecker_linux_production.sh"
     - "echo \"#!/bin/bash\" >> lnkchkr/linkchecker_linux_production_debug.sh"
-    - "echo \"java -jar linkchecker.jar --spring.profiles.active=demo,debug\" >> lnkchkr/linkchecker_linux_production_debug.sh"
+    - "echo \"java -jar linkchecker.jar --spring.profiles.active=production,debug\" >> lnkchkr/linkchecker_linux_production_debug.sh"
     - "chmod +x -R lnkchkr/linkchecker_linux_production_debug.sh lnkchkr/linkchecker_linux_production.sh lnkchkr/linkchecker_linux_demo_debug.sh lnkchkr/linkchecker_linux_demo.sh"
     - "ls -l"
 

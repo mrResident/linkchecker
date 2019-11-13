@@ -27,7 +27,7 @@ import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LinkcheckerApplication.class)
-@ActiveProfiles(profiles = "test")
+@ActiveProfiles(profiles = {"test", "debug"})
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
     scripts = {"classpath:schema-h2.sql", "classpath:data-h2.sql"},
     config = @SqlConfig(encoding = "UTF-8"))
@@ -49,7 +49,7 @@ public class GraphNodeServiceH2DBTests {
         NodeGraph nodeGraph = nodeService.get("v1");
         Assert.assertNotNull(nodeGraph);
         Assert.assertEquals("v1", nodeGraph.getName());
-        LOG.debug("NODE DTO: " + nodeGraph);
+        LOG.info("NODE DTO: " + nodeGraph);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class GraphNodeServiceH2DBTests {
         NodeGraph nodeGraph = nodeService.getById(5000);
         Assert.assertNotNull(nodeGraph);
         Assert.assertEquals("v1", nodeGraph.getName());
-        LOG.debug("NODE DTO: " + nodeGraph);
+        LOG.info("NODE DTO: " + nodeGraph);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class GraphNodeServiceH2DBTests {
             .filter(eg -> eg.getId().equals(5000))
             .findFirst()
             .get().getName()).isEqualTo("v1");
-        actual.forEach(ng -> LOG.debug("---- NODE: " + ng));
+        actual.forEach(ng -> LOG.info("---- NODE: " + ng));
     }
 
     @Test
@@ -152,7 +152,7 @@ public class GraphNodeServiceH2DBTests {
         NodeGraph actual = nodeService.get("v6");
         Assert.assertNotNull(actual);
         Set<NodeGraph> nodeGraphs = nodeService.getAll();
-        nodeGraphs.forEach(ng -> LOG.debug("---- NODE: " + ng));
+        nodeGraphs.forEach(ng -> LOG.info("---- NODE: " + ng));
     }
 
     @Test
@@ -168,7 +168,7 @@ public class GraphNodeServiceH2DBTests {
         Assert.assertEquals("w1", actual.stream()
             .filter(ng -> "w1".equals(ng.getName()))
             .findFirst().get().getName());
-        actual.forEach(ng -> LOG.debug("---- NODE: " + ng));
+        actual.forEach(ng -> LOG.info("---- NODE: " + ng));
     }
 
     @Test
@@ -186,7 +186,7 @@ public class GraphNodeServiceH2DBTests {
         Assert.assertNotNull(actual);
         Assert.assertEquals(1, actual.getCounter(), 0);
         Set<NodeGraph> nodeGraphs = nodeService.getAll();
-        nodeGraphs.forEach(ng -> LOG.debug("---- NODE: " + ng));
+        nodeGraphs.forEach(ng -> LOG.info("---- NODE: " + ng));
     }
 
     @Test

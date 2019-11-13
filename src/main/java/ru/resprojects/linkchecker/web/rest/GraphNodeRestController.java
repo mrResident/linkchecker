@@ -21,6 +21,7 @@ import ru.resprojects.linkchecker.services.GraphService;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
@@ -46,8 +47,9 @@ public class GraphNodeRestController {
         this.graphService = graphService;
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<NodeGraph> create(@Valid @RequestBody NodeGraph node) {
+        LOG.info("Creating new graph node");
         NodeGraph created = this.graphService.getNodes().create(node);
         URI uri = MvcUriComponentsBuilder.fromController(getClass())
             .path(NODES_REST_URL)
@@ -56,8 +58,9 @@ public class GraphNodeRestController {
         return ResponseEntity.created(uri).body(created);
     }
 
-    @PostMapping(value = "/byBatch", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/create/byBatch", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<NodeGraph>> createByBatch(@RequestBody @Valid Set<NodeGraph> nodes) {
+        LOG.info("Creating new graph nodes");
         Set<NodeGraph> created = this.graphService.getNodes().create(nodes);
         URI uri = MvcUriComponentsBuilder.fromController(getClass())
             .path(NODES_REST_URL)
@@ -68,40 +71,47 @@ public class GraphNodeRestController {
 
     @GetMapping
     public ResponseEntity<Collection<NodeGraph>> get() {
+        LOG.info("Getting all graph nodes");
         return ResponseEntity.ok(this.graphService.getNodes().getAll());
     }
 
     @GetMapping(value = "/byId/{id}")
     public ResponseEntity<NodeGraph> getById(@PathVariable Integer id) {
+        LOG.info("Getting graph node by id = " + id);
         return ResponseEntity.ok(graphService.getNodes().getById(id));
     }
 
     @GetMapping(value = "/byName/{name}")
     public ResponseEntity<NodeGraph> getByName(@PathVariable String name) {
+        LOG.info("Getting graph node by name = " + name);
         return ResponseEntity.ok(graphService.getNodes().get(name));
     }
 
     @DeleteMapping(value = "/byId/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Integer id) {
+        LOG.info("Removing graph node by id = " + id);
         graphService.getNodes().delete(id);
     }
 
     @DeleteMapping(value = "/byName/{name}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteByName(@PathVariable String name) {
+        LOG.info("Removing graph node by name = " + name);
         graphService.getNodes().delete(name);
     }
 
     @DeleteMapping(value = "/byObj")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteByObject(@RequestBody NodeGraph obj) {
+        LOG.info("Removing graph node by object = " + Optional.ofNullable(obj));
         graphService.getNodes().delete(obj);
     }
 
     @DeleteMapping
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete() {
+        LOG.info("Removing all graph nodes and graph edges that are linked with these nodes");
         graphService.getNodes().deleteAll();
     }
 }

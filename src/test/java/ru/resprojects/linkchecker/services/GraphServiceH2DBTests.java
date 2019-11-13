@@ -30,7 +30,7 @@ import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LinkcheckerApplication.class)
-@ActiveProfiles(profiles = "test")
+@ActiveProfiles(profiles = {"test", "debug"})
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
 	scripts = {"classpath:schema-h2.sql", "classpath:data-h2.sql"},
 	config = @SqlConfig(encoding = "UTF-8"))
@@ -68,7 +68,7 @@ public class GraphServiceH2DBTests {
 		graphDto.setEdges(edgeGraphSet);
 		GraphDto actual = graphService.create(graphDto);
 		Assert.assertNotNull(actual);
-		LOG.debug(actual.toString());
+		LOG.info(actual.toString());
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class GraphServiceH2DBTests {
 		graphDto.setEdges(edgeGraphSet);
 		GraphDto actual = graphService.create(graphDto);
 		Assert.assertNotNull(actual);
-		LOG.debug(actual.toString());
+		LOG.info(actual.toString());
 	}
 
 	@Test
@@ -111,11 +111,11 @@ public class GraphServiceH2DBTests {
 			new EdgeGraph("v5", "v4")
 		).collect(Collectors.toSet()));
 		Set<EdgeGraph> edgeGraphs = graphService.getEdges().getAll();
-		LOG.debug(edgeGraphs.toString());
+		LOG.info(edgeGraphs.toString());
 		GraphDto actual = graphService.get();
 		Assert.assertNotNull(actual);
 		Assert.assertNotEquals(edgeGraphs.size(), actual.getEdges().size());
-		LOG.debug(actual.toString());
+		LOG.info(actual.toString());
 	}
 
 	@Test
@@ -123,7 +123,7 @@ public class GraphServiceH2DBTests {
 		GraphDto actual = graphService.get();
 		Assert.assertNotNull(actual);
 		Assert.assertEquals(4, actual.getEdges().size());
-		LOG.debug(actual.toString());
+		LOG.info(actual.toString());
 	}
 
 	@Test
@@ -151,10 +151,10 @@ public class GraphServiceH2DBTests {
 		Map<String, Integer> nodeErrorStat = new HashMap<>();
 		for (int i = 0; i < 100; i++) {
 			try {
-				LOG.debug(graphService.checkRoute(nodeNames));
+				LOG.info(graphService.checkRoute(nodeNames));
 			} catch (ApplicationException e) {
 				String node = e.getMessage().split(" ")[1];
-				LOG.debug(node);
+				LOG.info(node);
 				if (!nodeErrorStat.containsKey(node)) {
 					nodeErrorStat.put(node, 1);
 				} else {
@@ -164,9 +164,9 @@ public class GraphServiceH2DBTests {
 				faultCount++;
 			}
 		}
-		LOG.debug(graphService.get().toString());
-		LOG.debug("FAULT COUNT for CHECK ROUTE = " + faultCount);
-		nodeErrorStat.forEach((key, value) -> LOG.debug("NODE " + key + " error count = " + value));
+		LOG.info(graphService.get().toString());
+		LOG.info("FAULT COUNT for CHECK ROUTE = " + faultCount);
+		nodeErrorStat.forEach((key, value) -> LOG.info("NODE " + key + " error count = " + value));
 	}
 
 	@Test

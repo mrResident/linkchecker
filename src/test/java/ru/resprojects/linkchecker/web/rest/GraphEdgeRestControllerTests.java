@@ -45,7 +45,7 @@ import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LinkcheckerApplication.class)
-@ActiveProfiles(profiles = "test")
+@ActiveProfiles(profiles = {"test", "debug"})
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
     scripts = {"classpath:schema-h2.sql", "classpath:data-h2.sql"},
     config = @SqlConfig(encoding = "UTF-8"))
@@ -70,7 +70,7 @@ public class GraphEdgeRestControllerTests {
     @Test
     public void addNewEdge() throws Exception {
         EdgeGraph newEdge = new EdgeGraph("v1", "v4");
-        MvcResult result = this.mvc.perform(post(GraphEdgeRestController.EDGE_REST_URL)
+        MvcResult result = this.mvc.perform(post(GraphEdgeRestController.EDGE_REST_URL + "/create")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(newEdge))).andReturn();
         Assert.assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
@@ -83,20 +83,20 @@ public class GraphEdgeRestControllerTests {
 
     @Test
     public void addNewEdgeValidationException() throws Exception {
-        MvcResult result = this.mvc.perform(post(GraphEdgeRestController.EDGE_REST_URL)
+        MvcResult result = this.mvc.perform(post(GraphEdgeRestController.EDGE_REST_URL + "/create")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(new EdgeGraph()))).andReturn();
         Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), result.getResponse().getStatus());
         ErrorInfo error = TestUtils.mapFromJson(result.getResponse().getContentAsString(), ErrorInfo.class);
         Assert.assertEquals(ErrorType.VALIDATION_ERROR, error.getType());
         Assert.assertEquals(ErrorPlaceType.APP, error.getPlace());
-        LOG.debug(Arrays.asList(error.getMessages()).toString());
+        LOG.info(Arrays.asList(error.getMessages()).toString());
     }
 
     @Test
     public void addNewEdgeAlreadyPresentException() throws Exception {
         EdgeGraph newEdge = new EdgeGraph("v1", "v2");
-        MvcResult result = this.mvc.perform(post(GraphEdgeRestController.EDGE_REST_URL)
+        MvcResult result = this.mvc.perform(post(GraphEdgeRestController.EDGE_REST_URL + "/create")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(newEdge))).andReturn();
         Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), result.getResponse().getStatus());
@@ -107,7 +107,7 @@ public class GraphEdgeRestControllerTests {
         Assert.assertTrue(errMsgs.contains(String.format(properties.getEdgeMsg().get("EDGE_MSG_ALREADY_PRESENT_ERROR"),
             newEdge.getNodeOne(), newEdge.getNodeTwo(),
             newEdge.getNodeTwo(), newEdge.getNodeOne())));
-        LOG.debug(errMsgs.toString());
+        LOG.info(errMsgs.toString());
     }
 
     @Test
@@ -116,7 +116,7 @@ public class GraphEdgeRestControllerTests {
             new EdgeGraph("v1", "v4"),
             new EdgeGraph("v2", "v4")
         ).collect(Collectors.toSet());
-        MvcResult result = this.mvc.perform(post(GraphEdgeRestController.EDGE_REST_URL + "/byBatch")
+        MvcResult result = this.mvc.perform(post(GraphEdgeRestController.EDGE_REST_URL + "/create/byBatch")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(newEdges))).andReturn();
         Assert.assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
@@ -128,7 +128,7 @@ public class GraphEdgeRestControllerTests {
 
     @Test
     public void addNewEdgesEmptyCollectionException() throws Exception {
-        MvcResult result = this.mvc.perform(post(GraphEdgeRestController.EDGE_REST_URL + "/byBatch")
+        MvcResult result = this.mvc.perform(post(GraphEdgeRestController.EDGE_REST_URL + "/create/byBatch")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(Collections.emptySet()))).andReturn();
         Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), result.getResponse().getStatus());
@@ -137,7 +137,7 @@ public class GraphEdgeRestControllerTests {
         Assert.assertEquals(ErrorPlaceType.EDGE, error.getPlace());
         List<String> errMsgs = Arrays.asList(error.getMessages());
         Assert.assertTrue(errMsgs.contains(properties.getAppMsg().get("MSG_COLLECTION_EMPTY")));
-        LOG.debug(errMsgs.toString());
+        LOG.info(errMsgs.toString());
     }
 
     @Test
@@ -147,7 +147,7 @@ public class GraphEdgeRestControllerTests {
             new EdgeGraph("v1", "v4"),
             new EdgeGraph("v2", "v4")
         ).collect(Collectors.toSet());
-        MvcResult result = this.mvc.perform(post(GraphEdgeRestController.EDGE_REST_URL + "/byBatch")
+        MvcResult result = this.mvc.perform(post(GraphEdgeRestController.EDGE_REST_URL + "/create/byBatch")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(newEdges))).andReturn();
         Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), result.getResponse().getStatus());
@@ -156,7 +156,7 @@ public class GraphEdgeRestControllerTests {
         Assert.assertEquals(ErrorPlaceType.EDGE, error.getPlace());
         List<String> errMsgs = Arrays.asList(error.getMessages());
         Assert.assertTrue(errMsgs.contains(properties.getAppMsg().get("MSG_COLLECTION_CONTAIN_NULL")));
-        LOG.debug(errMsgs.toString());
+        LOG.info(errMsgs.toString());
     }
 
     @Test
@@ -167,7 +167,7 @@ public class GraphEdgeRestControllerTests {
             new EdgeGraph("v1", "v4"),
             new EdgeGraph("v2", "v4")
         ).collect(Collectors.toSet());
-        MvcResult result = this.mvc.perform(post(GraphEdgeRestController.EDGE_REST_URL + "/byBatch")
+        MvcResult result = this.mvc.perform(post(GraphEdgeRestController.EDGE_REST_URL + "/create/byBatch")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(newEdges))).andReturn();
         Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), result.getResponse().getStatus());
@@ -178,7 +178,7 @@ public class GraphEdgeRestControllerTests {
         Assert.assertTrue(errMsgs.contains(String.format(properties.getEdgeMsg().get("EDGE_MSG_ALREADY_PRESENT_ERROR"),
             newEdge.getNodeOne(), newEdge.getNodeTwo(),
             newEdge.getNodeTwo(), newEdge.getNodeOne())));
-        LOG.debug(errMsgs.toString());
+        LOG.info(errMsgs.toString());
     }
 
     @Test

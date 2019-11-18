@@ -12,6 +12,7 @@ if ""=="%1" (
     echo Running program in DEMO mode
     java -jar %EXECUTABLE_FILE%
 ) else (
+    if "--help"=="%1" goto :Help
     if "--debug"=="%1" (
         echo Running program in DEMO mode with extended debug information
         java -jar linkchecker.jar --spring.profiles.active=demo,debug
@@ -44,11 +45,13 @@ echo --debug - running program in DEMO mode with extended debug information.
 echo.
 echo --production - running program in PRODUCTION mode. For running in this mode needed additional file application-production.properties with PostgreSQL dataset information. Also for this mode available addition key --debug for runnning program with extended debug information.
 echo.
+echo --help - display this is message
+echo.
 echo Examples:
 echo.
 echo linkchecker_win - run program in DEMO mode
 echo.
-echo linkchecker_win --debug - run program in DEMO mode with extended information.
+echo linkchecker_win --debug - run program in DEMO mode with extended debug information.
 echo.
 echo linkchecker_win --production - run program in PRODUCTION mode.
 echo.

@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: demo
+    active: test, debug
 logging:
   level:
     ru.resprojects: info
@@ -35,6 +35,11 @@ spring:
     url: jdbc:h2:mem:linkchecker;DB_CLOSE_ON_EXIT=FALSE
     initialization-mode: always
     platform: h2
+---
+spring:
+  profiles: test
+  thymeleaf:
+    cache: false
 ---
 spring:
   profiles: debug

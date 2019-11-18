@@ -13,11 +13,13 @@ Script without key is run program in DEMO mode. Also vailable next switches:
 file application-production.properties with PostgreSQL dataset information. Also for this mode
 available addition key --debug for runnning program with extended debug information.
 
+--help - display this is message
+
 Examples:
 
 linkchecker_linux - run program in DEMO mode
 
-linkchecker_linux --debug - run program in DEMO mode with extended information.
+linkchecker_linux --debug - run program in DEMO mode with extended debug information.
 
 linkchecker_linux --production - run program in PRODUCTION mode.
 
@@ -40,6 +42,9 @@ if [ -f "$EXECUTABLE_FILE" ]; then
         java -jar linkchecker.jar
     else
         case "$1" in
+            --help)
+                echo "$HELP"
+            ;;
             --debug)
                 echo "Running program in DEMO mode with extended debug information"
                 java -jar linkchecker.jar --spring.profiles.active=demo,debug

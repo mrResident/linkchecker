@@ -26,12 +26,12 @@ if ""=="%1" (
                     if "--debug"=="%2" (
                         echo Running program in PRODUCTION mode with extended debug information
                         java -jar linkchecker.jar --spring.profiles.active=production,debug
-                    ) else goto :Help                    
+                    ) else goto :KEY_NOT_FOUND %2
                 )
             ) else (
                 goto :PROPERTIES_FILE_NOT_FOUND
             )
-        ) else goto :Help
+        ) else goto :KEY_NOT_FOUND %1
     )
 )
 exit /B
@@ -58,6 +58,11 @@ echo.
 echo linkchecker_win --production --debug - run program in PRODUCTION mode with extended debug information.
 echo.
 echo For more information see https://gitlab.com/Aleksandrov/linkchecker/wikis/
+exit /b
+
+:KEY_NOT_FOUND
+echo linkchecker_win: unknown option %~1
+echo Try 'linkchecker_win --help' for more information.
 exit /b
 
 :PROPERTIES_FILE_NOT_FOUND

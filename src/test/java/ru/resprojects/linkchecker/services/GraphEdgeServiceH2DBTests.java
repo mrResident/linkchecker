@@ -29,7 +29,7 @@ import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LinkcheckerApplication.class)
-@ActiveProfiles(profiles = "test")
+@ActiveProfiles(profiles = {"test", "debug"})
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
     scripts = {"classpath:schema-h2.sql", "classpath:data-h2.sql"},
     config = @SqlConfig(encoding = "UTF-8"))
@@ -54,7 +54,7 @@ public class GraphEdgeServiceH2DBTests {
         Assert.assertEquals(new Integer(5009), actual.getId());
         Set<EdgeGraph> egList = edgeService.getAll();
         Assert.assertEquals(5, egList.size());
-        egList.forEach(eg -> LOG.debug("---- EDGE: " + eg));
+        egList.forEach(eg -> LOG.info("---- EDGE: " + eg));
     }
 
     @Test
@@ -98,10 +98,10 @@ public class GraphEdgeServiceH2DBTests {
         Set<EdgeGraph> actual = edgeService.create(edgeGraphs);
         Assert.assertFalse(actual.isEmpty());
         Assert.assertNotNull(actual.iterator().next().getId());
-        actual.forEach(eg -> LOG.debug("---- RETURNED EDGE: " + eg));
+        actual.forEach(eg -> LOG.info("---- RETURNED EDGE: " + eg));
         Set<EdgeGraph> egList = edgeService.getAll();
         Assert.assertEquals(7, egList.size());
-        egList.forEach(eg -> LOG.debug("---- EDGE: " + eg));
+        egList.forEach(eg -> LOG.info("---- EDGE: " + eg));
     }
 
     @Test
@@ -151,7 +151,7 @@ public class GraphEdgeServiceH2DBTests {
         edgeService.delete(5005);
         Set<EdgeGraph> egList = edgeService.getAll();
         Assert.assertEquals(3, egList.size());
-        egList.forEach(eg -> LOG.debug("---- EDGE: " + eg));
+        egList.forEach(eg -> LOG.info("---- EDGE: " + eg));
     }
 
     @Test
@@ -165,7 +165,7 @@ public class GraphEdgeServiceH2DBTests {
     public void deleteEdgeByNodeOneAndNodeTwoNames() {
         edgeService.delete("v1", "v2");
         Set<EdgeGraph> actual = edgeService.getAll();
-        actual.forEach(eg -> LOG.debug("---- EDGE: " + eg));
+        actual.forEach(eg -> LOG.info("---- EDGE: " + eg));
     }
 
     @Test
@@ -179,7 +179,7 @@ public class GraphEdgeServiceH2DBTests {
     public void deleteEdgeByNodeName() {
         edgeService.delete("v1");
         Set<EdgeGraph> actual = edgeService.getAll();
-        actual.forEach(eg -> LOG.debug("---- EDGE: " + eg));
+        actual.forEach(eg -> LOG.info("---- EDGE: " + eg));
     }
 
     @Test
@@ -208,7 +208,7 @@ public class GraphEdgeServiceH2DBTests {
             .filter(eg -> eg.getId().equals(5007))
             .findFirst()
             .get().getNodeTwo()).isEqualTo("v5");
-        actual.forEach(eg -> LOG.debug("---- EDGE: " + eg));
+        actual.forEach(eg -> LOG.info("---- EDGE: " + eg));
     }
 
     @Test
@@ -216,7 +216,7 @@ public class GraphEdgeServiceH2DBTests {
         EdgeGraph actual = edgeService.getById(5005);
         Assert.assertNotNull(actual);
         Assert.assertEquals(TestUtils.edgeGraph, actual);
-        LOG.debug(actual.toString());
+        LOG.info(actual.toString());
     }
 
     @Test
@@ -235,7 +235,7 @@ public class GraphEdgeServiceH2DBTests {
         Assert.assertFalse(actual.isEmpty());
         Assert.assertEquals(expected.size(), actual.size());
         assertThat(actual).containsAnyOf(expected.iterator().next());
-        actual.forEach(eg -> LOG.debug("---- EDGE: " + eg));
+        actual.forEach(eg -> LOG.info("---- EDGE: " + eg));
     }
 
     @Test
@@ -251,7 +251,7 @@ public class GraphEdgeServiceH2DBTests {
         Assert.assertNotNull(actual);
         Assert.assertEquals(TestUtils.edgeGraph, actual);
         Integer actualId = actual.getId();
-        LOG.debug(actual.toString());
+        LOG.info(actual.toString());
         actual = edgeService.get("v2", "v1");
         Assert.assertEquals(actualId, actual.getId()); //must equal because graph is undirected
     }

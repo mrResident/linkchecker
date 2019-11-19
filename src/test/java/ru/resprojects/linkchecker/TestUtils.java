@@ -8,6 +8,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Helper class for unit testing.
+ */
 public class TestUtils {
 
     public static final GraphDto.NodeGraph nodeGraph = new GraphDto.NodeGraph(5000, "v1", 0);

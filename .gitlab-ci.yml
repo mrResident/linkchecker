@@ -43,9 +43,13 @@ package:
   script:
     - echo "Packing into an executable jar file using maven"
     - mvn package
-    - "cp target/linkchecker-0.1.0.jar linkchecker.jar"
+    - "rm -r -d -f lnkchkr/"
+    - "mkdir -p lnkchkr"
+    - "cp target/linkchecker-0.1.0.jar lnkchkr/linkchecker.jar"
+    - "cp linkchecker_linux.sh lnkchkr/linkchecker_linux.sh"
+    - "cp linkchecker_win.bat lnkchkr/linkchecker_win.bat"
     - "ls -l"
 
   artifacts:
     paths:
-      - linkchecker.jar
+      - lnkchkr/

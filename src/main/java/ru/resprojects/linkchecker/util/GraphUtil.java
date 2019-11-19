@@ -54,6 +54,7 @@ public class GraphUtil {
         final Collection<EdgeGraph> edgesGraph) {
         Graph<Node, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
         if (Objects.isNull(nodesGraph) || Objects.isNull(edgesGraph)) {
+            LOG.debug("graphBuilder: Return empty graph because one of the input collection is null");
             return graph;
         }
         Set<Node> nodes = nodeGraphsToNodes(nodesGraph);
@@ -91,7 +92,10 @@ public class GraphUtil {
      * @return {@link GraphDto}.
      */
     public static GraphDto graphToGraphDto(final Graph<Node, DefaultEdge> graph) {
-        if (Objects.isNull(graph)) return new GraphDto();
+        if (Objects.isNull(graph)) {
+            LOG.debug("graphToGraphDto: returned empty DTO graph because input graph is null.");
+            return new GraphDto();
+        }
         return new GraphDto(getNodesDtoFromGraph(graph), getEdgesDtoFromGraph(graph));
     }
 
@@ -101,7 +105,10 @@ public class GraphUtil {
      * @return collection of GraphDto nodes.
      */
     private static Set<NodeGraph> getNodesDtoFromGraph(final Graph<Node, DefaultEdge> graph) {
-        if (Objects.isNull(graph)) return new HashSet<>();
+        if (Objects.isNull(graph)) {
+            LOG.debug("getNodesDtoFromGraph: returned empty collection, because input graph is null");
+            return new HashSet<>();
+        }
         return graph.vertexSet().stream()
             .map(n -> new NodeGraph(n.getId(), n.getName(), n.getCounter()))
             .collect(Collectors.toSet());
@@ -113,7 +120,10 @@ public class GraphUtil {
      * @return collection of GraphDto edges without IDs.
      */
     private static Set<EdgeGraph> getEdgesDtoFromGraph(final Graph<Node, DefaultEdge> graph) {
-        if (Objects.isNull(graph)) return new HashSet<>();
+        if (Objects.isNull(graph)) {
+            LOG.debug("getEdgesDtoFromGraph: returned empty collection, because input graph is null");
+            return new HashSet<>();
+        }
         return graph.edgeSet().stream()
             .map(e -> new EdgeGraph(graph.getEdgeSource(e).getName(), graph.getEdgeTarget(e).getName()))
             .collect(Collectors.toSet());
@@ -129,30 +139,30 @@ public class GraphUtil {
      */
     public static Graph<Node, DefaultEdge> removeCyclesFromGraph(
         final Graph<Node, DefaultEdge> graph) {
-        LOG.debug("Detect cycles in graph by Paton algorithm");
+        LOG.debug("removeCyclesFromGraph: Detect cycles in graph by Paton algorithm");
         if (!isGraphContainCycles(graph)) {
-            LOG.debug("Cycles not found!");
+            LOG.debug("removeCyclesFromGraph: Cycles not found!");
             return graph;
         }
         SimpleGraph<Node, DefaultEdge> result = new SimpleGraph<>(DefaultEdge.class);
         Graphs.addGraph(result, graph);
         while (true) {
-            LOG.debug("Try detect cycles");
+            LOG.debug("removeCyclesFromGraph: Try detect cycles");
             PatonCycleBase<Node, DefaultEdge> patonCycleBase = new PatonCycleBase<>(result);
             Set<GraphPath<Node, DefaultEdge>> paths = patonCycleBase.getCycleBasis().getCyclesAsGraphPaths();
             Set<DefaultEdge> edgeSet = new HashSet<>();
             if (paths.size() != 0) {
-                LOG.debug("Cycles found! Count of cycles in present graph = {}", paths.size());
+                LOG.debug("removeCyclesFromGraph: Cycles found! Count of cycles in present graph = {}", paths.size());
                 for (GraphPath<Node, DefaultEdge> graphPath : paths) {
                     edgeSet.addAll(graphPath.getEdgeList());
                 }
-                LOG.debug("Remove edge from cycle");
+                LOG.debug("removeCyclesFromGraph: Remove edge from cycle");
                 if (edgeSet.iterator().hasNext()) {
                     DefaultEdge edge = edgeSet.iterator().next();
                     result.removeEdge(edge);
                 }
             } else {
-                LOG.debug("Cycles not found!");
+                LOG.debug("removeCyclesFromGraph: Cycles not found!");
                 break;
             }
         }
@@ -188,7 +198,7 @@ public class GraphUtil {
             LOG.debug(writer.toString());
             return writer.toString();
         } catch (Exception e) {
-            LOG.debug("Fail export graph to GraphViz format.");
+            LOG.warn("Fail export graph to GraphViz format.", e);
         }
         return "";
     }
@@ -199,7 +209,10 @@ public class GraphUtil {
      * @return collection of graph node DTO or empty collection if nodes is null.
      */
     public static Set<NodeGraph> nodesToNodeGraphs(final Collection<Node> nodes) {
-        if (Objects.isNull(nodes)) return new HashSet<>();
+        if (Objects.isNull(nodes)) {
+            LOG.debug("nodesToNodeGraphs: return empty collection because input collection of nodes is null");
+            return new HashSet<>();
+        }
         return nodes.stream()
             .filter(Objects::nonNull)
             .map(GraphUtil::nodeToNodeGraph)
@@ -213,7 +226,10 @@ public class GraphUtil {
      * nodeGraphs is null.
      */
     public static Set<Node> nodeGraphsToNodes(final Collection<NodeGraph> nodeGraphs) {
-        if (Objects.isNull(nodeGraphs)) return new HashSet<>();
+        if (Objects.isNull(nodeGraphs)) {
+            LOG.debug("nodeGraphsToNodes: return empty collection because input collection of DTO nodes is null");
+            return new HashSet<>();
+        }
         return nodeGraphs.stream()
             .filter(Objects::nonNull)
             .map(GraphUtil::nodeGraphToNode)
@@ -260,7 +276,10 @@ public class GraphUtil {
      * @return collection of graph edge DTO or empty collection if param is null.
      */
     public static Set<EdgeGraph> edgesToEdgeGraphs(final Collection<Edge> edges) {
-        if (Objects.isNull(edges)) return new HashSet<>();
+        if (Objects.isNull(edges)) {
+            LOG.debug("edgesToEdgeGraphs: return empty collection because input collection of edges is null");
+            return new HashSet<>();
+        }
         return edges.stream()
             .filter(Objects::nonNull)
             .map(GraphUtil::edgeToEdgeGraph)
@@ -313,6 +332,7 @@ public class GraphUtil {
      * state or null if node graph collection is empty or null.
      */
     public static Map<String, Boolean> getRandomNodeFault(Collection<NodeGraph> nodes) {
+        LOG.debug("getRandomNodeFault: Generating random node fault");
         Map<String, Boolean> result = new HashMap<>();
         if (Objects.isNull(nodes) || nodes.isEmpty()) {
             return result;
@@ -321,6 +341,7 @@ public class GraphUtil {
             boolean isFault = ThreadLocalRandom.current().nextInt(100) >= 90;
             result.put(nodeGraph.getName(), isFault);
         });
+        LOG.debug("getRandomNodeFault: result = " + result.toString());
         return result;
     }
 

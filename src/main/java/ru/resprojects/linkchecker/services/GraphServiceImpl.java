@@ -34,8 +34,6 @@ import static ru.resprojects.linkchecker.util.GraphUtil.*;
 @Service
 public class GraphServiceImpl implements GraphService {
 
-    private static Logger LOG = LoggerFactory.getLogger(GraphServiceImpl.class);
-
     private final GraphEdgeService edges;
     private final GraphNodeService nodes;
     private final AppProperties properties;
@@ -49,10 +47,7 @@ public class GraphServiceImpl implements GraphService {
 
     @Override
     public GraphDto create(final GraphDto graphTo) throws ApplicationException {
-        LOG.debug("Starting create new graph.");
         if (Objects.isNull(graphTo)) {
-            LOG.debug("Stopping creating a new graph because method received" +
-                " null argument");
             throw new ApplicationException(
                 ErrorType.DATA_ERROR,
                 ErrorPlaceType.GRAPH,
@@ -61,8 +56,6 @@ public class GraphServiceImpl implements GraphService {
             );
         }
         if (graphTo.getNodes().isEmpty() && !graphTo.getEdges().isEmpty()) {
-            LOG.debug("Stopping creating a new graph because the collection of" +
-                " nodes is empty, while the collection of edges is not empty");
             throw new ApplicationException(
                 ErrorType.DATA_ERROR,
                 ErrorPlaceType.GRAPH,
@@ -70,12 +63,9 @@ public class GraphServiceImpl implements GraphService {
                 "NODES: " + properties.getAppMsg().get("MSG_COLLECTION_EMPTY")
             );
         }
-        LOG.debug("Removing old graph from DB");
         clear();
-        LOG.debug("Checking graph for cycles. If cycles is found, they will be removed.");
         GraphDto graph = graphToGraphDto(
             removeCyclesFromGraph(graphBuilder(graphTo.getNodes(), graphTo.getEdges())));
-        LOG.debug("Saving graph to the DB");
         Set<NodeGraph> nodeGraphSet = nodes.create(graph.getNodes());
         Set<EdgeGraph> edgeGraphSet = edges.create(graph.getEdges());
         return new GraphDto(nodeGraphSet, edgeGraphSet);
@@ -93,16 +83,12 @@ public class GraphServiceImpl implements GraphService {
 
     @Override
     public void clear() {
-        LOG.debug("Removing all nodes and edges from the graph");
         nodes.deleteAll();
     }
 
     @Override
     public String checkRoute(final Set<String> nodeNameSet) throws NotFoundException {
-        LOG.debug("Starting check route");
         if (Objects.isNull(nodeNameSet)) {
-            LOG.debug("Stopping check route because method received" +
-                " null argument");
             throw new ApplicationException(
                 ErrorType.DATA_ERROR,
                 ErrorPlaceType.GRAPH,
@@ -111,8 +97,6 @@ public class GraphServiceImpl implements GraphService {
             );
         }
         if (nodeNameSet.isEmpty()) {
-            LOG.debug("Stopping check route because the collection of" +
-                " nodes is empty");
             throw new ApplicationException(
                 ErrorType.DATA_ERROR,
                 ErrorPlaceType.GRAPH,
@@ -121,8 +105,6 @@ public class GraphServiceImpl implements GraphService {
             );
         }
         if (nodeNameSet.size() == 1) {
-            LOG.debug("Stopping check route because the collection of" +
-                " nodes have only one element");
             throw new ApplicationException(
                 ErrorType.DATA_ERROR,
                 ErrorPlaceType.GRAPH,
@@ -130,7 +112,6 @@ public class GraphServiceImpl implements GraphService {
                 properties.getAppMsg().get("MSG_COLLECTION_CONTAIN_ONE_ELEMENT")
             );
         }
-        LOG.debug("Checking graph for cycles. If cycles is found, they will be removed.");
         GraphDto graphDto = removeGraphCycles(new GraphDto(nodes.getAll(),
             edges.getAll()));
         Map<String, Boolean> faultNodes = getRandomNodeFault(graphDto.getNodes());

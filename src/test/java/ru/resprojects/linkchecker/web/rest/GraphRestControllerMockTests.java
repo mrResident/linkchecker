@@ -3,8 +3,6 @@ package ru.resprojects.linkchecker.web.rest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,8 +25,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @RunWith(SpringRunner.class)
 @WebMvcTest(GraphRestController.class)
 public class GraphRestControllerMockTests {
-
-    private static final Logger LOG = LoggerFactory.getLogger(GraphRestControllerMockTests.class);
 
     @Autowired
     private MockMvc mvc;

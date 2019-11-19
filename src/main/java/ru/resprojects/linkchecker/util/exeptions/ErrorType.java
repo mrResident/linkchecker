@@ -8,4 +8,5 @@ public enum ErrorType {
     DATA_NOT_FOUND, //Types of errors that are associated with search and extract data
     DATA_ERROR, //Types of errors that are associated with data handling
     VALIDATION_ERROR, //Types of errors are associated with validating data in REST-controllers
+    WRONG_REQUEST //Types of errors that are associated with http requests
 }

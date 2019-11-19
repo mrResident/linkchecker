@@ -74,34 +74,18 @@ public class Edge extends AbstractBaseEntity {
         this.nodeTwo = nodeTwo;
     }
 
-    /**
-     * Get first object of graph node.
-     * @return first object of graph node.
-     */
     public Node getNodeOne() {
         return nodeOne;
     }
 
-    /**
-     * Set first object of graph node.
-     * @param nodeOne - first object of graph node.
-     */
     public void setNodeOne(final Node nodeOne) {
         this.nodeOne = nodeOne;
     }
 
-    /**
-     * Get second object of graph node.
-     * @return second object of graph node.
-     */
     public Node getNodeTwo() {
         return nodeTwo;
     }
 
-    /**
-     * Set second object of graph node.
-     * @param nodeTwo second object of graph node.
-     */
     public void setNodeTwo(final Node nodeTwo) {
         this.nodeTwo = nodeTwo;
     }

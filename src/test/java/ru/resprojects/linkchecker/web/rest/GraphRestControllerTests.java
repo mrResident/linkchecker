@@ -46,14 +46,12 @@ import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LinkcheckerApplication.class)
-@ActiveProfiles(profiles = "test")
+@ActiveProfiles(profiles = {"test", "debug"})
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
     scripts = {"classpath:schema-h2.sql", "classpath:data-h2.sql"},
     config = @SqlConfig(encoding = "UTF-8"))
 @WebAppConfiguration
 public class GraphRestControllerTests {
-
-    private static final Logger LOG = LoggerFactory.getLogger(GraphRestControllerTests.class);
 
     private MockMvc mvc;
 
@@ -94,7 +92,7 @@ public class GraphRestControllerTests {
             .map(eg -> new EdgeGraph(eg.getNodeOne(), eg.getNodeTwo()))
             .collect(Collectors.toSet());
         GraphDto graph = new GraphDto(nodesGraph, edgesGraph);
-        MvcResult result = this.mvc.perform(post(GraphRestController.REST_URL)
+        MvcResult result = this.mvc.perform(post(GraphRestController.REST_URL + "/create")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(graph))).andReturn();
         Assert.assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());

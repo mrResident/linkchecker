@@ -56,18 +56,10 @@ public class Node extends AbstractNamedEntity {
         this.counter = counter;
     }
 
-    /**
-     * Get number of passes through the node of the graph.
-     * @return number of passes through the node of the graph.
-     */
     public int getCounter() {
         return counter;
     }
 
-    /**
-     * Set number of passes through the node of the graph.
-     * @param counter number of passes through the node of the graph.
-     */
     public void setCounter(final int counter) {
         this.counter = counter;
     }

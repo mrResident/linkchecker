@@ -76,10 +76,10 @@ public class ValidationModelTests {
 
     private static void printViolationMessage(Set<ConstraintViolation<Node>> violations) {
         violations.forEach(v -> {
-            LOG.debug("VIOLATION INFO");
-            LOG.debug("--> MESSAGE: " + v.getMessage());
-            LOG.debug("--> PROPERTY PATH: " + v.getPropertyPath().toString());
-            LOG.debug("--> INVALID VALUE: " + v.getInvalidValue());
+            LOG.info("VIOLATION INFO");
+            LOG.info("--> MESSAGE: " + v.getMessage());
+            LOG.info("--> PROPERTY PATH: " + v.getPropertyPath().toString());
+            LOG.info("--> INVALID VALUE: " + v.getInvalidValue());
         });
     }
 

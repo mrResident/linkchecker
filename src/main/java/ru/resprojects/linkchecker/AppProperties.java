@@ -7,6 +7,16 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Data class for application error string messages. These messages is loaded
+ * from "appmsg" block in the application.yml file
+ *
+ * Messages is divided on three type:
+ *
+ * AppMsg - error messages is related with application as whole.
+ * NodeMsg - error messages is related with nodes in the graph.
+ * EdgeMsg - error messages is related with edges int the graph.
+ */
 @Component
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix = "appmsg")

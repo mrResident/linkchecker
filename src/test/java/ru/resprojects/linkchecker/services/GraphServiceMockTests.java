@@ -44,8 +44,6 @@ import static org.powermock.api.mockito.PowerMockito.spy;
     "javax.net.ssl.*", "com.sun.org.apache.xalan.internal.xsltc.trax.*"})
 public class GraphServiceMockTests {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GraphServiceMockTests.class);
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 

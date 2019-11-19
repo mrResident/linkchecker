@@ -45,14 +45,14 @@ import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LinkcheckerApplication.class)
-@ActiveProfiles(profiles = "test")
+@ActiveProfiles(profiles = {"test", "debug"})
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
     scripts = {"classpath:schema-h2.sql", "classpath:data-h2.sql"},
     config = @SqlConfig(encoding = "UTF-8"))
 @WebAppConfiguration
 public class GraphNodeRestControllerTests {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GraphRestControllerTests.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GraphNodeRestControllerTests.class);
 
     private MockMvc mvc;
 
@@ -115,7 +115,7 @@ public class GraphNodeRestControllerTests {
     @Test
     public void addNewNodeToGraph() throws Exception {
         NodeGraph newNode = new NodeGraph("v6");
-        MvcResult result = this.mvc.perform(post(GraphNodeRestController.NODES_REST_URL)
+        MvcResult result = this.mvc.perform(post(GraphNodeRestController.NODES_REST_URL + "/create")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(newNode))).andReturn();
         Assert.assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
@@ -132,7 +132,7 @@ public class GraphNodeRestControllerTests {
             new NodeGraph("v7"),
             new NodeGraph("v8")
         ).collect(Collectors.toSet());
-        MvcResult result = this.mvc.perform(post(GraphNodeRestController.NODES_REST_URL + "/byBatch")
+        MvcResult result = this.mvc.perform(post(GraphNodeRestController.NODES_REST_URL + "/create/byBatch")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(newNodes))).andReturn();
         Assert.assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
@@ -144,20 +144,20 @@ public class GraphNodeRestControllerTests {
 
     @Test
     public void addNewNodeValidationException() throws Exception {
-        MvcResult result = this.mvc.perform(post(GraphNodeRestController.NODES_REST_URL)
+        MvcResult result = this.mvc.perform(post(GraphNodeRestController.NODES_REST_URL + "/create")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(new NodeGraph()))).andReturn();
         Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), result.getResponse().getStatus());
         ErrorInfo error = TestUtils.mapFromJson(result.getResponse().getContentAsString(), ErrorInfo.class);
         Assert.assertEquals(ErrorType.VALIDATION_ERROR, error.getType());
         Assert.assertEquals(ErrorPlaceType.APP, error.getPlace());
-        LOG.debug(Arrays.asList(error.getMessages()).toString());
+        LOG.info(Arrays.asList(error.getMessages()).toString());
     }
 
     @Test
     public void addNewNodeAlreadyPresentException() throws Exception {
         NodeGraph newNode = new NodeGraph("v1");
-        MvcResult result = this.mvc.perform(post(GraphNodeRestController.NODES_REST_URL)
+        MvcResult result = this.mvc.perform(post(GraphNodeRestController.NODES_REST_URL + "/create")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(newNode))).andReturn();
         Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), result.getResponse().getStatus());
@@ -166,13 +166,13 @@ public class GraphNodeRestControllerTests {
         Assert.assertEquals(ErrorPlaceType.NODE, error.getPlace());
         List<String> errMsgs = Arrays.asList(error.getMessages());
         Assert.assertTrue(errMsgs.contains(String.format(properties.getNodeMsg().get("NODE_MSG_ALREADY_PRESENT_ERROR"), newNode.getName())));
-        LOG.debug(errMsgs.toString());
+        LOG.info(errMsgs.toString());
     }
 
     @Test
     public void addNewNodesEmptyCollectionException() throws Exception {
         Set<NodeGraph> newNodes = Collections.emptySet();
-        MvcResult result = this.mvc.perform(post(GraphNodeRestController.NODES_REST_URL + "/byBatch")
+        MvcResult result = this.mvc.perform(post(GraphNodeRestController.NODES_REST_URL + "/create/byBatch")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(newNodes))).andReturn();
         Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), result.getResponse().getStatus());
@@ -181,7 +181,7 @@ public class GraphNodeRestControllerTests {
         Assert.assertEquals(ErrorPlaceType.NODE, error.getPlace());
         List<String> errMsgs = Arrays.asList(error.getMessages());
         Assert.assertTrue(errMsgs.contains(properties.getAppMsg().get("MSG_COLLECTION_EMPTY")));
-        LOG.debug(errMsgs.toString());
+        LOG.info(errMsgs.toString());
     }
 
     @Test
@@ -191,7 +191,7 @@ public class GraphNodeRestControllerTests {
             new NodeGraph("v7"),
             new NodeGraph("v8")
         ).collect(Collectors.toSet());
-        MvcResult result = this.mvc.perform(post(GraphNodeRestController.NODES_REST_URL + "/byBatch")
+        MvcResult result = this.mvc.perform(post(GraphNodeRestController.NODES_REST_URL + "/create/byBatch")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(newNodes))).andReturn();
         Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), result.getResponse().getStatus());
@@ -200,7 +200,7 @@ public class GraphNodeRestControllerTests {
         Assert.assertEquals(ErrorPlaceType.NODE, error.getPlace());
         List<String> errMsgs = Arrays.asList(error.getMessages());
         Assert.assertTrue(errMsgs.contains(properties.getAppMsg().get("MSG_COLLECTION_CONTAIN_NULL")));
-        LOG.debug(errMsgs.toString());
+        LOG.info(errMsgs.toString());
     }
 
     @Test
@@ -210,7 +210,7 @@ public class GraphNodeRestControllerTests {
             new NodeGraph("v7"),
             new NodeGraph("v8")
         ).collect(Collectors.toSet());
-        MvcResult result = this.mvc.perform(post(GraphNodeRestController.NODES_REST_URL + "/byBatch")
+        MvcResult result = this.mvc.perform(post(GraphNodeRestController.NODES_REST_URL + "/create/byBatch")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(newNodes))).andReturn();
         Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), result.getResponse().getStatus());
@@ -220,7 +220,7 @@ public class GraphNodeRestControllerTests {
         List<String> errMsgs = Arrays.asList(error.getMessages());
         Assert.assertTrue(errMsgs.contains(String.format(
             properties.getNodeMsg().get("NODE_MSG_ALREADY_PRESENT_ERROR"),"v1")));
-        LOG.debug(errMsgs.toString());
+        LOG.info(errMsgs.toString());
     }
 
     @Test
@@ -274,7 +274,7 @@ public class GraphNodeRestControllerTests {
         List<String> errMsgs = Arrays.asList(error.getMessages());
         Assert.assertTrue(errMsgs.contains(String.format(
             properties.getAppMsg().get("MSG_BY_ID_ERROR"), ErrorPlaceType.NODE, 5050)));
-        LOG.debug(errMsgs.toString());
+        LOG.info(errMsgs.toString());
     }
 
     @Test
@@ -288,7 +288,7 @@ public class GraphNodeRestControllerTests {
         List<String> errMsgs = Arrays.asList(error.getMessages());
         Assert.assertTrue(errMsgs.contains(String.format(
             properties.getNodeMsg().get("NODE_MSG_BY_NAME_ERROR"), "v10")));
-        LOG.debug(errMsgs.toString());
+        LOG.info(errMsgs.toString());
     }
 
     @Test
@@ -304,7 +304,7 @@ public class GraphNodeRestControllerTests {
         List<String> errMsgs = Arrays.asList(error.getMessages());
         Assert.assertTrue(errMsgs.contains(String.format(
             properties.getNodeMsg().get("NODE_MSG_BY_OBJECT_ERROR"), newNode.toString())));
-        LOG.debug(errMsgs.toString());
+        LOG.info(errMsgs.toString());
     }
 
     @Test
@@ -320,7 +320,7 @@ public class GraphNodeRestControllerTests {
         List<String> errMsgs = Arrays.asList(error.getMessages());
         Assert.assertTrue(errMsgs.contains(String.format(
             properties.getNodeMsg().get("NODE_MSG_BY_OBJECT_ERROR"), newNode.toString())));
-        LOG.debug(errMsgs.toString());
+        LOG.info(errMsgs.toString());
     }
 
     @Test
@@ -336,7 +336,7 @@ public class GraphNodeRestControllerTests {
         List<String> errMsgs = Arrays.asList(error.getMessages());
         Assert.assertTrue(errMsgs.contains(String.format(
             properties.getNodeMsg().get("NODE_MSG_BY_OBJECT_ERROR"), newNode.toString())));
-        LOG.debug(errMsgs.toString());
+        LOG.info(errMsgs.toString());
     }
 
 

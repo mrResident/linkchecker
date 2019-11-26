@@ -1,12 +1,10 @@
 package ru.resprojects.linkchecker.web.rest;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,11 +12,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import ru.resprojects.linkchecker.AppProperties;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
 import ru.resprojects.linkchecker.TestUtils;
@@ -50,21 +45,14 @@ import static ru.resprojects.linkchecker.dto.GraphDto.EdgeGraph;
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
     scripts = {"classpath:schema-h2.sql", "classpath:data-h2.sql"},
     config = @SqlConfig(encoding = "UTF-8"))
-@WebAppConfiguration
+@AutoConfigureMockMvc
 public class GraphRestControllerTests {
 
+    @Autowired
     private MockMvc mvc;
 
     @Autowired
-    WebApplicationContext webContext;
-
-    @Autowired
     private AppProperties properties;
-
-    @Before
-    public void init() {
-        mvc = MockMvcBuilders.webAppContextSetup(webContext).build();
-    }
 
     @Test
     public void getGraph() throws Exception {
@@ -102,6 +90,24 @@ public class GraphRestControllerTests {
         Assert.assertEquals(edgesGraph.size(), returnedGraph.getEdges().size());
         Assert.assertNotNull(returnedGraph.getNodes().iterator().next().getId());
         Assert.assertNotNull(returnedGraph.getEdges().iterator().next().getId());
+    }
+
+    @Test
+    public void createGraphEmptyNodeCollectionException() throws Exception {
+        Set<NodeGraph> nodesGraph = Collections.emptySet();
+        Set<EdgeGraph> edgesGraph = TestUtils.edgesGraph.stream()
+            .map(eg -> new EdgeGraph(eg.getNodeOne(), eg.getNodeTwo()))
+            .collect(Collectors.toSet());
+        GraphDto graph = new GraphDto(nodesGraph, edgesGraph);
+        MvcResult result = this.mvc.perform(post(GraphRestController.REST_URL + "/create")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(TestUtils.mapToJson(graph))).andReturn();
+        Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), result.getResponse().getStatus());
+        ErrorInfo error = TestUtils.mapFromJson(result.getResponse().getContentAsString(), ErrorInfo.class);
+        Assert.assertEquals(ErrorType.DATA_ERROR, error.getType());
+        Assert.assertEquals(ErrorPlaceType.GRAPH, error.getPlace());
+        List<String> errMsgs = Arrays.asList(error.getMessages());
+        Assert.assertTrue(errMsgs.contains("NODES: " + properties.getAppMsg().get("MSG_COLLECTION_EMPTY")));
     }
 
     @Test

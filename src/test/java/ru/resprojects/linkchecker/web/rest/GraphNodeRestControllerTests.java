@@ -2,12 +2,12 @@ package ru.resprojects.linkchecker.web.rest;
 
 import com.google.gson.reflect.TypeToken;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,11 +15,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import ru.resprojects.linkchecker.AppProperties;
 import ru.resprojects.linkchecker.LinkcheckerApplication;
 import ru.resprojects.linkchecker.TestUtils;
@@ -49,23 +46,16 @@ import static ru.resprojects.linkchecker.dto.GraphDto.NodeGraph;
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
     scripts = {"classpath:schema-h2.sql", "classpath:data-h2.sql"},
     config = @SqlConfig(encoding = "UTF-8"))
-@WebAppConfiguration
+@AutoConfigureMockMvc
 public class GraphNodeRestControllerTests {
 
     private static final Logger LOG = LoggerFactory.getLogger(GraphNodeRestControllerTests.class);
 
+    @Autowired
     private MockMvc mvc;
 
     @Autowired
-    WebApplicationContext webContext;
-
-    @Autowired
     private AppProperties properties;
-
-    @Before
-    public void init() {
-        mvc = MockMvcBuilders.webAppContextSetup(webContext).build();
-    }
 
     @Test
     public void getNodes() throws Exception {

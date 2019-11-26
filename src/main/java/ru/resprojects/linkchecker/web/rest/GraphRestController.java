@@ -34,7 +34,7 @@ public class GraphRestController {
 
     private static final Logger LOG = LoggerFactory.getLogger(GraphRestController.class);
 
-    static final String REST_URL = "/rest/v1/graph";
+    public static final String REST_URL = "/rest/v1/graph";
 
     private GraphService graphService;
 

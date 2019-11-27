@@ -3,6 +3,7 @@ stages:
   - compile
   - test
   - package
+  - deploy
 
 clean:
   stage: clean
@@ -42,14 +43,23 @@ package:
 
   script:
     - echo "Packing into an executable jar file using maven"
-    - mvn package
+    - mvn package -DskipTests
+
+deploy:
+  stage: deploy
+  tags:
+    - deploy
+
+  script:
+    - echo "Deploy"
     - "rm -r -d -f lnkchkr/"
     - "mkdir -p lnkchkr"
-    - "cp target/linkchecker-0.1.0.jar lnkchkr/linkchecker.jar"
+    - "cp target/linkchecker-*.jar lnkchkr/linkchecker.jar"
     - "cp linkchecker_linux.sh lnkchkr/linkchecker_linux.sh"
     - "cp linkchecker_win.bat lnkchkr/linkchecker_win.bat"
     - "ls -l"
 
   artifacts:
+    name: "linkchecker-$CI_COMMIT_REF_NAME"
     paths:
       - lnkchkr/

@@ -44,6 +44,7 @@ package:
   script:
     - echo "Packing into an executable jar file using maven"
     - mvn package
+    - "cp target/linkchecker-*.jar linkchecker.jar"
 
 deploy:
   stage: deploy
@@ -54,12 +55,13 @@ deploy:
     - echo "Deploy"
     - "rm -r -d -f lnkchkr/"
     - "mkdir -p lnkchkr"
-    - "cp target/linkchecker-*.jar lnkchkr/linkchecker.jar"
+    - "mv linkchecker.jar lnkchkr/linkchecker.jar"
     - "cp linkchecker_linux.sh lnkchkr/linkchecker_linux.sh"
     - "cp linkchecker_win.bat lnkchkr/linkchecker_win.bat"
     - "ls -l"
 
   artifacts:
     name: "linkchecker-$CI_COMMIT_REF_NAME"
+    expire_in: 1 week
     paths:
       - lnkchkr/

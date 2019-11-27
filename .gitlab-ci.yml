@@ -1,19 +1,7 @@
 stages:
-  - clean
   - compile
   - test
-  - package
   - deploy
-
-clean:
-  stage: clean
-
-  tags:
-    - maven
-
-  script:
-    - echo "Clean old target data with maven"
-    - mvn clean
 
 compile:
   stage: compile
@@ -35,27 +23,18 @@ test:
     - echo "Run junit testing with maven"
     - mvn test
 
-package:
-  stage: package
-  tags:
-    - package
-    - maven
-
-  script:
-    - echo "Packing into an executable jar file using maven"
-    - mvn package
-    - "cp target/linkchecker-*.jar linkchecker.jar"
-
 deploy:
   stage: deploy
   tags:
     - deploy
+    - maven
 
   script:
-    - echo "Deploy"
+    - echo "Packing into an executable jar file using maven and deploy"
+    - mvn package
+    - "cp target/linkchecker-*.jar lnkchkr/linkchecker.jar"
     - "rm -r -d -f lnkchkr/"
     - "mkdir -p lnkchkr"
-    - "mv linkchecker.jar lnkchkr/linkchecker.jar"
     - "cp linkchecker_linux.sh lnkchkr/linkchecker_linux.sh"
     - "cp linkchecker_win.bat lnkchkr/linkchecker_win.bat"
     - "ls -l"

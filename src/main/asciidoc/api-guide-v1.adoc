@@ -136,3 +136,10 @@ API Linkchecker следует стандартным соглашениям HTT
 Набор запросов при работе с графом в целом.
 
 include::graph.adoc[]
+
+[[rest-api-usage-nodes]]
+== NODES API
+
+Набор запросов при работе с вершинами графа (нодами).
+
+include::nodes.adoc[]

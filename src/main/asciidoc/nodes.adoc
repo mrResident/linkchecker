@@ -1,0 +1,473 @@
+=== HTTP запросы для получения информации о вершинах графа
+==== Получить список вершин графа.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/get-nodes/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/get-nodes/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/get-nodes/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/get-nodes/http-response.adoc[]
+
+*Response fields*
+include::{snippets}/get-nodes/response-fields.adoc[]
+
+==== HTTP запросы для получения информации о вершине графа.
+===== Получить информацию о вершине графа по её идентификатору.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/get-node-by-id/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/get-node-by-id/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/get-node-by-id/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/get-node-by-id/http-response.adoc[]
+
+*Response fields*
+include::{snippets}/get-node-by-id/response-fields.adoc[]
+
+===== Получить информацию о вершине графа по её уникальному имени.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/get-node-by-name/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/get-node-by-name/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/get-node-by-name/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/get-node-by-name/http-response.adoc[]
+
+*Response fields*
+include::{snippets}/get-node-by-name/response-fields.adoc[]
+
+==== Примеры ошибок при получении данных о вершине(ах) графа
+===== Ошибка поиска информации о вершине графа по уникальному имени
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/get-node-by-name-exception/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/get-node-by-name-exception/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/get-node-by-name-exception/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/get-node-by-name-exception/http-response.adoc[]
+*Response fields*
+include::{snippets}/get-node-by-name-exception/response-fields.adoc[]
+
+=== HTTP запросы для создания новой(ых) вершин(ы) в граф
+==== Создать и добавить новую вершину в граф
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/create-node/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/create-node/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/create-node/httpie-request.adoc[]
+
+*Request body*
+include::{snippets}/create-node/request-body.adoc[]
+*Request fields*
+include::{snippets}/create-node/request-fields.adoc[]
+
+*Пример ответа*
+
+*HTTP response*
+include::{snippets}/create-node/http-response.adoc[]
+*Response body*
+include::{snippets}/create-node/response-body.adoc[]
+*Response fields*
+include::{snippets}/create-node/response-fields.adoc[]
+
+==== Создать и добавить новые вершины в граф
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/create-nodes/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/create-nodes/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/create-nodes/httpie-request.adoc[]
+
+*Request body*
+include::{snippets}/create-nodes/request-body.adoc[]
+*Request fields*
+include::{snippets}/create-nodes/request-fields.adoc[]
+
+*Пример ответа*
+
+*HTTP response*
+include::{snippets}/create-nodes/http-response.adoc[]
+*Response body*
+include::{snippets}/create-nodes/response-body.adoc[]
+*Response fields*
+include::{snippets}/create-nodes/response-fields.adoc[]
+
+==== Примеры ошибок возникающие при создании вершин графа
+===== Ошибка валидации при создании вершины графа
+
+Попытка создать новый объект вершины графа с пустым уникальным именем.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/create-node-exception-1/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/create-node-exception-1/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/create-node-exception-1/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/create-node-exception-1/http-response.adoc[]
+*Response fields*
+include::{snippets}/create-node-exception-1/response-fields.adoc[]
+
+===== Ошибка создания уже существующей вершины
+
+Попытка создать новый объект вершины графа с уникальным именем, который уже существует в графе.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/create-node-exception-2/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/create-node-exception-2/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/create-node-exception-2/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/create-node-exception-2/http-response.adoc[]
+*Response fields*
+include::{snippets}/create-node-exception-2/response-fields.adoc[]
+
+===== Ошибка создания набора вершин графа используя пустой список
+
+Попытка создать и добавить в граф набор вершин графа используя пустой список.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/create-node-exception-3/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/create-node-exception-3/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/create-node-exception-3/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/create-node-exception-3/http-response.adoc[]
+*Response fields*
+include::{snippets}/create-node-exception-3/response-fields.adoc[]
+
+===== Ошибка создания набора вершин графа используя список содержащий null-элемент
+
+Попытка создать и добавить в граф набор вершин графа используя список содержащий null-элемент.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/create-node-exception-4/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/create-node-exception-4/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/create-node-exception-4/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/create-node-exception-4/http-response.adoc[]
+*Response fields*
+include::{snippets}/create-node-exception-4/response-fields.adoc[]
+
+===== Ошибка создания набора вершин графа используя список содержащий существующую вершину в графе
+
+Попытка создать и добавить в граф набор вершин графа используя список содержащий существующую вершину в графе.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/create-node-exception-5/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/create-node-exception-5/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/create-node-exception-5/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/create-node-exception-5/http-response.adoc[]
+*Response fields*
+include::{snippets}/create-node-exception-5/response-fields.adoc[]
+
+=== HTTP запросы для удаления вершин графа
+==== Удалить все вершины графа
+
+При удалении вершин графа происходит автоматическое удаление рёбер графа. Данный запрос эквивалентен запросу удаления всего графа.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-all-nodes/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-all-nodes/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-all-nodes/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-all-nodes/http-response.adoc[]
+
+==== HTTP запросы для удаления вершины графа
+===== Поиск и удаление вершины графа по идентификатору
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-node-by-id/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-node-by-id/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-node-by-id/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-node-by-id/http-response.adoc[]
+
+===== Поиск и удаление вершины графа по имени
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-node-by-name/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-node-by-name/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-node-by-name/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-node-by-name/http-response.adoc[]
+
+===== Поиск и удаление вершины графа по объекту
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-node-by-obj/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-node-by-obj/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-node-by-obj/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-node-by-obj/http-response.adoc[]
+
+==== Примеры ошибок возникающие при удалении вершин графа
+===== Ошибка при поиске и удалении вершины графа по идентификатору
+
+Попытка найти и удалить вершину графа используя идентификатор
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-node-exception-1/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-node-exception-1/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-node-exception-1/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-node-exception-1/http-response.adoc[]
+*Response fields*
+include::{snippets}/delete-node-exception-1/response-fields.adoc[]
+
+===== Ошибка при поиске и удалении вершины графа по имени
+
+Попытка найти и удалить вершину графа используя уникальное имя
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-node-exception-2/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-node-exception-2/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-node-exception-2/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-node-exception-2/http-response.adoc[]
+*Response fields*
+include::{snippets}/delete-node-exception-2/response-fields.adoc[]
+
+===== Ошибка при поиске и удалении вершины графа по объекту вершины графа у которого id = null
+
+Попытка найти и удалить вершину графа используя объект вершины графа у которого id = null
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-node-exception-3/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-node-exception-3/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-node-exception-3/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-node-exception-3/http-response.adoc[]
+*Response fields*
+include::{snippets}/delete-node-exception-3/response-fields.adoc[]
+
+===== Ошибка при поиске и удалении вершины графа по объекту несуществующей вершины графа
+
+Попытка найти и удалить вершину графа используя объект несуществующей вершины графа
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-node-exception-4/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-node-exception-4/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-node-exception-4/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-node-exception-4/http-response.adoc[]
+*Response fields*
+include::{snippets}/delete-node-exception-4/response-fields.adoc[]
+
+===== Ошибка при поиске и удалении вершины графа по объекту вершины графа у которого указан некорректный id
+
+Попытка найти и удалить вершину графа используя объект вершины графа у которого указан некорректный id
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-node-exception-5/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-node-exception-5/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-node-exception-5/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-node-exception-5/http-response.adoc[]
+*Response fields*
+include::{snippets}/delete-node-exception-5/response-fields.adoc[]

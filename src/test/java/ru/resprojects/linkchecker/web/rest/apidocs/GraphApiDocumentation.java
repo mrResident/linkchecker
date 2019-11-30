@@ -14,7 +14,6 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import ru.resprojects.linkchecker.TestUtils;
 import ru.resprojects.linkchecker.dto.GraphDto;
 import ru.resprojects.linkchecker.web.rest.GraphRestController;
@@ -88,15 +87,15 @@ public class GraphApiDocumentation {
             .andDo(document("create-graph",
                 requestFields(
                     fieldWithPath("nodes")
-                        .description("Collection of graph nodes"),
+                        .description("Коллекция вершин графа (ноды)"),
                     fieldWithPath("nodes[].name")
-                        .description("The name of the node."),
+                        .description("Уникальное имя вершины графа"),
                     fieldWithPath("edges")
-                        .description("Collection of graph edges."),
+                        .description("Коллекция рёбер графа"),
                     fieldWithPath("edges[].nodeOne")
-                        .description("Unique name of first graph node."),
+                        .description("Уникальное имя вершины графа"),
                     fieldWithPath("edges[].nodeTwo")
-                        .description("Unique name of second graph node.")
+                        .description("Уникальное имя вершины графа")
                 )))
             .andDo(getGraphResponseDoc("create-graph"));
     }
@@ -111,7 +110,7 @@ public class GraphApiDocumentation {
         this.mvc.perform(post(GraphRestController.REST_URL + "/create")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(graph)))
-            .andDo(document( "create-graph-exception"));
+            .andDo(ErrorResponseDoc("create-graph-exception"));
     }
 
     @Test
@@ -120,7 +119,7 @@ public class GraphApiDocumentation {
         this.mvc.perform(post(GraphRestController.REST_URL + "/checkroute")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(route)))
-            .andDo(document( "checkroute-graph-exception-1"));
+            .andDo(ErrorResponseDoc( "checkroute-graph-exception-1"));
     }
 
     @Test
@@ -129,7 +128,7 @@ public class GraphApiDocumentation {
         this.mvc.perform(post(GraphRestController.REST_URL + "/checkroute")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(route)))
-            .andDo(document( "checkroute-graph-exception-2"));
+            .andDo(ErrorResponseDoc( "checkroute-graph-exception-2"));
     }
 
     @Test
@@ -138,7 +137,7 @@ public class GraphApiDocumentation {
         this.mvc.perform(post(GraphRestController.REST_URL + "/checkroute")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(TestUtils.mapToJson(route)))
-            .andDo(document( "checkroute-graph-exception-3"));
+            .andDo(ErrorResponseDoc( "checkroute-graph-exception-3"));
     }
 
     @Test
@@ -152,21 +151,35 @@ public class GraphApiDocumentation {
         return document(documentIdentifier,
             responseFields(
                 fieldWithPath("nodes")
-                    .description("Collection of graph nodes"),
+                    .description("Коллекция вершин графа (ноды)"),
                 fieldWithPath("nodes[].id")
-                    .description("ID of the node."),
+                    .description("Идентификатор вершины графа"),
                 fieldWithPath("nodes[].name")
-                    .description("The name of the node."),
+                    .description("Уникальное имя вершины графа"),
                 fieldWithPath("nodes[].counter")
-                    .description("The number of passes through the graph node."),
+                    .description("Колличество проходов через узел"),
                 fieldWithPath("edges")
-                    .description("Collection of graph edges."),
+                    .description("Коллекция рёбер графа"),
                 fieldWithPath("edges[].id")
-                    .description("ID of the edge."),
+                    .description("Уникальный идентификатор ребра графа"),
                 fieldWithPath("edges[].nodeOne")
-                    .description("Unique name of first graph node."),
+                    .description("Уникальное имя вершины графа"),
                 fieldWithPath("edges[].nodeTwo")
-                    .description("Unique name of second graph node.")
+                    .description("Уникальное имя вершины графа")
+            ));
+    }
+
+    public static RestDocumentationResultHandler ErrorResponseDoc(String documentIdentifier) {
+        return document(documentIdentifier,
+            responseFields(
+                fieldWithPath("url")
+                    .description("REST-запрос, при котором возникла ошибка"),
+                fieldWithPath("type")
+                    .description("тип ошибки"),
+                fieldWithPath("place")
+                    .description("места возникновения ошибок"),
+                fieldWithPath("messages")
+                    .description("сообщения об ошибках")
             ));
     }
 

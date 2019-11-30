@@ -1,8 +1,6 @@
-=== Get graph
+=== Получить объект графа.
 
-Извлечение графа из БД и передача информации о нём клиенту.
-
-*Примеры запросов*
+*Пример запроса*
 
 '''
 
@@ -13,7 +11,7 @@ include::{snippets}/get-graph/http-request.adoc[]
 *HTTPie request*
 include::{snippets}/get-graph/httpie-request.adoc[]
 
-*Примеры ответов*
+*Пример ответа*
 
 '''
 
@@ -23,11 +21,9 @@ include::{snippets}/get-graph/http-response.adoc[]
 *HTTP response fields*
 include::{snippets}/get-graph/response-fields.adoc[]
 
-=== Export graph
+=== Экспорт графа в формат https://www.graphviz.org/about/[graphviz].
 
-Экспорт графа в формат https://www.graphviz.org/about/[graphviz].
-
-*Примеры запросов*
+*Пример запроса*
 
 '''
 
@@ -38,18 +34,18 @@ include::{snippets}/export-graph/http-request.adoc[]
 *HTTPie request*
 include::{snippets}/export-graph/httpie-request.adoc[]
 
-*Примеры ответов*
+*Пример ответа*
 
 '''
 
 *HTTP response*
 include::{snippets}/export-graph/http-response.adoc[]
 
-=== Create graph
+=== Создание нового графа
 
-Создание графа (при этом, предыдущий граф удаляется из БД)
+При этом прежний граф полностью удаляется из БД.
 
-*Примеры запросов*
+*Пример запроса*
 
 '''
 
@@ -65,7 +61,7 @@ include::{snippets}/create-graph/request-body.adoc[]
 *Request fields*
 include::{snippets}/create-graph/request-fields.adoc[]
 
-*Примеры ответов*
+*Пример ответа*
 
 *HTTP response*
 include::{snippets}/create-graph/http-response.adoc[]
@@ -75,10 +71,9 @@ include::{snippets}/create-graph/response-body.adoc[]
 include::{snippets}/create-graph/response-fields.adoc[]
 
 ==== Примеры ошибок
-
 ===== Ошибка при создании нового графа
 
-*Примеры запроса*
+*Пример запроса*
 
 '''
 
@@ -89,7 +84,7 @@ include::{snippets}/create-graph-exception/http-request.adoc[]
 *HTTPie request*
 include::{snippets}/create-graph-exception/httpie-request.adoc[]
 
-*Примеры ответа*
+*Пример ответа*
 
 '''
 
@@ -97,12 +92,12 @@ include::{snippets}/create-graph-exception/httpie-request.adoc[]
 include::{snippets}/create-graph-exception/http-response.adoc[]
 *Response body*
 include::{snippets}/create-graph-exception/response-body.adoc[]
+*Response fields*
+include::{snippets}/create-graph-exception/response-fields.adoc[]
 
-=== Delete graph
+=== Удалить графа из БД
 
-Удаление графа из БД.
-
-*Примеры запросов*
+*Пример запроса*
 
 '''
 
@@ -113,18 +108,16 @@ include::{snippets}/delete-graph/http-request.adoc[]
 *HTTPie request*
 include::{snippets}/delete-graph/httpie-request.adoc[]
 
-*Примеры ответов*
+*Пример ответа*
 
 '''
 
 *HTTP response*
 include::{snippets}/delete-graph/http-response.adoc[]
 
-=== Check route graph
+=== Проверка работоспособности заданной последовательности узлов.
 
-Проверка работоспособность заданной последовательности связанных узлов.
-
-*Примеры запросов*
+*Пример запроса*
 
 '''
 
@@ -138,7 +131,7 @@ include::{snippets}/checkroute-graph/httpie-request.adoc[]
 *Request body*
 include::{snippets}/checkroute-graph/request-body.adoc[]
 
-*Примеры ответов*
+*Пример ответа*
 
 '''
 
@@ -170,8 +163,8 @@ include::{snippets}/checkroute-graph-exception-1/request-body.adoc[]
 
 *HTTP response*
 include::{snippets}/checkroute-graph-exception-1/http-response.adoc[]
-*Response body*
-include::{snippets}/checkroute-graph-exception-1/response-body.adoc[]
+*Response fields*
+include::{snippets}/checkroute-graph-exception-1/response-fields.adoc[]
 
 ===== Входная коллекция состоящая из одного элемента
 
@@ -195,8 +188,8 @@ include::{snippets}/checkroute-graph-exception-2/request-body.adoc[]
 
 *HTTP response*
 include::{snippets}/checkroute-graph-exception-2/http-response.adoc[]
-*Response body*
-include::{snippets}/checkroute-graph-exception-2/response-body.adoc[]
+*Response fields*
+include::{snippets}/checkroute-graph-exception-2/response-fields.adoc[]
 
 ===== Путь между входными узлами не найден
 
@@ -218,6 +211,5 @@ include::{snippets}/checkroute-graph-exception-3/request-body.adoc[]
 
 *HTTP response*
 include::{snippets}/checkroute-graph-exception-3/http-response.adoc[]
-*Response body*
-include::{snippets}/checkroute-graph-exception-3/response-body.adoc[]
-
+*Response fields*
+include::{snippets}/checkroute-graph-exception-3/response-fields.adoc[]

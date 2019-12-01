@@ -1,0 +1,468 @@
+=== HTTP запросы для поиска рёбер графа
+==== Получить список всех рёбер графа.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/get-edges/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/get-edges/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/get-edges/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/get-edges/http-response.adoc[]
+
+*Response fields*
+include::{snippets}/get-edges/response-fields.adoc[]
+
+==== HTTP запросы для поиска рёбер графа.
+===== Поиск ребра графа по его идентификатору.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/get-edge-by-id/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/get-edge-by-id/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/get-edge-by-id/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/get-edge-by-id/http-response.adoc[]
+
+*Response fields*
+include::{snippets}/get-edge-by-id/response-fields.adoc[]
+
+===== Поиск рёбер графа в которых встречается уникальное имя вершины графа заданное в качестве параметра поиска
+
+В поиске используется уникальное имя вершины графа. В отбор попадают все ребра графа в которых встречается
+уникальное имя вершины графа, заданное в качестве параметра поиска.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/get-edges-by-node-name/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/get-edges-by-node-name/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/get-edges-by-node-name/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/get-edges-by-node-name/http-response.adoc[]
+
+*Response fields*
+include::{snippets}/get-edges-by-node-name/response-fields.adoc[]
+
+===== Поиск ребра графа по паре уникальных имен вершин графа, которые связывает искомое ребро
+
+Поиск ребра ведётся по конкретному набору вершин, которые связывает искомое ребро.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/get-edge-by-nodes-name/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/get-edge-by-nodes-name/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/get-edge-by-nodes-name/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/get-edge-by-nodes-name/http-response.adoc[]
+
+*Response fields*
+include::{snippets}/get-edge-by-nodes-name/response-fields.adoc[]
+
+==== Примеры ошибок при поиске рёбер графа
+===== Ошибка поиска ребра графа по идентификатору
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/get-edge-exception-1/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/get-edge-exception-1/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/get-edge-exception-1/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/get-edge-exception-1/http-response.adoc[]
+*Response fields*
+include::{snippets}/get-edge-exception-1/response-fields.adoc[]
+
+===== Ошибка поиска рёбер графа по уникальному имени вершины графа
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/get-edge-exception-2/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/get-edge-exception-2/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/get-edge-exception-2/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/get-edge-exception-2/http-response.adoc[]
+*Response fields*
+include::{snippets}/get-edge-exception-2/response-fields.adoc[]
+
+=== HTTP запросы добавления новых рёбер в граф
+==== Создать и добавить новое ребро в граф
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/create-edge/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/create-edge/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/create-edge/httpie-request.adoc[]
+
+*Request body*
+include::{snippets}/create-edge/request-body.adoc[]
+*Request fields*
+include::{snippets}/create-edge/request-fields.adoc[]
+
+*Пример ответа*
+
+*HTTP response*
+include::{snippets}/create-edge/http-response.adoc[]
+*Response body*
+include::{snippets}/create-edge/response-body.adoc[]
+*Response fields*
+include::{snippets}/create-edge/response-fields.adoc[]
+
+==== Создать и добавить новые ребра в граф
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/create-edges/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/create-edges/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/create-edges/httpie-request.adoc[]
+
+*Request body*
+include::{snippets}/create-edges/request-body.adoc[]
+*Request fields*
+include::{snippets}/create-edges/request-fields.adoc[]
+
+*Пример ответа*
+
+*HTTP response*
+include::{snippets}/create-edges/http-response.adoc[]
+*Response body*
+include::{snippets}/create-edges/response-body.adoc[]
+*Response fields*
+include::{snippets}/create-edges/response-fields.adoc[]
+
+==== Примеры ошибок возникающие при добавлении рёбер в граф
+===== Ошибка валидации при добавлении ребра в граф
+
+Попытка создать новый объект ребра графа не указав имена связываемых ребром вершин графа.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/create-edge-exception-1/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/create-edge-exception-1/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/create-edge-exception-1/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/create-edge-exception-1/http-response.adoc[]
+*Response fields*
+include::{snippets}/create-edge-exception-1/response-fields.adoc[]
+
+===== Ошибка при создания ребра, который уже присутствует в графе
+
+Попытка создать новый объект ребра, который уже присутствует в графе.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/create-edge-exception-2/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/create-edge-exception-2/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/create-edge-exception-2/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/create-edge-exception-2/http-response.adoc[]
+*Response fields*
+include::{snippets}/create-edge-exception-2/response-fields.adoc[]
+
+===== Ошибка создания набора рёбер графа используя пустой список
+
+Попытка создать и добавить в граф набор рёбер графа используя пустой список.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/create-edge-exception-3/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/create-edge-exception-3/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/create-edge-exception-3/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/create-edge-exception-3/http-response.adoc[]
+*Response fields*
+include::{snippets}/create-edge-exception-3/response-fields.adoc[]
+
+===== Ошибка создания набора вершин рёбер используя список содержащий null-элемент
+
+Попытка создать и добавить в граф набор рёбер графа используя список содержащий null-элемент.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/create-edge-exception-4/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/create-edge-exception-4/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/create-edge-exception-4/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/create-edge-exception-4/http-response.adoc[]
+*Response fields*
+include::{snippets}/create-edge-exception-4/response-fields.adoc[]
+
+===== Ошибка создания набора рёбер графа используя список содержащий существующее ребро в графе
+
+Попытка создать и добавить в граф набор рёбер графа используя список содержащий существующее ребро в графе.
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/create-edge-exception-5/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/create-edge-exception-5/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/create-edge-exception-5/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/create-edge-exception-5/http-response.adoc[]
+*Response fields*
+include::{snippets}/create-edge-exception-5/response-fields.adoc[]
+
+=== HTTP запросы для удаления рёбер графа
+==== Удалить все рёбра графа
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-all-edges/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-all-edges/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-all-edges/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-all-edges/http-response.adoc[]
+
+==== HTTP запросы для удаления ребра графа
+===== Поиск и удаление ребра графа по идентификатору
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-edge-by-id/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-edge-by-id/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-edge-by-id/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-edge-by-id/http-response.adoc[]
+
+===== Поиск и удаление всех рёбер графа которые содержат указанное в качестве параметра поиска имя вершины графа
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-edges-by-node-name/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-edges-by-node-name/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-edges-by-node-name/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-edges-by-node-name/http-response.adoc[]
+
+===== Поиск и удаление ребра графа по именам вершин графа, которые искомое ребро соединяет
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-edge-by-nodes-name/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-edge-by-nodes-name/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-edge-by-nodes-name/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-edge-by-nodes-name/http-response.adoc[]
+
+==== Примеры ошибок возникающие при удалении рёбер графа
+===== Ошибка при поиске и удалении ребра графа по идентификатору
+
+Попытка найти и удалить ребро графа используя идентификатор
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-edge-exception-1/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-edge-exception-1/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-edge-exception-1/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-edge-exception-1/http-response.adoc[]
+*Response fields*
+include::{snippets}/delete-edge-exception-1/response-fields.adoc[]
+
+===== Ошибка при поиске и удалении рёбр графа которые не содержат указанное в качестве параметра поиска имя вершины графа
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-edge-exception-2/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-edge-exception-2/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-edge-exception-2/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-edge-exception-2/http-response.adoc[]
+*Response fields*
+include::{snippets}/delete-edge-exception-2/response-fields.adoc[]
+
+===== Ошибка при поиске и удалении ребра графа по именам вершин графа
+
+*Пример запроса*
+
+'''
+
+*CURL request*
+include::{snippets}/delete-edge-exception-3/curl-request.adoc[]
+*HTTP request*
+include::{snippets}/delete-edge-exception-3/http-request.adoc[]
+*HTTPie request*
+include::{snippets}/delete-edge-exception-3/httpie-request.adoc[]
+
+*Пример ответа*
+
+'''
+
+*HTTP response*
+include::{snippets}/delete-edge-exception-3/http-response.adoc[]
+*Response fields*
+include::{snippets}/delete-edge-exception-3/response-fields.adoc[]

@@ -143,3 +143,10 @@ include::graph.adoc[]
 Набор запросов при работе с вершинами графа (нодами).
 
 include::nodes.adoc[]
+
+[[rest-api-usage-edges]]
+== EDGES API
+
+Набор запросов при работе с рёбрами графа.
+
+include::edges.adoc[]

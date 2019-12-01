@@ -39,7 +39,7 @@ public class GraphEdgeRestController {
 
     private static final Logger LOG = LoggerFactory.getLogger(GraphEdgeRestController.class);
 
-    static final String EDGE_REST_URL = REST_URL + "/edges";
+    public static final String EDGE_REST_URL = REST_URL + "/edges";
 
     private GraphService graphService;
 

@@ -38,7 +38,7 @@ public class GraphNodeRestController {
 
     private static final Logger LOG = LoggerFactory.getLogger(GraphNodeRestController.class);
 
-    static final String NODES_REST_URL = REST_URL + "/nodes";
+    public static final String NODES_REST_URL = REST_URL + "/nodes";
 
     private GraphService graphService;
 
